@@ -39,43 +39,4 @@ Git
 Installation
 Clone the repository
 
-bash
-git clone <repository-url>
-cd poc-blockchain-nous
-Set up local blockchain
 
-bash
-cd ganache
-npm install
-npm start
-Configure EVM Bridge
-
-bash
-cd evm-bridge-main
-npm install
-cp .env.example .env
-# Edit .env with your configuration
-npm run dev
-Start object storage
-
-bash
-cd minio
-docker-compose up -d
-Launch webhook server
-
-bash
-cd webbook-server
-npm install
-npm start
-🔧 Configuration
-Each component contains its own configuration files. Key configuration areas include:
-
-Blockchain network settings (Ganache)
-
-Bridge parameters (EVM Bridge)
-
-Storage configurations (MinIO)
-
-Webhook endpoints (Webhook Server)
-
-Sovity platform integration
