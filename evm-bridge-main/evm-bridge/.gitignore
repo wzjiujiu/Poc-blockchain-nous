@@ -1,0 +1,24 @@
+# .gitignore file
+
+# Ignore downloaded dependencies
+
+node_modules
+
+# Ignore compiled files
+
+dist
+
+# Ignore configuration file
+
+.env
+
+# Ignore compiled language files
+
+locales/conf/*.txt
+
+# Ignore temp files
+
+temp
+data
+certbot
+test.txt

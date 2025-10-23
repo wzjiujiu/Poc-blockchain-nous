@@ -1,0 +1,66 @@
+// SPDX-License-Identifier: MIT
+//
+// The MIT License (MIT)
+// 
+// Copyright (c) 2025 AIR Institute and BISITE (USAL)
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of
+// this software and associated documentation files (the "Software"), to deal in
+// the Software without restriction, including without limitation the rights to
+// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+// the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// Logs config
+
+"use strict";
+
+/**
+ * Logs configuration 
+ */
+export class LogsConfig {
+
+    /**
+     * Gets the configuration instance.
+     */
+    public static getInstance(): LogsConfig {
+        if (LogsConfig.instance) {
+            return LogsConfig.instance;
+        }
+
+        const config: LogsConfig = new LogsConfig();
+
+        config.logRequests = process.env.LOG_REQUESTS === "YES";
+
+        config.logInfo = process.env.LOG_INFO !== "NO";
+        config.logDebug = process.env.LOG_DEBUG === "YES";
+        config.logTrace = process.env.LOG_TRACE === "YES";
+        
+        LogsConfig.instance = config;
+
+        return config;
+    }
+    private static instance: LogsConfig = null;
+
+    public logRequests: boolean;
+
+    public logInfo: boolean;
+    public logDebug: boolean;
+    public logTrace: boolean;
+
+    constructor() {
+        this.logInfo = true;
+        this.logRequests = true;
+        this.logDebug = true;
+    }
+}

@@ -1,0 +1,628 @@
+{
+    "primaryKeys": [
+        {
+            "collection": "contract_event_status",
+            "field": "address"
+        },
+        {
+            "collection": "dynamic_configuration",
+            "field": "configKey"
+        },
+        {
+            "collection": "event_example_initialized",
+            "field": "id"
+        },
+        {
+            "collection": "event_example_paused",
+            "field": "id"
+        },
+        {
+            "collection": "event_example_test_event",
+            "field": "id"
+        },
+        {
+            "collection": "event_example_unpaused",
+            "field": "id"
+        },
+        {
+            "collection": "event_example_upgraded",
+            "field": "id"
+        },
+        {
+            "collection": "event_role_manager_initialized",
+            "field": "id"
+        },
+        {
+            "collection": "event_role_manager_paused",
+            "field": "id"
+        },
+        {
+            "collection": "event_role_manager_role_assigned",
+            "field": "id"
+        },
+        {
+            "collection": "event_role_manager_role_revoked",
+            "field": "id"
+        },
+        {
+            "collection": "event_role_manager_unpaused",
+            "field": "id"
+        },
+        {
+            "collection": "event_role_manager_upgraded",
+            "field": "id"
+        },
+        {
+            "collection": "event_upgrade_control_contract_upgraded",
+            "field": "id"
+        },
+        {
+            "collection": "event_upgrade_control_initialized",
+            "field": "id"
+        },
+        {
+            "collection": "event_upgrade_control_paused",
+            "field": "id"
+        },
+        {
+            "collection": "event_upgrade_control_unpaused",
+            "field": "id"
+        },
+        {
+            "collection": "event_upgrade_control_upgraded",
+            "field": "id"
+        },
+        {
+            "collection": "wallets",
+            "field": "id"
+        }
+    ],
+    "indexes": [
+        {
+            "collection": "event_example_initialized",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_initialized",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_initialized",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_paused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_paused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_paused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_test_event",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_test_event",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_test_event",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_test_event",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pExampleValue1",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_unpaused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_unpaused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_unpaused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pImplementation",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_initialized",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_initialized",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_initialized",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_paused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_paused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_paused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_role_assigned",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_role_assigned",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_role_assigned",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_role_revoked",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_role_revoked",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_role_revoked",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_unpaused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_unpaused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_unpaused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_role_manager_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pImplementation",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_contract_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_contract_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_contract_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_initialized",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_initialized",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_initialized",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_paused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_paused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_paused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_unpaused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_unpaused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_unpaused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_upgrade_control_upgraded",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pImplementation",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "wallets",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "uid",
+                    "dir": ""
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Webhook Live UI</title>
+  <link href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" rel="stylesheet">
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--muted:#9aa6b2;--accent:#7dd3fc}
+    body{font-family:Inter, system-ui, sans-serif;margin:0;background:linear-gradient(180deg,#071021 0%,#0e1724 100%);color:#e6eef6;height:100vh;display:flex;align-items:stretch;gap:20px;padding:20px}
+    .container{max-width:1200px;margin:0 auto;display:flex;gap:20px;width:100%}
+    .panel{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 6px 18px rgba(2,6,23,0.6);flex:1;display:flex;flex-direction:column;min-height:300px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    h1{font-size:18px;margin:0}
+    small{color:var(--muted)}
+    .events, .logs{overflow:auto;flex:1;padding:8px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
+    .item{padding:8px;border-radius:8px;margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.03)}
+    .meta{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .json{font-family:monospace;font-size:13px;white-space:pre-wrap;color:#d6f0ff}
+    .controls{display:flex;gap:8px}
+    button{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;color:var(--muted);cursor:pointer}
+    button.primary{border-color:var(--accent);color:var(--accent)}
+    .empty{color:var(--muted);text-align:center;padding:20px}
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <div class="panel" style="flex:0.9">
+      <header>
+        <div>
+          <h1>Webhook Live UI</h1>
+          <small>Riceve eventi su <code>/event</code> e mostra log in tempo reale</small>
+        </div>
+        <div class="controls">
+          <button id="clearEvents">Clear eventi</button>
+          <button id="clearLogs">Clear logs</button>
+        </div>
+      </header>
+
+      <section style="display:flex;gap:12px;align-items:stretch;height:100%;">
+        <div style="flex:1;display:flex;flex-direction:column">
+          <div style="font-weight:600;margin-bottom:8px">Ultimi eventi</div>
+          <div class="events" id="eventsList">
+            <div class="empty">Nessun evento ancora — invia una POST a <code>/event</code></div>
+          </div>
+        </div>
+
+        <div style="width:360px;display:flex;flex-direction:column">
+          <div style="font-weight:600;margin-bottom:8px">Logs live</div>
+          <div class="logs" id="logsList">
+            <div class="empty">Nessun log ancora</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const eventsList = document.getElementById('eventsList');
+    const logsList = document.getElementById('logsList');
+    const clearEventsBtn = document.getElementById('clearEvents');
+    const clearLogsBtn = document.getElementById('clearLogs');
+
+    function addEvent(evt){
+      // rimuovi placeholder empty
+      const empt = eventsList.querySelector('.empty');
+      if (empt) empt.remove();
+
+      const it = document.createElement('div');
+      it.className = 'item';
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.textContent = `Ricevuto: ${new Date(evt.ts).toLocaleString()}`;
+      const pre = document.createElement('div');
+      pre.className = 'json';
+      pre.textContent = JSON.stringify(evt, null, 2);
+      it.appendChild(meta);
+      it.appendChild(pre);
+      eventsList.prepend(it);
+    }
+
+    function addLog(log){
+      const empt = logsList.querySelector('.empty');
+      if (empt) empt.remove();
+
+      const it = document.createElement('div');
+      it.className = 'item';
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.textContent = `${new Date(log.ts).toLocaleString()}`;
+      const text = document.createElement('div');
+      text.className = 'json';
+      text.textContent = log.text;
+      it.appendChild(meta);
+      it.appendChild(text);
+      logsList.prepend(it);
+    }
+
+    socket.on('connect', ()=> {
+      addLog({ text: 'Connesso al server socket.io', ts: new Date().toISOString() });
+    });
+
+    socket.on('log', (payload) => {
+      addLog(payload);
+    });
+
+    socket.on('event', (payload) => {
+      addEvent(payload);
+    });
+
+    clearEventsBtn.addEventListener('click', () => {
+      eventsList.innerHTML = '<div class="empty">Nessun evento ancora — invia una POST a <code>/event</code></div>';
+    });
+
+    clearLogsBtn.addEventListener('click', () => {
+      logsList.innerHTML = '<div class="empty">Nessun log ancora</div>';
+    });
+  </script>
+</body>
+</html>

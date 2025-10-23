@@ -1,0 +1,7 @@
+# Backend
+
+evm-bridge/node_modules
+evm-bridge/data
+evm-bridge/temp
+evm-bridge/dist
+evm-bridge/.env

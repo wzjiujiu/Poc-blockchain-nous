@@ -1,0 +1,77 @@
+// SPDX-License-Identifier: MIT
+//
+// The MIT License (MIT)
+// 
+// Copyright (c) 2025 AIR Institute and BISITE (USAL)
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of
+// this software and associated documentation files (the "Software"), to deal in
+// the Software without restriction, including without limitation the rights to
+// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+// the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+/* File utils */
+
+"use strict";
+
+import fileUpload from "express-fileupload";
+import Path from "path";
+import { createRandomUID } from "./text-utils";
+import { unlink } from "fs";
+import { Monitor } from "../monitor";
+
+/**
+ * @returns A random temp file path
+ */
+export function makeTempFile() {
+    return Path.resolve(__dirname, "..", "..", "temp", createRandomUID());
+}
+
+/**
+ * Gets path to temp file
+ * @param file Temp file name
+ * @returns Temp file full path
+ */
+export function getTempFilePath(file: string) {
+    return Path.resolve(__dirname, "..", "..", "temp", file);
+}
+
+/**
+ * Moves uploaded file to temp file
+ * @param file Uploaded file
+ * @returns Temp file path
+ */
+export async function moveUploadedFileToTempFile(file: fileUpload.UploadedFile): Promise<string> {
+    const tmpFile = makeTempFile();
+    return new Promise<string>(function (resolve, reject) {
+        file.mv(tmpFile, function (err) {
+            if (err) {
+                return reject(err);
+            }
+            resolve(tmpFile);
+        });
+    });
+}
+
+/**
+ * Clears a temp file
+ * @param file The temp file to delete
+ */
+export function clearTempFile(file: string) {
+    unlink(file, err => {
+        if (err) {
+            Monitor.exception(err);
+        }
+    });
+}
