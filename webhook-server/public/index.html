@@ -14,9 +14,35 @@
     h1{font-size:18px;margin:0}
     small{color:var(--muted)}
     .events, .logs{overflow:auto;flex:1;padding:8px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
-    .item{padding:8px;border-radius:8px;margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.03)}
-    .meta{font-size:12px;color:var(--muted);margin-bottom:6px}
-    .json{font-family:monospace;font-size:13px;white-space:pre-wrap;color:#d6f0ff}
+    .item{padding:8px;border-radius:8px;margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column}
+    .meta{font-size:12px;color:var(--muted);margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:4px}
+    .json{font-family:monospace;font-size:13px;white-space:pre-wrap;color:#d6f0ff;margin-top:4px;padding-left:8px}
+
+    /* --- Coppie chiave:valore compatte --- */
+    .json ul {
+      margin: 0;
+      padding-left: 12px;
+      list-style: none;
+    }
+
+    .json li {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin: 2px 0;
+    }
+
+    .json b {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .json span {
+      color: #e6eef6;
+      word-break: break-all;
+    }
+
     .controls{display:flex;gap:8px}
     button{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;color:var(--muted);cursor:pointer}
     button.primary{border-color:var(--accent);color:var(--accent)}
@@ -64,21 +90,28 @@
     const clearEventsBtn = document.getElementById('clearEvents');
     const clearLogsBtn = document.getElementById('clearLogs');
 
-    function addEvent(evt){
-      // rimuovi placeholder empty
+    function addEvent(evt) {
       const empt = eventsList.querySelector('.empty');
       if (empt) empt.remove();
 
       const it = document.createElement('div');
       it.className = 'item';
+
       const meta = document.createElement('div');
       meta.className = 'meta';
       meta.textContent = `Ricevuto: ${new Date(evt.ts).toLocaleString()}`;
-      const pre = document.createElement('div');
-      pre.className = 'json';
-      pre.textContent = JSON.stringify(evt, null, 2);
+
+      const content = document.createElement('div');
+      content.className = 'json';
+
+      if (evt.html) {
+        content.innerHTML = evt.html;
+      } else {
+        content.textContent = JSON.stringify(evt, null, 2);
+      }
+
       it.appendChild(meta);
-      it.appendChild(pre);
+      it.appendChild(content);
       eventsList.prepend(it);
     }
 
@@ -103,13 +136,8 @@
       addLog({ text: 'Connesso al server socket.io', ts: new Date().toISOString() });
     });
 
-    socket.on('log', (payload) => {
-      addLog(payload);
-    });
-
-    socket.on('event', (payload) => {
-      addEvent(payload);
-    });
+    socket.on('log', (payload) => addLog(payload));
+    socket.on('event', (payload) => addEvent(payload));
 
     clearEventsBtn.addEventListener('click', () => {
       eventsList.innerHTML = '<div class="empty">Nessun evento ancora — invia una POST a <code>/event</code></div>';

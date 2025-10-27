@@ -28,6 +28,64 @@ console.log = (...args) => {
   io.emit("log", { text, ts: new Date().toISOString() });
 };
 
+// --- Funzioni per parsing e formattazione ---
+function parseNestedJSON(obj) {
+  if (typeof obj === "string") {
+    try {
+      return parseNestedJSON(JSON.parse(obj));
+    } catch {
+      return obj; // non è JSON valido
+    }
+  } else if (Array.isArray(obj)) {
+    return obj.map(parseNestedJSON);
+  } else if (obj && typeof obj === "object") {
+    const parsed = {};
+    for (const [key, value] of Object.entries(obj)) {
+      parsed[key] = parseNestedJSON(value);
+    }
+    return parsed;
+  }
+  return obj;
+}
+
+function cleanKeys(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(cleanKeys);
+  } else if (obj && typeof obj === "object") {
+    const cleaned = {};
+    for (const [key, value] of Object.entries(obj)) {
+      const cleanKey = key.replace(/.*[\/#]/, ""); // rimuove prefissi URL
+      cleaned[cleanKey] = cleanKeys(value);
+    }
+    return cleaned;
+  }
+  return obj;
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function renderAsList(obj) {
+  if (typeof obj !== "object" || obj === null) return `<span>${obj}</span>`;
+  
+  let html = "<ul style='list-style:none;padding-left:0;margin:0'>";
+  
+  for (const [key, val] of Object.entries(obj)) {
+    if (typeof val === "object" && val !== null) {
+      html += `<li><b>${key}:</b> ${renderAsList(val)}</li>`;
+    } else {
+      html += `<li><b>${key}:</b> <span>${val}</span></li>`;
+    }
+  }
+
+  html += "</ul>";
+  return html;
+}
+
 // --- Ethereum setup ---
 const INFURA_PROJECT_ID = process.env.INFURA_PROJECT_ID;
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
@@ -43,7 +101,7 @@ const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 // Funzione per leggere balance
 async function printBalance() {
   try {
-    const balance = await provider.getBalance(wallet.address); // metodo corretto per v6
+    const balance = await provider.getBalance(wallet.address);
     const etherBalance = ethers.formatEther(balance);
     console.log(`💰 Balance wallet (${wallet.address}): ${etherBalance} ETH`);
     io.emit("balance", { address: wallet.address, balance: etherBalance });
@@ -59,25 +117,31 @@ app.get("/", (req, res) => {
 
 // --- Webhook endpoint ---
 app.post("/event", async (req, res) => {
-  const { assetId, policy, manifest, timestamp } = req.body || {};
+  const parsedData = parseNestedJSON(req.body);
+  const cleanedData = cleanKeys(parsedData);
+  const prettyHtml = renderAsList(cleanedData);
 
-  console.log("✅ Ricevuto evento:", req.body);
+  console.log("✅ Evento parsato e pulito:");
+  console.dir(cleanedData, { depth: null, colors: true });
 
-  // Calcolo hash SHA-256
-  const hash = crypto.createHash("sha256").update(JSON.stringify(req.body || {})).digest("hex");
+  const hash = crypto.createHash("sha256").update(JSON.stringify(cleanedData)).digest("hex");
   const txHash = "0x" + hash.substring(0, 16);
 
-  // Stampa balance aggiornato
   await printBalance();
 
   const response = {
     status: "ok",
-    assetId,
     txHash,
     receivedAt: new Date().toISOString(),
   };
 
-  io.emit("event", { requestBody: req.body, response, ts: new Date().toISOString() });
+  io.emit("event", {
+    ...cleanedData,
+    response,
+    ts: new Date().toISOString(),
+    html: prettyHtml
+  });
+
   res.json(response);
 });
 
@@ -90,5 +154,5 @@ io.on("connection", (socket) => {
 // --- Avvio server ---
 server.listen(PORT, () => {
   console.log(`🚀 Webhook + UI attivo su http://localhost:${PORT}/`);
-  printBalance(); // stampa balance all'avvio
+  printBalance();
 });
