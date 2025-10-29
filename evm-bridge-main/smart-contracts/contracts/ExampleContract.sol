@@ -29,70 +29,59 @@ import "./interfaces/IExampleContract.sol";
 /**
  * This is an example smart contract
  */
-contract ExampleContract is IExampleContract, BaseContract {
+contract ExampleContract is  BaseContract {
     /* Contract data */
 
-    uint256 private _exampleValue1;
-    string private _exampleValue2;
-    address private _exampleValue3;
-
-    /* Constructor */
-
-    constructor() {}
-
-    /* Initializer */
-
-    /**
-     * Initializes the smart contract
-     * @param roleManagerAddress The address of the role manager smart contract
-     * @param upgradeControlAddress The address of the upgrade control smart contract
-     */
-    function initialize(
+    struct Asset {
+        string id;         // ID univoco dell'asset (es. UUID, codice interno, hash, ecc.)
+        address owner;     // Indirizzo che ha registrato l'asset
+        uint256 timestamp; // Momento della registrazione
+    }
+	
+	 function initialize(
         address roleManagerAddress,
         address upgradeControlAddress
     ) public reinitializer(1) {
         _initialize_base(roleManagerAddress, upgradeControlAddress);
     }
 
-    /* View functions */
 
-    /**
-     * Gets the current test values
-     * @return exampleValue1 Example value 1
-     * @return exampleValue2 Example value 2
-     * @return exampleValue3 Example value 3
-     */
-    function getTestValues()
-        public
-        view
-        override
-        returns (
-            uint256 exampleValue1,
-            string memory exampleValue2,
-            address exampleValue3
-        )
-    {
-        return (_exampleValue1, _exampleValue2, _exampleValue3);
+    // Mapping: id asset → dati dell'asset
+    mapping(string => Asset) private assets;
+
+    // Evento per il frontend / monitoraggio
+    event AssetRegistered(address indexed owner, string assetId, uint256 timestamp);
+
+    /// @notice Registra un nuovo asset sulla blockchain
+    /// @param assetId L'identificatore univoco dell'asset (stringa)
+    function registerAsset(string memory assetId) external {
+        require(bytes(assetId).length > 0, "ID non valido");
+        require(assets[assetId].owner == address(0), "Asset gia' registrato");
+
+        assets[assetId] = Asset({
+            id: assetId,
+            owner: msg.sender,
+            timestamp: block.timestamp
+        });
+
+        emit AssetRegistered(msg.sender, assetId, block.timestamp);
     }
 
-    /* Transaction functions */
+    /// @notice Restituisce i dettagli di un asset
+    /// @param assetId L'identificatore dell'asset
+    function getAsset(string memory assetId)
+        external
+        view
+        returns (string memory id, address owner, uint256 timestamp)
+    {
+        Asset memory a = assets[assetId];
+        require(a.owner != address(0), "Asset non trovato");
+        return (a.id, a.owner, a.timestamp);
+    }
 
-    /**
-     * Sets some test values
-     * Requires role: TEST_ROLE
-     * @param exampleValue1 Example value 1
-     * @param exampleValue2 Example value 2
-     * @param exampleValue3 Example value 3
-     */
-    function setTestValues(
-        uint256 exampleValue1,
-        string memory exampleValue2,
-        address exampleValue3
-    ) public override onlyRole(ROLES.TEST_ROLE) {
-        _exampleValue1 = exampleValue1;
-        _exampleValue2 = exampleValue2;
-        _exampleValue3 = exampleValue3;
-
-        emit TestEvent(exampleValue1, exampleValue2, exampleValue3);
+    /// @notice Verifica se un asset e' gia' registrato
+    /// @param assetId L'identificatore dell'asset
+    function isRegistered(string memory assetId) external view returns (bool) {
+        return assets[assetId].owner != address(0);
     }
 }

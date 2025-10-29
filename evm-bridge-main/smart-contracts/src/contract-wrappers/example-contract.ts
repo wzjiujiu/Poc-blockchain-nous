@@ -25,7 +25,7 @@
 
 "use strict";
 
-import { BytesLike, TransactionSendingOptions, deploySmartContract, getTxBuildDetailsForDeploy, Quantity, SmartContractEventWrapper, SmartContractEvent, Address, MethodCallingOptions, AddressLike, MethodTransactionOptions, TransactionResult, QuantityLike, SmartContractInterface, TransactionBuildDetails, BlockTag, RPCOptions, ABILike } from "@asanrom/smart-contract-wrapper";
+import { Address, Quantity, SmartContractEventWrapper, SmartContractEvent, MethodCallingOptions, AddressLike, MethodTransactionOptions, TransactionResult, BytesLike, SmartContractInterface, TransactionBuildDetails, QuantityLike, BlockTag, RPCOptions, ABILike } from "@asanrom/smart-contract-wrapper";
 
 /**
  * Contract wrapper: ExampleContract
@@ -47,29 +47,7 @@ export class ExampleContractWrapper {
 
     private _contractInterface: SmartContractInterface;
 
-    /**
-     * Deploys the smart contract
-     * @param bytecode The smart contract bytecode
-     * @param options The options for sending the transaction
-     * @returns An smart contract wrapper for the deployed contract
-     */
-    public static async deploy(bytecode: BytesLike, options: TransactionSendingOptions): Promise<ExampleContractWrapper> {
-        const deployed = await deploySmartContract(bytecode, CONTRACT_ABI, [], 0, options);
-        if (deployed.receipt.status > BigInt(0)) {
-            return new ExampleContractWrapper(deployed.result, options);
-        } else {
-            throw new Error("Transaction reverted");
-        }
-    }
-    
-    /**
-     * Gets transaction details to deploy an smart contract
-     * @param bytecode The smart contract bytecode
-     * @returns An smart contract wrapper for the deployed contract
-     */
-    public static getDeployTxBuildDetails(bytecode: BytesLike): TransactionBuildDetails {
-        return getTxBuildDetailsForDeploy(bytecode, CONTRACT_ABI, [], 0);
-    }
+
 
     /**
      * Wrapper constructor
@@ -93,6 +71,22 @@ export class ExampleContractWrapper {
     }
 
     /**
+     * Calls View method: getAsset(string)
+     * Restituisce i dettagli di un asset
+     * @param assetId L'identificatore dell'asset
+     * @param options The options for sending the request
+     * @returns The result for calling the method
+     */
+    public async getAsset(assetId: string, options?: MethodCallingOptions): Promise<{id: string, owner: Address, timestamp: Quantity}> {
+        const __r: any = await this._contractInterface.callViewMethod("getAsset", [assetId], options || {});
+        return {
+            id: __r[0],
+            owner: __r[1],
+            timestamp: __r[2],
+        };
+    }
+
+    /**
      * Calls View method: getInitializedVersion()
      * Gets the current initialized version Use this method to figure out the last deployed version of the contract
      * @param options The options for sending the request
@@ -104,20 +98,15 @@ export class ExampleContractWrapper {
     }
 
     /**
-     * Calls View method: getTestValues()
-     * Gets the current test values
+     * Calls View method: isRegistered(string)
+     * Verifica se un asset e' gia' registrato
+     * @param assetId L'identificatore dell'asset
      * @param options The options for sending the request
-     * @returns exampleValue1 Example value 1
-     * @returns exampleValue2 Example value 2
-     * @returns exampleValue3 Example value 3
+     * @returns The result for calling the method
      */
-    public async getTestValues(options?: MethodCallingOptions): Promise<{exampleValue1: Quantity, exampleValue2: string, exampleValue3: Address}> {
-        const __r: any = await this._contractInterface.callViewMethod("getTestValues", [], options || {});
-        return {
-            exampleValue1: __r[0],
-            exampleValue2: __r[1],
-            exampleValue3: __r[2],
-        };
+    public async isRegistered(assetId: string, options?: MethodCallingOptions): Promise<boolean> {
+        const __r: any = await this._contractInterface.callViewMethod("isRegistered", [assetId], options || {});
+        return __r[0];
     }
 
     /**
@@ -144,9 +133,9 @@ export class ExampleContractWrapper {
 
     /**
      * Calls Transaction method: initialize(address,address)
-     * Initializes the smart contract
-     * @param roleManagerAddress The address of the role manager smart contract
-     * @param upgradeControlAddress The address of the upgrade control smart contract
+     * Method: initialize(address,address)
+     * @param roleManagerAddress roleManagerAddress
+     * @param upgradeControlAddress upgradeControlAddress
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
@@ -163,9 +152,9 @@ export class ExampleContractWrapper {
     
     /**
      * Gets details for building a transaction calling the method: initialize(address,address)
-     * Initializes the smart contract
-     * @param roleManagerAddress The address of the role manager smart contract
-     * @param upgradeControlAddress The address of the upgrade control smart contract
+     * Method: initialize(address,address)
+     * @param roleManagerAddress roleManagerAddress
+     * @param upgradeControlAddress upgradeControlAddress
      * @returns The details for building the transaction
      */
     public initialize$txBuildDetails(roleManagerAddress: AddressLike, upgradeControlAddress: AddressLike): TransactionBuildDetails {
@@ -199,16 +188,14 @@ export class ExampleContractWrapper {
     }
 
     /**
-     * Calls Transaction method: setTestValues(uint256,string,address)
-     * Sets some test values Requires role: TEST_ROLE
-     * @param exampleValue1 Example value 1
-     * @param exampleValue2 Example value 2
-     * @param exampleValue3 Example value 3
+     * Calls Transaction method: registerAsset(string)
+     * Registra un nuovo asset sulla blockchain
+     * @param assetId L'identificatore univoco dell'asset (stringa)
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async setTestValues(exampleValue1: QuantityLike, exampleValue2: string, exampleValue3: AddressLike, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
-        const __r = await this._contractInterface.callMutableMethod("setTestValues", [exampleValue1, exampleValue2, exampleValue3], options);
+    public async registerAsset(assetId: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("registerAsset", [assetId], options);
     
         if (__r.receipt.status > BigInt(0)) {
             const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
@@ -219,15 +206,13 @@ export class ExampleContractWrapper {
     }
     
     /**
-     * Gets details for building a transaction calling the method: setTestValues(uint256,string,address)
-     * Sets some test values Requires role: TEST_ROLE
-     * @param exampleValue1 Example value 1
-     * @param exampleValue2 Example value 2
-     * @param exampleValue3 Example value 3
+     * Gets details for building a transaction calling the method: registerAsset(string)
+     * Registra un nuovo asset sulla blockchain
+     * @param assetId L'identificatore univoco dell'asset (stringa)
      * @returns The details for building the transaction
      */
-    public setTestValues$txBuildDetails(exampleValue1: QuantityLike, exampleValue2: string, exampleValue3: AddressLike): TransactionBuildDetails {
-        return this._contractInterface.encodeMutableMethod("setTestValues", [exampleValue1, exampleValue2, exampleValue3]);
+    public registerAsset$txBuildDetails(assetId: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("registerAsset", [assetId]);
     }
 
     /**
@@ -301,7 +286,7 @@ export class ExampleContractWrapper {
 /**
  * Possible event types for contract: ExampleContract
  */
-export type ExampleContractEventType = "Initialized" | "Paused" | "TestEvent" | "Unpaused" | "Upgraded";
+export type ExampleContractEventType = "AssetRegistered" | "Initialized" | "Paused" | "Unpaused" | "Upgraded";
 
 /**
  * Collection of events for contract: ExampleContract
@@ -347,6 +332,23 @@ export class ExampleContractEventCollection {
     }
 
     /**
+     * Get an event of type AssetRegistered(address,string,uint256) from the collection
+     * @param index Event index in the collection (from 0 to length - 1)
+     * @returns The event object
+     */
+    public getAssetRegisteredEvent(index: number): SmartContractEventWrapper<AssetRegisteredEvent> {
+        const __r: any = this.events[index].parameters;
+        return {
+            event: this.events[index],
+            data: {
+                owner: __r[0],
+                assetId: __r[1],
+                timestamp: __r[2],
+            },
+        };
+    }
+
+    /**
      * Get an event of type Initialized(uint64) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
@@ -372,23 +374,6 @@ export class ExampleContractEventCollection {
             event: this.events[index],
             data: {
                 by: __r[0],
-            },
-        };
-    }
-
-    /**
-     * Get an event of type TestEvent(uint256,string,address) from the collection
-     * @param index Event index in the collection (from 0 to length - 1)
-     * @returns The event object
-     */
-    public getTestEventEvent(index: number): SmartContractEventWrapper<TestEventEvent> {
-        const __r: any = this.events[index].parameters;
-        return {
-            event: this.events[index],
-            data: {
-                exampleValue1: __r[0],
-                exampleValue2: __r[1],
-                exampleValue3: __r[2],
             },
         };
     }
@@ -425,6 +410,17 @@ export class ExampleContractEventCollection {
 }
 
 /**
+ * Event: AssetRegistered(address,string,uint256)
+ */
+export interface AssetRegisteredEvent {
+    owner: Address,
+
+    assetId: string,
+
+    timestamp: Quantity,
+}
+
+/**
  * Event: Initialized(uint64)
  */
 export interface InitializedEvent {
@@ -440,27 +436,6 @@ export interface PausedEvent {
      * The administrator who paused the smart contract
      */
     by: Address,
-}
-
-/**
- * Event: TestEvent(uint256,string,address)
- * TestEvent - An example event
- */
-export interface TestEventEvent {
-    /**
-     * Example value 1
-     */
-    exampleValue1: Quantity,
-
-    /**
-     * Example value 2
-     */
-    exampleValue2: string,
-
-    /**
-     * Example value 3
-     */
-    exampleValue3: Address,
 }
 
 /**
@@ -482,11 +457,6 @@ export interface UpgradedEvent {
 }
 
 const CONTRACT_ABI: ABILike = [
-    {
-        "inputs": [],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
     {
         "inputs": [
             {
@@ -549,6 +519,31 @@ const CONTRACT_ABI: ABILike = [
         "anonymous": false,
         "inputs": [
             {
+                "indexed": true,
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "assetId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            }
+        ],
+        "name": "AssetRegistered",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
                 "indexed": false,
                 "internalType": "uint64",
                 "name": "version",
@@ -569,31 +564,6 @@ const CONTRACT_ABI: ABILike = [
             }
         ],
         "name": "Paused",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "exampleValue1",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "exampleValue2",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "exampleValue3",
-                "type": "address"
-            }
-        ],
-        "name": "TestEvent",
         "type": "event"
     },
     {
@@ -636,13 +606,29 @@ const CONTRACT_ABI: ABILike = [
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "getInitializedVersion",
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "assetId",
+                "type": "string"
+            }
+        ],
+        "name": "getAsset",
         "outputs": [
             {
-                "internalType": "uint64",
-                "name": "v",
-                "type": "uint64"
+                "internalType": "string",
+                "name": "id",
+                "type": "string"
+            },
+            {
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -650,22 +636,12 @@ const CONTRACT_ABI: ABILike = [
     },
     {
         "inputs": [],
-        "name": "getTestValues",
+        "name": "getInitializedVersion",
         "outputs": [
             {
-                "internalType": "uint256",
-                "name": "exampleValue1",
-                "type": "uint256"
-            },
-            {
-                "internalType": "string",
-                "name": "exampleValue2",
-                "type": "string"
-            },
-            {
-                "internalType": "address",
-                "name": "exampleValue3",
-                "type": "address"
+                "internalType": "uint64",
+                "name": "v",
+                "type": "uint64"
             }
         ],
         "stateMutability": "view",
@@ -687,6 +663,25 @@ const CONTRACT_ABI: ABILike = [
         "name": "initialize",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "assetId",
+                "type": "string"
+            }
+        ],
+        "name": "isRegistered",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -725,22 +720,12 @@ const CONTRACT_ABI: ABILike = [
     {
         "inputs": [
             {
-                "internalType": "uint256",
-                "name": "exampleValue1",
-                "type": "uint256"
-            },
-            {
                 "internalType": "string",
-                "name": "exampleValue2",
+                "name": "assetId",
                 "type": "string"
-            },
-            {
-                "internalType": "address",
-                "name": "exampleValue3",
-                "type": "address"
             }
         ],
-        "name": "setTestValues",
+        "name": "registerAsset",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

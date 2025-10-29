@@ -13,6 +13,22 @@ CREATE TABLE "dynamic_configuration" (
     "config_value" MEDIUMTEXT
 );
 
+CREATE TABLE "event_example_asset_registered" (
+    "id" VARCHAR(255) PRIMARY KEY,
+    "block" BIGINT,
+    "event_index" BIGINT,
+    "tx" VARCHAR(255),
+    "timestamp" BIGINT,
+    "p_owner" VARCHAR(255),
+    "p_asset_id" TEXT,
+    "p_timestamp" VARCHAR(255)
+);
+
+CREATE INDEX "ix_event_example_asset_registered_s_1" ON "event_example_asset_registered"("id" DESC);
+CREATE INDEX "ix_event_example_asset_registered_s_2" ON "event_example_asset_registered"("block");
+CREATE INDEX "ix_event_example_asset_registered_s_3" ON "event_example_asset_registered"("tx");
+CREATE INDEX "ix_event_example_asset_registered_s_4" ON "event_example_asset_registered"("p_owner", "id" DESC);
+
 CREATE TABLE "event_example_initialized" (
     "id" VARCHAR(255) PRIMARY KEY,
     "block" BIGINT,
@@ -38,22 +54,6 @@ CREATE TABLE "event_example_paused" (
 CREATE INDEX "ix_event_example_paused_s_1" ON "event_example_paused"("id" DESC);
 CREATE INDEX "ix_event_example_paused_s_2" ON "event_example_paused"("block");
 CREATE INDEX "ix_event_example_paused_s_3" ON "event_example_paused"("tx");
-
-CREATE TABLE "event_example_test_event" (
-    "id" VARCHAR(255) PRIMARY KEY,
-    "block" BIGINT,
-    "event_index" BIGINT,
-    "tx" VARCHAR(255),
-    "timestamp" BIGINT,
-    "p_example_value1" VARCHAR(255),
-    "p_example_value2" TEXT,
-    "p_example_value3" VARCHAR(255)
-);
-
-CREATE INDEX "ix_event_example_test_event_s_1" ON "event_example_test_event"("id" DESC);
-CREATE INDEX "ix_event_example_test_event_s_2" ON "event_example_test_event"("block");
-CREATE INDEX "ix_event_example_test_event_s_3" ON "event_example_test_event"("tx");
-CREATE INDEX "ix_event_example_test_event_s_4" ON "event_example_test_event"("p_example_value1", "id" DESC);
 
 CREATE TABLE "event_example_unpaused" (
     "id" VARCHAR(255) PRIMARY KEY,

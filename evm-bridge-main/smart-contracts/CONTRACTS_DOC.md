@@ -197,13 +197,6 @@ This is an example smart contract
  - Parameters:
     - `by` - The administrator who paused the smart contract
 
-**TestEvent(uint256,string,address)**
- - Description: TestEvent - An example event
- - Parameters:
-    - `exampleValue1` - Example value 1
-    - `exampleValue2` - Example value 2
-    - `exampleValue3` - Example value 3
-
 **Unpaused(address)**
  - Description: Paused - The smart contract was paused
  - Parameters:
@@ -215,23 +208,20 @@ This is an example smart contract
 
 ### Methods
 
+**getAsset(string)**
+ - Description: Restituisce i dettagli di un asset
+ - Parameters:
+    - `assetId` - L'identificatore dell'asset
+
 **getInitializedVersion()**
  - Description: Gets the current initialized version Use this method to figure out the last deployed version of the contract
  - Returns:
     - `v` - The current initialized version
 
-**getTestValues()**
- - Description: Gets the current test values
- - Returns:
-    - `exampleValue1` - Example value 1
-    - `exampleValue2` - Example value 2
-    - `exampleValue3` - Example value 3
-
-**initialize(address,address)**
- - Description: Initializes the smart contract
+**isRegistered(string)**
+ - Description: Verifica se un asset e' gia' registrato
  - Parameters:
-    - `roleManagerAddress` - The address of the role manager smart contract
-    - `upgradeControlAddress` - The address of the upgrade control smart contract
+    - `assetId` - L'identificatore dell'asset
 
 **pause()**
  - Description: Pauses the smart contract Requires ADMIN role
@@ -244,12 +234,10 @@ This is an example smart contract
 **proxiableUUID()**
  - Details: Implementation of the ERC1822 {proxiableUUID} function. This returns the storage slot used by the implementation. It is used to validate the implementation's compatibility when performing an upgrade. IMPORTANT: A proxy pointing at a proxiable contract should not be considered proxiable itself, because this risks bricking a proxy that upgrades to it, by delegating to itself until out of gas. Thus it is critical that this function revert if invoked through a proxy. This is guaranteed by the `notDelegated` modifier.
 
-**setTestValues(uint256,string,address)**
- - Description: Sets some test values Requires role: TEST_ROLE
+**registerAsset(string)**
+ - Description: Registra un nuovo asset sulla blockchain
  - Parameters:
-    - `exampleValue1` - Example value 1
-    - `exampleValue2` - Example value 2
-    - `exampleValue3` - Example value 3
+    - `assetId` - L'identificatore univoco dell'asset (stringa)
 
 **unpause()**
  - Description: Unpauses the smart contract Requires ADMIN role

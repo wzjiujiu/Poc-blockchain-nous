@@ -31,13 +31,12 @@ import { Controller } from "../controller";
 import { noCache, sendApiResult } from "../../utils/http-utils";
 import { parsePaginationParameters } from "../../utils/pagination";
 import { DataFilter } from "tsbean-orm";
+import { EventExampleAssetRegistered } from "../../models/event-sync/example/asset-registered";
 import { EventExampleInitialized } from "../../models/event-sync/example/initialized";
 import { EventExamplePaused } from "../../models/event-sync/example/paused";
-import { EventExampleTestEvent } from "../../models/event-sync/example/test-event";
 import { EventExampleUnpaused } from "../../models/event-sync/example/unpaused";
 import { EventExampleUpgraded } from "../../models/event-sync/example/upgraded";
-import { serializeEventABIParams, normalizeDatabaseUint256, normalizeAddress } from "../../utils/blockchain";
-import { parseBigInteger } from "../../utils/bigint";
+import { serializeEventABIParams, normalizeAddress } from "../../utils/blockchain";
 
 /**
  * Auto generated smart contract API
@@ -47,13 +46,76 @@ import { parseBigInteger } from "../../utils/bigint";
  */
 export class ExampleContractApiEventsController extends Controller {
     public registerAPI(prefix: string, application: Express.Express) {
+        application.get(prefix + "/contracts/example/events/asset-registered", noCache(this.getEventsAssetRegistered.bind(this)));
         application.get(prefix + "/contracts/example/events/initialized", noCache(this.getEventsInitialized.bind(this)));
         application.get(prefix + "/contracts/example/events/paused", noCache(this.getEventsPaused.bind(this)));
-        application.get(prefix + "/contracts/example/events/test-event", noCache(this.getEventsTestEvent.bind(this)));
         application.get(prefix + "/contracts/example/events/unpaused", noCache(this.getEventsUnpaused.bind(this)));
         application.get(prefix + "/contracts/example/events/upgraded", noCache(this.getEventsUpgraded.bind(this)));
     }
 
+    /**
+     * @typedef EventParamsExampleAssetRegistered
+     * @property {string} owner.required - owner - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} assetId.required - assetId
+     * @property {string} timestamp.required - timestamp - eg: 0
+     */
+
+    /**
+     * @typedef EventItemExampleAssetRegistered
+     * @property {string} id.required - Event ID - eg: xxxx-yyyy-zzzz
+     * @property {number} block.required - Block number - eg: 1
+     * @property {number} eventIndex.required - Event index in the block - eg: 0
+     * @property {string} tx.required - Transaction hash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} timestamp.required - Event timestamp (Unix seconds) - eg: 0
+     * @property {EventParamsExampleAssetRegistered.model} parameters.required - Event parameters
+     */
+
+    /**
+     * @typedef EventListExampleAssetRegistered
+     * @property {Array.<EventItemExampleAssetRegistered>} events.required - List of events
+     * @property {string} continuationToken - Continuation token - eg: xxxx-yyyy-zzzz
+     */
+
+    /**
+     * Get a list of events of type AssetRegistered
+     * Smart contract: Example (ExampleContract)
+     * Event signature: AssetRegistered(address,string,uint256)
+     * Binding: GetEventsAssetRegistered
+     * @route GET /contracts/example/events/asset-registered
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {string} continuationToken.query - Continuation token
+     * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
+     * @param {string} filter_eq_pOwner.query - Filter event with a value for the parameter 'owner' equal than the one specified.
+     * @returns {EventListExampleAssetRegistered.model} 200 - Event list
+     * @security BearerAuthorization
+     */
+    public async getEventsAssetRegistered(request: Express.Request, response: Express.Response) {
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "name": "AssetRegistered", "type": "event" };
+
+        const [limit, continuationToken] = parsePaginationParameters(request);
+
+        const filters: DataFilter<EventExampleAssetRegistered>[] = [];
+
+        if (request.query.filter_eq_pOwner !== undefined && request.query.filter_eq_pOwner !== null) {
+            filters.push(DataFilter.equals("pOwner", normalizeAddress(request.query.filter_eq_pOwner + "")));
+        }
+
+        const [events, nextContinuationToken] = await EventExampleAssetRegistered.findPaginated(filters, limit, continuationToken);
+
+        sendApiResult(request, response, {
+            events: events.map(e => {
+                return {
+                    id: e.id,
+                    block: e.block,
+                    timestamp: e.timestamp,
+                    eventIndex: e.eventIndex,
+                    tx: e.tx,
+                    parameters: serializeEventABIParams(e.getParametersArray(), eventAbi),
+                };
+            }),
+            continuationToken: nextContinuationToken,
+        });
+    }
     /**
      * @typedef EventParamsExampleInitialized
      * @property {string} version.required - version - eg: 0
@@ -152,80 +214,6 @@ export class ExampleContractApiEventsController extends Controller {
         const filters: DataFilter<EventExamplePaused>[] = [];
 
         const [events, nextContinuationToken] = await EventExamplePaused.findPaginated(filters, limit, continuationToken);
-
-        sendApiResult(request, response, {
-            events: events.map(e => {
-                return {
-                    id: e.id,
-                    block: e.block,
-                    timestamp: e.timestamp,
-                    eventIndex: e.eventIndex,
-                    tx: e.tx,
-                    parameters: serializeEventABIParams(e.getParametersArray(), eventAbi),
-                };
-            }),
-            continuationToken: nextContinuationToken,
-        });
-    }
-    /**
-     * @typedef EventParamsExampleTestEvent
-     * @property {string} exampleValue1.required - Example value 1 - eg: 0
-     * @property {string} exampleValue2.required - Example value 2
-     * @property {string} exampleValue3.required - Example value 3 - eg: 0x0000000000000000000000000000000000000000
-     */
-
-    /**
-     * @typedef EventItemExampleTestEvent
-     * @property {string} id.required - Event ID - eg: xxxx-yyyy-zzzz
-     * @property {number} block.required - Block number - eg: 1
-     * @property {number} eventIndex.required - Event index in the block - eg: 0
-     * @property {string} tx.required - Transaction hash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} timestamp.required - Event timestamp (Unix seconds) - eg: 0
-     * @property {EventParamsExampleTestEvent.model} parameters.required - Event parameters
-     */
-
-    /**
-     * @typedef EventListExampleTestEvent
-     * @property {Array.<EventItemExampleTestEvent>} events.required - List of events
-     * @property {string} continuationToken - Continuation token - eg: xxxx-yyyy-zzzz
-     */
-
-    /**
-     * Get a list of events of type TestEvent
-     * Smart contract: Example (ExampleContract)
-     * Event signature: TestEvent(uint256,string,address)
-     * Binding: GetEventsTestEvent
-     * TestEvent - An example event
-     * @route GET /contracts/example/events/test-event
-     * @group example - API for smart contract: Example (ExampleContract)
-     * @param {string} continuationToken.query - Continuation token
-     * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
-     * @param {string} filter_eq_pExampleValue1.query - Filter event with a value for the parameter 'exampleValue1' equal than the one specified.
-     * @param {string} filter_gt_pExampleValue1.query - Filter event with a value for the parameter 'exampleValue1' greater than the one specified.
-     * @param {string} filter_lt_pExampleValue1.query - Filter event with a value for the parameter 'exampleValue1' less than the one specified.
-     * @returns {EventListExampleTestEvent.model} 200 - Event list
-     * @security BearerAuthorization
-     */
-    public async getEventsTestEvent(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "exampleValue1", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "exampleValue2", "type": "string" }, { "indexed": false, "internalType": "address", "name": "exampleValue3", "type": "address" }], "name": "TestEvent", "type": "event" };
-
-        const [limit, continuationToken] = parsePaginationParameters(request);
-
-        const filters: DataFilter<EventExampleTestEvent>[] = [];
-
-        if (request.query.filter_eq_pExampleValue1 !== undefined && request.query.filter_eq_pExampleValue1 !== null) {
-            filters.push(DataFilter.equals("pExampleValue1", normalizeDatabaseUint256(parseBigInteger(request.query.filter_eq_pExampleValue1 + ""))));
-        }
-
-        if (request.query.filter_gt_pExampleValue1 !== undefined && request.query.filter_gt_pExampleValue1 !== null) {
-            filters.push(DataFilter.greaterThan("pExampleValue1", normalizeDatabaseUint256(parseBigInteger(request.query.filter_gt_pExampleValue1 + ""))));
-        }
-
-        if (request.query.filter_lt_pExampleValue1 !== undefined && request.query.filter_lt_pExampleValue1 !== null) {
-            filters.push(DataFilter.lessThan("pExampleValue1", normalizeDatabaseUint256(parseBigInteger(request.query.filter_lt_pExampleValue1 + ""))));
-        }
-
-        const [events, nextContinuationToken] = await EventExampleTestEvent.findPaginated(filters, limit, continuationToken);
 
         sendApiResult(request, response, {
             events: events.map(e => {

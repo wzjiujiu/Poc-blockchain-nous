@@ -43,15 +43,15 @@ export class ExampleContractApiTxController extends Controller {
     public registerAPI(prefix: string, application: Express.Express) {
         application.post(prefix + "/contracts/example/tx/initialize", ensureObjectBody(this.txInitialize.bind(this)));
         application.post(prefix + "/contracts/example/tx/pause", ensureObjectBody(this.txPause.bind(this)));
-        application.post(prefix + "/contracts/example/tx/set-test-values", ensureObjectBody(this.txSetTestValues.bind(this)));
+        application.post(prefix + "/contracts/example/tx/register-asset", ensureObjectBody(this.txRegisterAsset.bind(this)));
         application.post(prefix + "/contracts/example/tx/unpause", ensureObjectBody(this.txUnpause.bind(this)));
         application.post(prefix + "/contracts/example/tx/upgrade-to-and-call", ensureObjectBody(this.txUpgradeToAndCall.bind(this)));
     }
 
     /**
      * @typedef TxParamsExampleInitialize
-     * @property {string} roleManagerAddress.required - The address of the role manager smart contract - eg: 0x0000000000000000000000000000000000000000
-     * @property {string} upgradeControlAddress.required - The address of the upgrade control smart contract - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} roleManagerAddress.required - roleManagerAddress - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} upgradeControlAddress.required - upgradeControlAddress - eg: 0x0000000000000000000000000000000000000000
      */
 
     /**
@@ -65,7 +65,7 @@ export class ExampleContractApiTxController extends Controller {
      * Smart contract: Example (ExampleContract)
      * Method signature: initialize(address,address)
      * Binding: TxInitialize
-     * Initializes the smart contract
+     * 
      * @route POST /contracts/example/tx/initialize
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {TxRequestExampleInitialize.model} request.body.required - Request body
@@ -126,34 +126,32 @@ export class ExampleContractApiTxController extends Controller {
         await handleTransactionSending(request, response, txBuildData, wrapper.address);
     }
     /**
-     * @typedef TxParamsExampleSetTestValues
-     * @property {string} exampleValue1.required - Example value 1 - eg: 0
-     * @property {string} exampleValue2.required - Example value 2
-     * @property {string} exampleValue3.required - Example value 3 - eg: 0x0000000000000000000000000000000000000000
+     * @typedef TxParamsExampleRegisterAsset
+     * @property {string} assetId.required - L'identificatore univoco dell'asset (stringa)
      */
 
     /**
-     * @typedef TxRequestExampleSetTestValues
-     * @property {TxParamsExampleSetTestValues.model} parameters.required - Transaction parameters
+     * @typedef TxRequestExampleRegisterAsset
+     * @property {TxParamsExampleRegisterAsset.model} parameters.required - Transaction parameters
      * @property {TxSigningOptions.model} txSign.required - Transaction signing options
      */
 
     /**
-     * Sends transaction for method: setTestValues
+     * Sends transaction for method: registerAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: setTestValues(uint256,string,address)
-     * Binding: TxSetTestValues
-     * Sets some test values Requires role: TEST_ROLE
-     * @route POST /contracts/example/tx/set-test-values
+     * Method signature: registerAsset(string)
+     * Binding: TxRegisterAsset
+     * Registra un nuovo asset sulla blockchain
+     * @route POST /contracts/example/tx/register-asset
      * @group example - API for smart contract: Example (ExampleContract)
-     * @param {TxRequestExampleSetTestValues.model} request.body.required - Request body
+     * @param {TxRequestExampleRegisterAsset.model} request.body.required - Request body
      * @returns {TxResponse.model} 200 - Transaction result
      * @returns {TxBadRequest.model} 400 - Bad request
      * @returns {TxSigningForbiddenResponse.model} 403 - Access denied
      * @security BearerAuthorization
      */
-    public async txSetTestValues(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "uint256", "name": "exampleValue1", "type": "uint256" }, { "internalType": "string", "name": "exampleValue2", "type": "string" }, { "internalType": "address", "name": "exampleValue3", "type": "address" }], "name": "setTestValues", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+    public async txRegisterAsset(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "assetId", "type": "string" }], "name": "registerAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 
@@ -164,7 +162,7 @@ export class ExampleContractApiTxController extends Controller {
 
         const wrapper = SmartContractsConfig.getInstance().example;
 
-        const txBuildData = wrapper.setTestValues$txBuildDetails.call(wrapper, ...txParams);
+        const txBuildData = wrapper.registerAsset$txBuildDetails.call(wrapper, ...txParams);
 
         await handleTransactionSending(request, response, txBuildData, wrapper.address);
     }

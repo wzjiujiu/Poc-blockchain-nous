@@ -133,11 +133,19 @@
     }
 
     socket.on('connect', ()=> {
-      addLog({ text: 'Connesso al server socket.io', ts: new Date().toISOString() });
-    });
+  addLog({ text: 'Connesso al server socket.io', ts: new Date().toISOString() });
+});
 
-    socket.on('log', (payload) => addLog(payload));
-    socket.on('event', (payload) => addEvent(payload));
+socket.on('log', (payload) => addLog(payload));
+socket.on('event', (payload) => addEvent(payload));
+
+// ✅ AGGIUNGI QUI
+socket.on('balance', (data) => {
+  addLog({
+    text: `💰 Balance wallet (${data.address}): ${data.balance} ETH`,
+    ts: new Date().toISOString()
+  });
+});
 
     clearEventsBtn.addEventListener('click', () => {
       eventsList.innerHTML = '<div class="empty">Nessun evento ancora — invia una POST a <code>/event</code></div>';

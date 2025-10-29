@@ -28,7 +28,7 @@
     "dotenv": "16.3.1",
     "eslint": "8.49.0",
     "ethereum-cryptography": "3.2.0",
-    "rimraf": "5.0.1",
+    "rimraf": "^5.0.1",
     "solc": "0.8.24",
     "ts-node": "10.9.1",
     "typescript": "5.2.2"

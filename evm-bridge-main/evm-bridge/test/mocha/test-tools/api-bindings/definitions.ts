@@ -1548,12 +1548,12 @@ export interface CallResponseRoleManagerProxiableUUID {
 
 export interface TxParamsExampleInitialize {
     /**
-     * The address of the role manager smart contract 
+     * roleManagerAddress 
      */
     roleManagerAddress: string;
 
     /**
-     * The address of the upgrade control smart contract 
+     * upgradeControlAddress 
      */
     upgradeControlAddress: string;
 }
@@ -1568,25 +1568,15 @@ export interface TxRequestExamplePause {
     txSign: TxSigningOptions;
 }
 
-export interface TxParamsExampleSetTestValues {
+export interface TxParamsExampleRegisterAsset {
     /**
-     * Example value 1 
+     * L'identificatore univoco dell'asset (stringa)
      */
-    exampleValue1: string;
-
-    /**
-     * Example value 2
-     */
-    exampleValue2: string;
-
-    /**
-     * Example value 3 
-     */
-    exampleValue3: string;
+    assetId: string;
 }
 
-export interface TxRequestExampleSetTestValues {
-    parameters: TxParamsExampleSetTestValues;
+export interface TxRequestExampleRegisterAsset {
+    parameters: TxParamsExampleRegisterAsset;
 
     txSign: TxSigningOptions;
 }
@@ -1611,6 +1601,61 @@ export interface TxRequestExampleUpgradeToAndCall {
     parameters: TxParamsExampleUpgradeToAndCall;
 
     txSign: TxSigningOptions;
+}
+
+export interface EventParamsExampleAssetRegistered {
+    /**
+     * owner 
+     */
+    owner: string;
+
+    /**
+     * assetId
+     */
+    assetId: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+}
+
+export interface EventItemExampleAssetRegistered {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExampleAssetRegistered;
+}
+
+export interface EventListExampleAssetRegistered {
+    events: EventItemExampleAssetRegistered[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
 }
 
 export interface EventParamsExampleInitialized {
@@ -1696,61 +1741,6 @@ export interface EventItemExamplePaused {
 
 export interface EventListExamplePaused {
     events: EventItemExamplePaused[];
-
-    /**
-     * Continuation token 
-     */
-    continuationToken?: string;
-}
-
-export interface EventParamsExampleTestEvent {
-    /**
-     * Example value 1 
-     */
-    exampleValue1: string;
-
-    /**
-     * Example value 2
-     */
-    exampleValue2: string;
-
-    /**
-     * Example value 3 
-     */
-    exampleValue3: string;
-}
-
-export interface EventItemExampleTestEvent {
-    /**
-     * Event ID 
-     */
-    id: string;
-
-    /**
-     * Block number 
-     */
-    block: number;
-
-    /**
-     * Event index in the block 
-     */
-    eventIndex: number;
-
-    /**
-     * Transaction hash 
-     */
-    tx: string;
-
-    /**
-     * Event timestamp (Unix seconds) 
-     */
-    timestamp: string;
-
-    parameters: EventParamsExampleTestEvent;
-}
-
-export interface EventListExampleTestEvent {
-    events: EventItemExampleTestEvent[];
 
     /**
      * Continuation token 
@@ -1855,6 +1845,30 @@ export interface CallResponseExampleUPGRADE_INTERFACE_VERSION {
     _0: string;
 }
 
+export interface CallRequestExampleGetAsset {
+    /**
+     * L'identificatore dell'asset
+     */
+    assetId: string;
+}
+
+export interface CallResponseExampleGetAsset {
+    /**
+     * id
+     */
+    id: string;
+
+    /**
+     * owner 
+     */
+    owner: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+}
+
 export interface CallResponseExampleGetInitializedVersion {
     /**
      * The current initialized version 
@@ -1862,21 +1876,18 @@ export interface CallResponseExampleGetInitializedVersion {
     v: string;
 }
 
-export interface CallResponseExampleGetTestValues {
+export interface CallRequestExampleIsRegistered {
     /**
-     * Example value 1 
+     * L'identificatore dell'asset
      */
-    exampleValue1: string;
+    assetId: string;
+}
 
+export interface CallResponseExampleIsRegistered {
     /**
-     * Example value 2
+     * _0
      */
-    exampleValue2: string;
-
-    /**
-     * Example value 3 
-     */
-    exampleValue3: string;
+    _0: boolean;
 }
 
 export interface CallResponseExamplePaused {

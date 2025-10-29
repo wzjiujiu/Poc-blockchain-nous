@@ -27,7 +27,7 @@
 
 import { RequestErrorHandler, RequestParams, CommonAuthenticatedErrorHandler } from "@asanrom/request-axios";
 import { getApiUrl, generateURIQuery } from "./utils";
-import { SmartContractInformation, TxResponse, TxRequestExampleInitialize, TxRequestExamplePause, TxRequestExampleSetTestValues, TxRequestExampleUnpause, TxRequestExampleUpgradeToAndCall, EventListExampleInitialized, EventListExamplePaused, EventListExampleTestEvent, EventListExampleUnpaused, EventListExampleUpgraded, CallResponseExampleUPGRADE_INTERFACE_VERSION, CallResponseExampleGetInitializedVersion, CallResponseExampleGetTestValues, CallResponseExamplePaused, CallResponseExampleProxiableUUID } from "./definitions";
+import { SmartContractInformation, TxResponse, TxRequestExampleInitialize, TxRequestExamplePause, TxRequestExampleRegisterAsset, TxRequestExampleUnpause, TxRequestExampleUpgradeToAndCall, EventListExampleAssetRegistered, EventListExampleInitialized, EventListExamplePaused, EventListExampleUnpaused, EventListExampleUpgraded, CallResponseExampleUPGRADE_INTERFACE_VERSION, CallResponseExampleGetAsset, CallRequestExampleGetAsset, CallResponseExampleGetInitializedVersion, CallResponseExampleIsRegistered, CallRequestExampleIsRegistered, CallResponseExamplePaused, CallResponseExampleProxiableUUID } from "./definitions";
 
 export class ApiExample {
     /**
@@ -56,7 +56,6 @@ export class ApiExample {
      * Sends transaction for method: initialize
      * Smart contract: Example (ExampleContract)
      * Method signature: initialize(address,address)
-     * Initializes the smart contract
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -118,18 +117,18 @@ export class ApiExample {
 
     /**
      * Method: POST
-     * Path: /contracts/example/tx/set-test-values
-     * Sends transaction for method: setTestValues
+     * Path: /contracts/example/tx/register-asset
+     * Sends transaction for method: registerAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: setTestValues(uint256,string,address)
-     * Sets some test values Requires role: TEST_ROLE
+     * Method signature: registerAsset(string)
+     * Registra un nuovo asset sulla blockchain
      * @param body Body parameters
      * @returns The request parameters
      */
-    public static TxSetTestValues(body: TxRequestExampleSetTestValues): RequestParams<TxResponse, TxSetTestValuesErrorHandler> {
+    public static TxRegisterAsset(body: TxRequestExampleRegisterAsset): RequestParams<TxResponse, TxRegisterAssetErrorHandler> {
         return {
             method: "POST",
-            url: getApiUrl(`/contracts/example/tx/set-test-values`),
+            url: getApiUrl(`/contracts/example/tx/register-asset`),
             json: body,
             handleError: (err, handler) => {
                 new RequestErrorHandler()
@@ -216,6 +215,29 @@ export class ApiExample {
 
     /**
      * Method: GET
+     * Path: /contracts/example/events/asset-registered
+     * Get a list of events of type AssetRegistered
+     * Smart contract: Example (ExampleContract)
+     * Event signature: AssetRegistered(address,string,uint256)
+     * @param queryParams Query parameters
+     * @returns The request parameters
+     */
+    public static GetEventsAssetRegistered(queryParams: GetEventsAssetRegisteredQueryParameters): RequestParams<EventListExampleAssetRegistered, CommonAuthenticatedErrorHandler> {
+        return {
+            method: "GET",
+            url: getApiUrl(`/contracts/example/events/asset-registered` + generateURIQuery(queryParams)),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: GET
      * Path: /contracts/example/events/initialized
      * Get a list of events of type Initialized
      * Smart contract: Example (ExampleContract)
@@ -251,30 +273,6 @@ export class ApiExample {
         return {
             method: "GET",
             url: getApiUrl(`/contracts/example/events/paused` + generateURIQuery(queryParams)),
-            handleError: (err, handler) => {
-                new RequestErrorHandler()
-                    .add(401, "*", handler.unauthorized)
-                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
-                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
-                    .handle(err);
-            },
-        };
-    }
-
-    /**
-     * Method: GET
-     * Path: /contracts/example/events/test-event
-     * Get a list of events of type TestEvent
-     * Smart contract: Example (ExampleContract)
-     * Event signature: TestEvent(uint256,string,address)
-     * TestEvent - An example event
-     * @param queryParams Query parameters
-     * @returns The request parameters
-     */
-    public static GetEventsTestEvent(queryParams: GetEventsTestEventQueryParameters): RequestParams<EventListExampleTestEvent, CommonAuthenticatedErrorHandler> {
-        return {
-            method: "GET",
-            url: getApiUrl(`/contracts/example/events/test-event` + generateURIQuery(queryParams)),
             handleError: (err, handler) => {
                 new RequestErrorHandler()
                     .add(401, "*", handler.unauthorized)
@@ -358,6 +356,33 @@ export class ApiExample {
 
     /**
      * Method: POST
+     * Path: /contracts/example/call/get-asset
+     * Calls the view method: getAsset
+     * Smart contract: Example (ExampleContract)
+     * Method signature: getAsset(string)
+     * Restituisce i dettagli di un asset
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static CallGetAsset(body: CallRequestExampleGetAsset): RequestParams<CallResponseExampleGetAsset, CallGetAssetErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/call/get-asset`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(404, "*", handler.notFound)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
      * Path: /contracts/example/call/get-initialized-version
      * Calls the view method: getInitializedVersion
      * Smart contract: Example (ExampleContract)
@@ -383,17 +408,19 @@ export class ApiExample {
 
     /**
      * Method: POST
-     * Path: /contracts/example/call/get-test-values
-     * Calls the view method: getTestValues
+     * Path: /contracts/example/call/is-registered
+     * Calls the view method: isRegistered
      * Smart contract: Example (ExampleContract)
-     * Method signature: getTestValues()
-     * Gets the current test values
+     * Method signature: isRegistered(string)
+     * Verifica se un asset e' gia' registrato
+     * @param body Body parameters
      * @returns The request parameters
      */
-    public static CallGetTestValues(): RequestParams<CallResponseExampleGetTestValues, CallGetTestValuesErrorHandler> {
+    public static CallIsRegistered(body: CallRequestExampleIsRegistered): RequestParams<CallResponseExampleIsRegistered, CallIsRegisteredErrorHandler> {
         return {
             method: "POST",
-            url: getApiUrl(`/contracts/example/call/get-test-values`),
+            url: getApiUrl(`/contracts/example/call/is-registered`),
+            json: body,
             handleError: (err, handler) => {
                 new RequestErrorHandler()
                     .add(404, "*", handler.notFound)
@@ -547,9 +574,9 @@ export type TxPauseErrorHandler = CommonAuthenticatedErrorHandler & {
 };
 
 /**
- * Error handler for TxSetTestValues
+ * Error handler for TxRegisterAsset
  */
-export type TxSetTestValuesErrorHandler = CommonAuthenticatedErrorHandler & {
+export type TxRegisterAssetErrorHandler = CommonAuthenticatedErrorHandler & {
     /**
      * General handler for status = 400
      */
@@ -682,6 +709,26 @@ export type TxUpgradeToAndCallErrorHandler = CommonAuthenticatedErrorHandler & {
 };
 
 /**
+ * Query parameters for GetEventsAssetRegistered
+ */
+export interface GetEventsAssetRegisteredQueryParameters {
+    /**
+     * Continuation token
+     */
+    continuationToken?: string;
+
+    /**
+     * Max number of items to get. Default: 25, Max: 256
+     */
+    limit?: string;
+
+    /**
+     * Filter event with a value for the parameter 'owner' equal than the one specified.
+     */
+    filter_eq_pOwner?: string;
+}
+
+/**
  * Query parameters for GetEventsInitialized
  */
 export interface GetEventsInitializedQueryParameters {
@@ -709,36 +756,6 @@ export interface GetEventsPausedQueryParameters {
      * Max number of items to get. Default: 25, Max: 256
      */
     limit?: string;
-}
-
-/**
- * Query parameters for GetEventsTestEvent
- */
-export interface GetEventsTestEventQueryParameters {
-    /**
-     * Continuation token
-     */
-    continuationToken?: string;
-
-    /**
-     * Max number of items to get. Default: 25, Max: 256
-     */
-    limit?: string;
-
-    /**
-     * Filter event with a value for the parameter 'exampleValue1' equal than the one specified.
-     */
-    filter_eq_pExampleValue1?: string;
-
-    /**
-     * Filter event with a value for the parameter 'exampleValue1' greater than the one specified.
-     */
-    filter_gt_pExampleValue1?: string;
-
-    /**
-     * Filter event with a value for the parameter 'exampleValue1' less than the one specified.
-     */
-    filter_lt_pExampleValue1?: string;
 }
 
 /**
@@ -792,6 +809,21 @@ export type CallUPGRADEINTERFACEVERSIONErrorHandler = CommonAuthenticatedErrorHa
 };
 
 /**
+ * Error handler for CallGetAsset
+ */
+export type CallGetAssetErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * General handler for status = 404
+     */
+    notFound: () => void;
+};
+
+/**
  * Error handler for CallGetInitializedVersion
  */
 export type CallGetInitializedVersionErrorHandler = CommonAuthenticatedErrorHandler & {
@@ -807,9 +839,9 @@ export type CallGetInitializedVersionErrorHandler = CommonAuthenticatedErrorHand
 };
 
 /**
- * Error handler for CallGetTestValues
+ * Error handler for CallIsRegistered
  */
-export type CallGetTestValuesErrorHandler = CommonAuthenticatedErrorHandler & {
+export type CallIsRegisteredErrorHandler = CommonAuthenticatedErrorHandler & {
     /**
      * General handler for status = 400
      */

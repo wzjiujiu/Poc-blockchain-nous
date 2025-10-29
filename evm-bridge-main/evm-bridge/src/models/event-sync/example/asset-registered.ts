@@ -21,7 +21,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// EventExampleTestEvent - Model class to store events of type 'TestEvent' for contract Example
+// EventExampleAssetRegistered - Model class to store events of type 'AssetRegistered' for contract Example
 // WARNING: THIS FILE IS AUTO-GENERATED. DO NOT ADD ANY CHANGES OR THEY MAY BE LOST THE NEXT TIME YOU GENERATE THE CODE
 
 "use strict";
@@ -29,17 +29,17 @@
 import { DataModel, enforceType, TypedRow, DataSource, DataFinder, DataFilter, OrderBy, SelectOptions } from "tsbean-orm";
 
 const DATA_SOURCE = DataSource.DEFAULT;
-const TABLE = "event_example_test_event";
+const TABLE = "event_example_asset_registered";
 const PRIMARY_KEY = "id";
 
 /**
  * Model class for event storage
  * Contract name: ExampleContract
  * Contract name (instance): Example
- * Event name: TestEvent
+ * Event name: AssetRegistered
  */
-export class EventExampleTestEvent extends DataModel {
-    public static finder = new DataFinder<EventExampleTestEvent, string>(DATA_SOURCE, TABLE, PRIMARY_KEY, (data: TypedRow<EventExampleTestEvent>) => { return new EventExampleTestEvent(data) });
+export class EventExampleAssetRegistered extends DataModel {
+    public static finder = new DataFinder<EventExampleAssetRegistered, string>(DATA_SOURCE, TABLE, PRIMARY_KEY, (data: TypedRow<EventExampleAssetRegistered>) => { return new EventExampleAssetRegistered(data) });
 
     /**
      * Finds events (paginated)
@@ -48,14 +48,14 @@ export class EventExampleTestEvent extends DataModel {
      * @param continuationToken The continuation token
      * @returns The results and the next continuation token
      */
-    public static async findPaginated(filters: DataFilter<EventExampleTestEvent>[], limit: number, continuationToken?: string): Promise<[list: EventExampleTestEvent[], nextContinuationToken: string | null]> {
+    public static async findPaginated(filters: DataFilter<EventExampleAssetRegistered>[], limit: number, continuationToken?: string): Promise<[list: EventExampleAssetRegistered[], nextContinuationToken: string | null]> {
         const finalFilters = filters.slice();
 
         if (continuationToken) {
             finalFilters.push(DataFilter.greaterThan("id", continuationToken));
         }
 
-        let finalFilter: DataFilter<EventExampleTestEvent>;
+        let finalFilter: DataFilter<EventExampleAssetRegistered>;
 
         if (finalFilters.length === 1) {
             finalFilter = finalFilters[0];
@@ -65,7 +65,7 @@ export class EventExampleTestEvent extends DataModel {
             finalFilter = DataFilter.any();
         }
 
-        const itemList = await EventExampleTestEvent.finder.find(finalFilter, OrderBy.desc("id"), SelectOptions.configure().setMaxRows(limit));
+        const itemList = await EventExampleAssetRegistered.finder.find(finalFilter, OrderBy.desc("id"), SelectOptions.configure().setMaxRows(limit));
 
         let nextContinuationToken: string | null = null;
 
@@ -80,7 +80,7 @@ export class EventExampleTestEvent extends DataModel {
      * Resets the collection
      */
     public static async reset() {
-        await EventExampleTestEvent.finder.delete(DataFilter.any());
+        await EventExampleAssetRegistered.finder.delete(DataFilter.any());
     }
 
     /**
@@ -89,7 +89,7 @@ export class EventExampleTestEvent extends DataModel {
      * @returns True only of the event exists
      */
     public static async exists(id: string): Promise<boolean> {
-        const count = await EventExampleTestEvent.finder.count(DataFilter.equals("id", id));
+        const count = await EventExampleAssetRegistered.finder.count(DataFilter.equals("id", id));
         return count > 0;
     }
 
@@ -111,17 +111,17 @@ export class EventExampleTestEvent extends DataModel {
     /* db-type: BIGINT */
     public timestamp: number;
 
-    /* db-index: pExampleValue1, id DESC */
+    /* db-index: pOwner, id DESC */
     /* db-type: VARCHAR 255 */
-    public pExampleValue1: string;
+    public pOwner: string;
 
     /* db-type: TEXT */
-    public pExampleValue2: string;
+    public pAssetId: string;
 
     /* db-type: VARCHAR 255 */
-    public pExampleValue3: string;
+    public pTimestamp: string;
 
-    constructor(data: TypedRow<EventExampleTestEvent>) {
+    constructor(data: TypedRow<EventExampleAssetRegistered>) {
         super(DATA_SOURCE, TABLE, PRIMARY_KEY);
 
         this.id = enforceType(data.id, "string") || '';
@@ -129,9 +129,9 @@ export class EventExampleTestEvent extends DataModel {
         this.eventIndex = enforceType(data.eventIndex, "int") || 0;
         this.tx = enforceType(data.tx, "string") || '';
         this.timestamp = enforceType(data.timestamp, "int") || 0;
-        this.pExampleValue1 = enforceType(data.pExampleValue1, "string") || '';
-        this.pExampleValue2 = enforceType(data.pExampleValue2, "string") || '';
-        this.pExampleValue3 = enforceType(data.pExampleValue3, "string") || '';
+        this.pOwner = enforceType(data.pOwner, "string") || '';
+        this.pAssetId = enforceType(data.pAssetId, "string") || '';
+        this.pTimestamp = enforceType(data.pTimestamp, "string") || '';
 
         this.init();
     }
@@ -139,9 +139,9 @@ export class EventExampleTestEvent extends DataModel {
     // Gets the parameters into a single array
     public getParametersArray(): (string | boolean)[] {
         return [
-            this.pExampleValue1,
-            this.pExampleValue2,
-            this.pExampleValue3,
+            this.pOwner,
+            this.pAssetId,
+            this.pTimestamp,
         ];
     }
 }

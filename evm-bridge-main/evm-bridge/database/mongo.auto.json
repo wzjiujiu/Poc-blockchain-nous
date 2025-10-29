@@ -9,15 +9,15 @@
             "field": "configKey"
         },
         {
+            "collection": "event_example_asset_registered",
+            "field": "id"
+        },
+        {
             "collection": "event_example_initialized",
             "field": "id"
         },
         {
             "collection": "event_example_paused",
-            "field": "id"
-        },
-        {
-            "collection": "event_example_test_event",
             "field": "id"
         },
         {
@@ -79,7 +79,7 @@
     ],
     "indexes": [
         {
-            "collection": "event_example_initialized",
+            "collection": "event_example_asset_registered",
             "unique": false,
             "fields": [
                 {
@@ -89,7 +89,7 @@
             ]
         },
         {
-            "collection": "event_example_initialized",
+            "collection": "event_example_asset_registered",
             "unique": false,
             "fields": [
                 {
@@ -99,7 +99,7 @@
             ]
         },
         {
-            "collection": "event_example_initialized",
+            "collection": "event_example_asset_registered",
             "unique": false,
             "fields": [
                 {
@@ -109,76 +109,76 @@
             ]
         },
         {
-            "collection": "event_example_paused",
+            "collection": "event_example_asset_registered",
             "unique": false,
             "fields": [
                 {
-                    "name": "id",
-                    "dir": "DESC"
-                }
-            ]
-        },
-        {
-            "collection": "event_example_paused",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "block",
-                    "dir": ""
-                }
-            ]
-        },
-        {
-            "collection": "event_example_paused",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "tx",
-                    "dir": ""
-                }
-            ]
-        },
-        {
-            "collection": "event_example_test_event",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "id",
-                    "dir": "DESC"
-                }
-            ]
-        },
-        {
-            "collection": "event_example_test_event",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "block",
-                    "dir": ""
-                }
-            ]
-        },
-        {
-            "collection": "event_example_test_event",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "tx",
-                    "dir": ""
-                }
-            ]
-        },
-        {
-            "collection": "event_example_test_event",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "pExampleValue1",
+                    "name": "pOwner",
                     "dir": ""
                 },
                 {
                     "name": "id",
                     "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_initialized",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_initialized",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_initialized",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_paused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_paused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_paused",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
                 }
             ]
         },

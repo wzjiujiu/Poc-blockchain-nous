@@ -28,9 +28,9 @@
 
 import { SmartContractsConfig } from "../../config/config-smart-contracts";
 import { SmartContractEventSynchronizer } from "./event-synchronizer";
+import { EventExampleAssetRegistered } from "../../models/event-sync/example/asset-registered";
 import { EventExampleInitialized } from "../../models/event-sync/example/initialized";
 import { EventExamplePaused } from "../../models/event-sync/example/paused";
-import { EventExampleTestEvent } from "../../models/event-sync/example/test-event";
 import { EventExampleUnpaused } from "../../models/event-sync/example/unpaused";
 import { EventExampleUpgraded } from "../../models/event-sync/example/upgraded";
 import { createEventUID, normalizeDatabaseUint256, normalizeAddress } from "../../utils/blockchain";
@@ -55,6 +55,37 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
         for (let i = 0; i < events.length(); i++) {
             const eventType = events.getEventType(i);
             switch (eventType) {
+                case "AssetRegistered":
+                    {
+                        const ev = events.getAssetRegisteredEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pOwner = normalizeAddress(ev.data.owner);
+                        const pAssetId = ev.data.assetId;
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const exists = await EventExampleAssetRegistered.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExampleAssetRegistered({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pOwner,
+                                pAssetId,
+                                pTimestamp,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
                 case "Initialized":
                     {
                         const ev = events.getInitializedEvent(i);
@@ -103,37 +134,6 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 eventIndex,
                                 tx,
                                 pBy,
-                            });
-
-                            await newEvent.insert();
-                        }
-                    }
-                    break;
-                case "TestEvent":
-                    {
-                        const ev = events.getTestEventEvent(i);
-
-                        const block = Number(ev.event.log.blockNumber);
-                        const timestamp = await this.getBlockTimestamp(block);
-                        const eventIndex = Number(ev.event.log.logIndex);
-                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
-
-                        const id = createEventUID(block, eventIndex, tx);
-
-                        const pExampleValue1 = normalizeDatabaseUint256(ev.data.exampleValue1);
-                        const pExampleValue2 = ev.data.exampleValue2;
-                        const pExampleValue3 = normalizeAddress(ev.data.exampleValue3);
-                        const exists = await EventExampleTestEvent.exists(id);
-                        if (!exists) {
-                            const newEvent = new EventExampleTestEvent({
-                                id,
-                                block,
-                                timestamp,
-                                eventIndex,
-                                tx,
-                                pExampleValue1,
-                                pExampleValue2,
-                                pExampleValue3,
                             });
 
                             await newEvent.insert();
@@ -198,9 +198,9 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
         }
     }
     async reset(): Promise<void> {
+        await EventExampleAssetRegistered.reset();
         await EventExampleInitialized.reset();
         await EventExamplePaused.reset();
-        await EventExampleTestEvent.reset();
         await EventExampleUnpaused.reset();
         await EventExampleUpgraded.reset();
     }
