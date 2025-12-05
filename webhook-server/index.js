@@ -20,6 +20,7 @@ app.use(express.static("public"));
 // --- Buffer dei log in memoria ---
 const logs = [];
 const MAX_LOGS = 100;
+const Asset='http://localhost:11000/api/management/v3/assets';
 
 // Override console.log per inviare log anche via socket e salvarli
 const originalConsoleLog = console.log.bind(console);
@@ -105,7 +106,7 @@ const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const provider = new ethers.JsonRpcProvider("http://localhost:8545");
 const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 
-const CONTRACT_ADDRESS = "0xd9e5e9acdb6ef1afa4e23e4645c71b882cd63e4d";
+const CONTRACT_ADDRESS = "0xd0fc4e931b6d67bcecc65c2afec2faa278d0d769";
 
 const CONTRACT_ABI = [
   "function registerAsset(string assetId) external",
@@ -141,58 +142,170 @@ app.get("/", (req, res) => {
 
 // --- Webhook endpoint ---
 app.post("/event", async (req, res) => {
-  const parsedData = parseNestedJSON(req.body);
-  const cleanedData = cleanKeys(parsedData);
-  const prettyHtml = renderAsList(cleanedData);
-
-  console.log("✅ Evento parsato e pulito:");
-  console.dir(cleanedData, { depth: null, colors: true });
-
-  const hash = crypto.createHash("sha256").update(JSON.stringify(cleanedData)).digest("hex");
-  const txHash = "0x" + hash.substring(0, 16);
-
-
-  const response = {
-    status: "ok",
-    txHash,
-    receivedAt: new Date().toISOString(),
-  };
-  
   try {
-  // 🔹 ID univoco ogni chiamata
-  const assetId = "asset-" + Date.now();
-  console.log(`📤 Registrazione asset ID: ${assetId}`);
+    // 1. Parsing e normalizzazione dati
+    const parsedData = parseNestedJSON(req.body);
+    const cleanedData = cleanKeys(parsedData);
+    const prettyHtml = renderAsList(cleanedData);
 
-  // 🔹 Pre-calcola gas come fa Remix (opzionale)
-  const estimatedGas = await contract.registerAsset.estimateGas(assetId);
-  console.log(`⛽ Gas stimato: ${estimatedGas.toString()}`);
+    let assetId = "";
+    let assetTitle=;
+    let transactionId = "";
+    let policiesId = "";
+    let method="";
 
-  // 🔹 Invia la transazione usando il gas stimato
-  const tx = await contract.registerAsset(assetId, {
-    gasLimit: estimatedGas + 50000n // margine di sicurezza
-  });
+    // Estrae la porta dalla request EDC (che NON è mai una URL completa)
+    const rawPort = cleanedData.request?.port;
+    const normalizedPort = rawPort?.toString().match(/\d{4,5}/)?.[0]; // estrae "11000"
+    method=cleanedData.request?.method;
+    assetId = cleanedData.response?.['@id'];
+    assetTitle=cleanedData.request?.body?.properties?.title;
 
-  console.log(`⏳ Transazione inviata: ${tx.hash}`);
+    console.log("📥 Evento ricevuto");
+    console.log("Raw port:", rawPort);
+    console.log("Normalized port:", normalizedPort);
+    console.log("Asset ID:", assetId);
 
-  const receipt = await tx.wait();
-  console.log(`✅ Asset "${assetId}" registrato nel blocco ${receipt.blockNumber}`);
+    // Prepara hash risposta
+    const hash = crypto
+      .createHash("sha256")
+      .update(JSON.stringify(cleanedData))
+      .digest("hex");
 
-  // 🔹 Legge dal contratto per conferma
-  const data = await contract.getAsset(assetId);
-  console.log(`📄 Asset registrato:`, data);
-} catch (err) {
-  console.error("❌ Errore durante la registrazione asset:", err.shortMessage || err.message);
-}
+    const txHash = "0x" + hash.substring(0, 16);
 
-  io.emit("event", {
-    ...cleanedData,
-    response,
-    ts: new Date().toISOString(),
-    html: prettyHtml
-  });
+    const response = {
+      status: "ok",
+      txHash,
+      receivedAt: new Date().toISOString(),
+    };
 
-  res.json(response);
+    //
+    // 2. LOGICA PER ASSET CONSUMER (PORTA 11000)
+    //
+    if (normalizedPort === "11000") {
+      console.log("📡 Evento proveniente dal CONSUMER (11000)");
+      console.dir(cleanedData, { depth: null, colors: true });
+
+      if(rawPort==Asset&&method=='POST')
+      {
+        try {
+        const newAssetId =assetId.toString();
+
+        console.log(`📤 Registrazione asset ID: ${newAssetId}`);
+
+        const estimatedGas = await contract.registerAsset.estimateGas(newAssetId);
+        console.log(`⛽ Gas stimato: ${estimatedGas.toString()}`);
+
+        const tx = await contract.registerAsset(newAssetId, assetTitle,{
+          gasLimit: estimatedGas + 50000n, // margine di sicurezza
+        });
+
+        console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+        const receipt = await tx.wait();
+        console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
+
+        const data = await contract.getAsset(newAssetId);
+        console.log(`📄 Asset registrato:`, data);
+       } catch (err) {
+        console.error("❌ Errore durante la registrazione asset (consumer):", err);
+       }
+      }
+      else if(rawPort==Asset&&method=='PUT')
+      {
+      try {
+        assetId=cleanedData.request?.body?.properties?.id;
+        const newAssetId =assetId.toString();
+
+        console.log(`📤 cerco ID nel chain : ${newAssetId}`);
+
+        const data = await contract.getAsset(newAssetId);
+        console.log(`📄 Asset trovato:`, data);
+       } catch (err) {
+        console.error("❌ Errore durante la registrazione asset (consumer):", err);
+       }
+
+      }
+
+      // Invio aggiornamento realtime
+      io.emit("event", {
+        ...cleanedData,
+        response,
+        ts: new Date().toISOString(),
+        html: prettyHtml,
+      });
+
+      return res.json(response);
+    }
+
+    //
+    // 3. LOGICA PER ASSET PROVIDER (PORTA 22000)
+    //
+    if (normalizedPort === "22000") {
+      console.log("📡 Evento proveniente dal PROVIDER (22000)");
+      console.dir(cleanedData, { depth: null, colors: true });
+
+      try {
+        const newAssetId = "asset-" + Date.now();
+
+        console.log(`📤 Registrazione asset ID: ${newAssetId}`);
+
+        const estimatedGas = await contract.registerAsset.estimateGas(newAssetId);
+        console.log(`⛽ Gas stimato: ${estimatedGas.toString()}`);
+
+        const tx = await contract.registerAsset(newAssetId, {
+          gasLimit: estimatedGas + 50000n,
+        });
+
+        console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+        const receipt = await tx.wait();
+        console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
+
+        const data = await contract.getAsset(newAssetId);
+        console.log(`📄 Asset registrato:`, data);
+      } catch (err) {
+        console.error("❌ Errore durante la registrazione asset (provider):", err);
+      }
+
+      io.emit("event", {
+        ...cleanedData,
+        response,
+        ts: new Date().toISOString(),
+        html: prettyHtml,
+      });
+
+      return res.json(response);
+    }
+
+    //
+    // 4. PORTA NON RICONOSCIUTA
+    //
+    console.warn("⚠️ Nessuna logica definita per questa porta:", normalizedPort);
+
+    io.emit("event", {
+      ...cleanedData,
+      response,
+      ts: new Date().toISOString(),
+      html: prettyHtml,
+    });
+
+    return res.json(response);
+
+  } catch (err) {
+    console.error("❌ Errore interno nell'handler /event:", err);
+
+    return res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+      error: err.message,
+    });
+  }
 });
+
+
+
 
 // --- Socket.IO connection ---
 io.on("connection", (socket) => {
