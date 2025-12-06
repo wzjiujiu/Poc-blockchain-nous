@@ -268,6 +268,52 @@ app.post("/event", async (req, res) => {
           console.log("policyid:", policyid);
           console.log("time1:", time1);
           console.log("time2:", time2);
+		  const timePolicy = (time1 && time2) ? true : false;
+		  try {
+                 const newpolicyid =policyid.toString();
+				 
+				 if(timePolicy==true){
+			      console.log(`📤 Registrazione poliicy ID: ${newpolicyid}`);
+				 
+
+                  const estimatedGas = await contract.registerAsset.estimateGas(newAssetId, assetTitle);
+                  console.log(`⛽ Gas stimato: ${estimatedGas.toString()}`);
+
+                  const tx = await contract.registerAsset(newAssetId, assetTitle,{gasLimit: estimatedGas + 50000n, // margine di sicurezza
+				 });
+
+                  console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+                  const receipt = await tx.wait();
+                  console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
+
+                  const data = await contract.getAsset(newAssetId);
+                  console.log(`📄 Asset registrato:`, data);
+					 
+				 }
+				 else{
+			      console.log(`📤 Registrazione poliicy ID: ${newpolicyid}`);
+				 
+
+                  const estimatedGas = await contract.registerAsset.estimateGas(newAssetId, assetTitle);
+                  console.log(`⛽ Gas stimato: ${estimatedGas.toString()}`);
+
+                  const tx = await contract.registerAsset(newAssetId, assetTitle,{gasLimit: estimatedGas + 50000n, // margine di sicurezza
+				  });
+
+                  console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+                  const receipt = await tx.wait();
+                  console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
+
+                  const data = await contract.getAsset(newAssetId);
+                  console.log(`📄 Asset registrato:`, data);
+				 }
+
+
+                } catch (err) {
+                   console.error("❌ Errore durante la registrazione asset (consumer):", err);
+                }
 	  }
 	  
 
