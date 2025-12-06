@@ -25,7 +25,7 @@
 
 "use strict";
 
-import { Address, Quantity, SmartContractEventWrapper, SmartContractEvent, MethodCallingOptions, AddressLike, MethodTransactionOptions, TransactionResult, BytesLike, SmartContractInterface, TransactionBuildDetails, QuantityLike, BlockTag, RPCOptions, ABILike } from "@asanrom/smart-contract-wrapper";
+import { Quantity, SmartContractEventWrapper, SmartContractEvent, Address, MethodCallingOptions, AddressLike, MethodTransactionOptions, TransactionResult, BytesLike, SmartContractInterface, TransactionBuildDetails, QuantityLike, BlockTag, RPCOptions, ABILike } from "@asanrom/smart-contract-wrapper";
 
 /**
  * Contract wrapper: ExampleContract
@@ -73,16 +73,17 @@ export class ExampleContractWrapper {
     /**
      * Calls View method: getAsset(string)
      * Restituisce i dettagli di un asset
-     * @param assetId L'identificatore dell'asset
+     * @param assetId assetId
      * @param options The options for sending the request
      * @returns The result for calling the method
      */
-    public async getAsset(assetId: string, options?: MethodCallingOptions): Promise<{id: string, owner: Address, timestamp: Quantity}> {
+    public async getAsset(assetId: string, options?: MethodCallingOptions): Promise<{id: string, owner: Address, timestamp: Quantity, title: string}> {
         const __r: any = await this._contractInterface.callViewMethod("getAsset", [assetId], options || {});
         return {
             id: __r[0],
             owner: __r[1],
             timestamp: __r[2],
+            title: __r[3],
         };
     }
 
@@ -99,8 +100,8 @@ export class ExampleContractWrapper {
 
     /**
      * Calls View method: isRegistered(string)
-     * Verifica se un asset e' gia' registrato
-     * @param assetId L'identificatore dell'asset
+     * Controlla se un asset è registrato
+     * @param assetId assetId
      * @param options The options for sending the request
      * @returns The result for calling the method
      */
@@ -162,6 +163,36 @@ export class ExampleContractWrapper {
     }
 
     /**
+     * Calls Transaction method: modifyAsset(string,string)
+     * Modifica titolo di un asset esistente
+     * @param assetId assetId
+     * @param newTitle newTitle
+     * @param options The options for sending the transaction
+     * @returns The transaction result
+     */
+    public async modifyAsset(assetId: string, newTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("modifyAsset", [assetId, newTitle], options);
+    
+        if (__r.receipt.status > BigInt(0)) {
+            const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
+            return { receipt: __r.receipt, result: new ExampleContractEventCollection(decodedEvents) };
+        } else {
+            throw new Error("Transaction reverted");
+        }
+    }
+    
+    /**
+     * Gets details for building a transaction calling the method: modifyAsset(string,string)
+     * Modifica titolo di un asset esistente
+     * @param assetId assetId
+     * @param newTitle newTitle
+     * @returns The details for building the transaction
+     */
+    public modifyAsset$txBuildDetails(assetId: string, newTitle: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("modifyAsset", [assetId, newTitle]);
+    }
+
+    /**
      * Calls Transaction method: pause()
      * Pauses the smart contract Requires ADMIN role
      * @param options The options for sending the transaction
@@ -188,14 +219,15 @@ export class ExampleContractWrapper {
     }
 
     /**
-     * Calls Transaction method: registerAsset(string)
-     * Registra un nuovo asset sulla blockchain
-     * @param assetId L'identificatore univoco dell'asset (stringa)
+     * Calls Transaction method: registerAsset(string,string)
+     * Registra un nuovo asset
+     * @param assetId assetId
+     * @param assetTitle assetTitle
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async registerAsset(assetId: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
-        const __r = await this._contractInterface.callMutableMethod("registerAsset", [assetId], options);
+    public async registerAsset(assetId: string, assetTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("registerAsset", [assetId, assetTitle], options);
     
         if (__r.receipt.status > BigInt(0)) {
             const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
@@ -206,13 +238,14 @@ export class ExampleContractWrapper {
     }
     
     /**
-     * Gets details for building a transaction calling the method: registerAsset(string)
-     * Registra un nuovo asset sulla blockchain
-     * @param assetId L'identificatore univoco dell'asset (stringa)
+     * Gets details for building a transaction calling the method: registerAsset(string,string)
+     * Registra un nuovo asset
+     * @param assetId assetId
+     * @param assetTitle assetTitle
      * @returns The details for building the transaction
      */
-    public registerAsset$txBuildDetails(assetId: string): TransactionBuildDetails {
-        return this._contractInterface.encodeMutableMethod("registerAsset", [assetId]);
+    public registerAsset$txBuildDetails(assetId: string, assetTitle: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("registerAsset", [assetId, assetTitle]);
     }
 
     /**
@@ -286,7 +319,7 @@ export class ExampleContractWrapper {
 /**
  * Possible event types for contract: ExampleContract
  */
-export type ExampleContractEventType = "AssetRegistered" | "Initialized" | "Paused" | "Unpaused" | "Upgraded";
+export type ExampleContractEventType = "AssetModified" | "AssetRegistered" | "Initialized" | "Paused" | "Unpaused" | "Upgraded";
 
 /**
  * Collection of events for contract: ExampleContract
@@ -332,7 +365,24 @@ export class ExampleContractEventCollection {
     }
 
     /**
-     * Get an event of type AssetRegistered(address,string,uint256) from the collection
+     * Get an event of type AssetModified(string,string,uint256) from the collection
+     * @param index Event index in the collection (from 0 to length - 1)
+     * @returns The event object
+     */
+    public getAssetModifiedEvent(index: number): SmartContractEventWrapper<AssetModifiedEvent> {
+        const __r: any = this.events[index].parameters;
+        return {
+            event: this.events[index],
+            data: {
+                assetId: __r[0],
+                newTitle: __r[1],
+                timestamp: __r[2],
+            },
+        };
+    }
+
+    /**
+     * Get an event of type AssetRegistered(address,string,uint256,string) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
      */
@@ -344,6 +394,7 @@ export class ExampleContractEventCollection {
                 owner: __r[0],
                 assetId: __r[1],
                 timestamp: __r[2],
+                title: __r[3],
             },
         };
     }
@@ -410,7 +461,18 @@ export class ExampleContractEventCollection {
 }
 
 /**
- * Event: AssetRegistered(address,string,uint256)
+ * Event: AssetModified(string,string,uint256)
+ */
+export interface AssetModifiedEvent {
+    assetId: string,
+
+    newTitle: string,
+
+    timestamp: Quantity,
+}
+
+/**
+ * Event: AssetRegistered(address,string,uint256,string)
  */
 export interface AssetRegisteredEvent {
     owner: Address,
@@ -418,6 +480,8 @@ export interface AssetRegisteredEvent {
     assetId: string,
 
     timestamp: Quantity,
+
+    title: string,
 }
 
 /**
@@ -519,6 +583,31 @@ const CONTRACT_ABI: ABILike = [
         "anonymous": false,
         "inputs": [
             {
+                "indexed": false,
+                "internalType": "string",
+                "name": "assetId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "newTitle",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            }
+        ],
+        "name": "AssetModified",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
                 "indexed": true,
                 "internalType": "address",
                 "name": "owner",
@@ -535,6 +624,12 @@ const CONTRACT_ABI: ABILike = [
                 "internalType": "uint256",
                 "name": "timestamp",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
             }
         ],
         "name": "AssetRegistered",
@@ -629,6 +724,11 @@ const CONTRACT_ABI: ABILike = [
                 "internalType": "uint256",
                 "name": "timestamp",
                 "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
             }
         ],
         "stateMutability": "view",
@@ -685,6 +785,24 @@ const CONTRACT_ABI: ABILike = [
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "assetId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "newTitle",
+                "type": "string"
+            }
+        ],
+        "name": "modifyAsset",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "pause",
         "outputs": [],
@@ -722,6 +840,11 @@ const CONTRACT_ABI: ABILike = [
             {
                 "internalType": "string",
                 "name": "assetId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "assetTitle",
                 "type": "string"
             }
         ],

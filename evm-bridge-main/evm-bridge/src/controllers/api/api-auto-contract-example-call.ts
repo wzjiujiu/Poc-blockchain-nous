@@ -94,7 +94,7 @@ export class ExampleContractApiCallController extends Controller {
     }
     /**
      * @typedef CallRequestExampleGetAsset
-     * @property {string} assetId.required - L'identificatore dell'asset
+     * @property {string} assetId.required - assetId
      */
 
     /**
@@ -102,6 +102,7 @@ export class ExampleContractApiCallController extends Controller {
      * @property {string} id.required - id
      * @property {string} owner.required - owner - eg: 0x0000000000000000000000000000000000000000
      * @property {string} timestamp.required - timestamp - eg: 0
+     * @property {string} title.required - title
      */
 
     /**
@@ -119,7 +120,7 @@ export class ExampleContractApiCallController extends Controller {
      * @security BearerAuthorization
      */
     public async callGetAsset(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "string", "name": "assetId", "type": "string" }], "name": "getAsset", "outputs": [{ "internalType": "string", "name": "id", "type": "string" }, { "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "stateMutability": "view", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "assetId", "type": "string" }], "name": "getAsset", "outputs": [{ "internalType": "string", "name": "id", "type": "string" }, { "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "string", "name": "title", "type": "string" }], "stateMutability": "view", "type": "function" };
 
         const [callParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body, methodAbi);
 
@@ -138,6 +139,7 @@ export class ExampleContractApiCallController extends Controller {
                 callResult.id,
                 callResult.owner,
                 callResult.timestamp,
+                callResult.title,
             ], methodAbi);
         } catch (ex) {
             Monitor.debugException(ex)
@@ -192,7 +194,7 @@ export class ExampleContractApiCallController extends Controller {
     }
     /**
      * @typedef CallRequestExampleIsRegistered
-     * @property {string} assetId.required - L'identificatore dell'asset
+     * @property {string} assetId.required - assetId
      */
 
     /**
@@ -205,7 +207,7 @@ export class ExampleContractApiCallController extends Controller {
      * Smart contract: Example (ExampleContract)
      * Method signature: isRegistered(string)
      * Binding: CallIsRegistered
-     * Verifica se un asset e' gia' registrato
+     * Controlla se un asset è registrato
      * @route POST /contracts/example/call/is-registered
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {CallRequestExampleIsRegistered.model} request.body.required - Request body

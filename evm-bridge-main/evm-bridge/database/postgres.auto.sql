@@ -13,6 +13,21 @@ CREATE TABLE "dynamic_configuration" (
     "config_value" MEDIUMTEXT
 );
 
+CREATE TABLE "event_example_asset_modified" (
+    "id" VARCHAR(255) PRIMARY KEY,
+    "block" BIGINT,
+    "event_index" BIGINT,
+    "tx" VARCHAR(255),
+    "timestamp" BIGINT,
+    "p_asset_id" TEXT,
+    "p_new_title" TEXT,
+    "p_timestamp" VARCHAR(255)
+);
+
+CREATE INDEX "ix_event_example_asset_modified_s_1" ON "event_example_asset_modified"("id" DESC);
+CREATE INDEX "ix_event_example_asset_modified_s_2" ON "event_example_asset_modified"("block");
+CREATE INDEX "ix_event_example_asset_modified_s_3" ON "event_example_asset_modified"("tx");
+
 CREATE TABLE "event_example_asset_registered" (
     "id" VARCHAR(255) PRIMARY KEY,
     "block" BIGINT,
@@ -21,7 +36,8 @@ CREATE TABLE "event_example_asset_registered" (
     "timestamp" BIGINT,
     "p_owner" VARCHAR(255),
     "p_asset_id" TEXT,
-    "p_timestamp" VARCHAR(255)
+    "p_timestamp" VARCHAR(255),
+    "p_title" TEXT
 );
 
 CREATE INDEX "ix_event_example_asset_registered_s_1" ON "event_example_asset_registered"("id" DESC);

@@ -1564,15 +1564,38 @@ export interface TxRequestExampleInitialize {
     txSign: TxSigningOptions;
 }
 
+export interface TxParamsExampleModifyAsset {
+    /**
+     * assetId
+     */
+    assetId: string;
+
+    /**
+     * newTitle
+     */
+    newTitle: string;
+}
+
+export interface TxRequestExampleModifyAsset {
+    parameters: TxParamsExampleModifyAsset;
+
+    txSign: TxSigningOptions;
+}
+
 export interface TxRequestExamplePause {
     txSign: TxSigningOptions;
 }
 
 export interface TxParamsExampleRegisterAsset {
     /**
-     * L'identificatore univoco dell'asset (stringa)
+     * assetId
      */
     assetId: string;
+
+    /**
+     * assetTitle
+     */
+    assetTitle: string;
 }
 
 export interface TxRequestExampleRegisterAsset {
@@ -1603,6 +1626,61 @@ export interface TxRequestExampleUpgradeToAndCall {
     txSign: TxSigningOptions;
 }
 
+export interface EventParamsExampleAssetModified {
+    /**
+     * assetId
+     */
+    assetId: string;
+
+    /**
+     * newTitle
+     */
+    newTitle: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+}
+
+export interface EventItemExampleAssetModified {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExampleAssetModified;
+}
+
+export interface EventListExampleAssetModified {
+    events: EventItemExampleAssetModified[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
 export interface EventParamsExampleAssetRegistered {
     /**
      * owner 
@@ -1618,6 +1696,11 @@ export interface EventParamsExampleAssetRegistered {
      * timestamp 
      */
     timestamp: string;
+
+    /**
+     * title
+     */
+    title: string;
 }
 
 export interface EventItemExampleAssetRegistered {
@@ -1847,7 +1930,7 @@ export interface CallResponseExampleUPGRADE_INTERFACE_VERSION {
 
 export interface CallRequestExampleGetAsset {
     /**
-     * L'identificatore dell'asset
+     * assetId
      */
     assetId: string;
 }
@@ -1867,6 +1950,11 @@ export interface CallResponseExampleGetAsset {
      * timestamp 
      */
     timestamp: string;
+
+    /**
+     * title
+     */
+    title: string;
 }
 
 export interface CallResponseExampleGetInitializedVersion {
@@ -1878,7 +1966,7 @@ export interface CallResponseExampleGetInitializedVersion {
 
 export interface CallRequestExampleIsRegistered {
     /**
-     * L'identificatore dell'asset
+     * assetId
      */
     assetId: string;
 }

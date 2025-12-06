@@ -28,6 +28,7 @@
 
 import { SmartContractsConfig } from "../../config/config-smart-contracts";
 import { SmartContractEventSynchronizer } from "./event-synchronizer";
+import { EventExampleAssetModified } from "../../models/event-sync/example/asset-modified";
 import { EventExampleAssetRegistered } from "../../models/event-sync/example/asset-registered";
 import { EventExampleInitialized } from "../../models/event-sync/example/initialized";
 import { EventExamplePaused } from "../../models/event-sync/example/paused";
@@ -55,6 +56,37 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
         for (let i = 0; i < events.length(); i++) {
             const eventType = events.getEventType(i);
             switch (eventType) {
+                case "AssetModified":
+                    {
+                        const ev = events.getAssetModifiedEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pAssetId = ev.data.assetId;
+                        const pNewTitle = ev.data.newTitle;
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const exists = await EventExampleAssetModified.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExampleAssetModified({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pAssetId,
+                                pNewTitle,
+                                pTimestamp,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
                 case "AssetRegistered":
                     {
                         const ev = events.getAssetRegisteredEvent(i);
@@ -69,6 +101,7 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                         const pOwner = normalizeAddress(ev.data.owner);
                         const pAssetId = ev.data.assetId;
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const pTitle = ev.data.title;
                         const exists = await EventExampleAssetRegistered.exists(id);
                         if (!exists) {
                             const newEvent = new EventExampleAssetRegistered({
@@ -80,6 +113,7 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 pOwner,
                                 pAssetId,
                                 pTimestamp,
+                                pTitle,
                             });
 
                             await newEvent.insert();
@@ -198,6 +232,7 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
         }
     }
     async reset(): Promise<void> {
+        await EventExampleAssetModified.reset();
         await EventExampleAssetRegistered.reset();
         await EventExampleInitialized.reset();
         await EventExamplePaused.reset();

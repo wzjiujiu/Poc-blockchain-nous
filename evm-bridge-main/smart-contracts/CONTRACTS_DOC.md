@@ -210,8 +210,6 @@ This is an example smart contract
 
 **getAsset(string)**
  - Description: Restituisce i dettagli di un asset
- - Parameters:
-    - `assetId` - L'identificatore dell'asset
 
 **getInitializedVersion()**
  - Description: Gets the current initialized version Use this method to figure out the last deployed version of the contract
@@ -219,9 +217,10 @@ This is an example smart contract
     - `v` - The current initialized version
 
 **isRegistered(string)**
- - Description: Verifica se un asset e' gia' registrato
- - Parameters:
-    - `assetId` - L'identificatore dell'asset
+ - Description: Controlla se un asset è registrato
+
+**modifyAsset(string,string)**
+ - Description: Modifica titolo di un asset esistente
 
 **pause()**
  - Description: Pauses the smart contract Requires ADMIN role
@@ -234,10 +233,8 @@ This is an example smart contract
 **proxiableUUID()**
  - Details: Implementation of the ERC1822 {proxiableUUID} function. This returns the storage slot used by the implementation. It is used to validate the implementation's compatibility when performing an upgrade. IMPORTANT: A proxy pointing at a proxiable contract should not be considered proxiable itself, because this risks bricking a proxy that upgrades to it, by delegating to itself until out of gas. Thus it is critical that this function revert if invoked through a proxy. This is guaranteed by the `notDelegated` modifier.
 
-**registerAsset(string)**
- - Description: Registra un nuovo asset sulla blockchain
- - Parameters:
-    - `assetId` - L'identificatore univoco dell'asset (stringa)
+**registerAsset(string,string)**
+ - Description: Registra un nuovo asset
 
 **unpause()**
  - Description: Unpauses the smart contract Requires ADMIN role

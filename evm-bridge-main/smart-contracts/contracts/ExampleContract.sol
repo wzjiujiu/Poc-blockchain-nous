@@ -50,7 +50,7 @@ contract ExampleContract is BaseContract {
 
         // Permesso: solo owner o admin
         require(
-            msg.sender == assets[assetId].owner || hasRole(msg.sender, ROLE_ADMIN),
+            msg.sender == assets[assetId].owner,
             "Non autorizzato"
         );
 

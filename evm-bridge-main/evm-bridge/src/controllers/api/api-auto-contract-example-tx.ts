@@ -42,6 +42,7 @@ import { handleTransactionSending } from "../../utils/tx-sending";
 export class ExampleContractApiTxController extends Controller {
     public registerAPI(prefix: string, application: Express.Express) {
         application.post(prefix + "/contracts/example/tx/initialize", ensureObjectBody(this.txInitialize.bind(this)));
+        application.post(prefix + "/contracts/example/tx/modify-asset", ensureObjectBody(this.txModifyAsset.bind(this)));
         application.post(prefix + "/contracts/example/tx/pause", ensureObjectBody(this.txPause.bind(this)));
         application.post(prefix + "/contracts/example/tx/register-asset", ensureObjectBody(this.txRegisterAsset.bind(this)));
         application.post(prefix + "/contracts/example/tx/unpause", ensureObjectBody(this.txUnpause.bind(this)));
@@ -91,6 +92,48 @@ export class ExampleContractApiTxController extends Controller {
         await handleTransactionSending(request, response, txBuildData, wrapper.address);
     }
     /**
+     * @typedef TxParamsExampleModifyAsset
+     * @property {string} assetId.required - assetId
+     * @property {string} newTitle.required - newTitle
+     */
+
+    /**
+     * @typedef TxRequestExampleModifyAsset
+     * @property {TxParamsExampleModifyAsset.model} parameters.required - Transaction parameters
+     * @property {TxSigningOptions.model} txSign.required - Transaction signing options
+     */
+
+    /**
+     * Sends transaction for method: modifyAsset
+     * Smart contract: Example (ExampleContract)
+     * Method signature: modifyAsset(string,string)
+     * Binding: TxModifyAsset
+     * Modifica titolo di un asset esistente
+     * @route POST /contracts/example/tx/modify-asset
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {TxRequestExampleModifyAsset.model} request.body.required - Request body
+     * @returns {TxResponse.model} 200 - Transaction result
+     * @returns {TxBadRequest.model} 400 - Bad request
+     * @returns {TxSigningForbiddenResponse.model} 403 - Access denied
+     * @security BearerAuthorization
+     */
+    public async txModifyAsset(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }], "name": "modifyAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+
+        const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        const txBuildData = wrapper.modifyAsset$txBuildDetails.call(wrapper, ...txParams);
+
+        await handleTransactionSending(request, response, txBuildData, wrapper.address);
+    }
+    /**
      * @typedef TxRequestExamplePause
      * @property {TxSigningOptions.model} txSign.required - Transaction signing options
      */
@@ -127,7 +170,8 @@ export class ExampleContractApiTxController extends Controller {
     }
     /**
      * @typedef TxParamsExampleRegisterAsset
-     * @property {string} assetId.required - L'identificatore univoco dell'asset (stringa)
+     * @property {string} assetId.required - assetId
+     * @property {string} assetTitle.required - assetTitle
      */
 
     /**
@@ -139,9 +183,9 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: registerAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerAsset(string)
+     * Method signature: registerAsset(string,string)
      * Binding: TxRegisterAsset
-     * Registra un nuovo asset sulla blockchain
+     * Registra un nuovo asset
      * @route POST /contracts/example/tx/register-asset
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {TxRequestExampleRegisterAsset.model} request.body.required - Request body
@@ -151,7 +195,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txRegisterAsset(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "string", "name": "assetId", "type": "string" }], "name": "registerAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string", "name": "assetTitle", "type": "string" }], "name": "registerAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 

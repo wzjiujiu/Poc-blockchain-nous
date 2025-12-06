@@ -31,6 +31,7 @@ import { Controller } from "../controller";
 import { noCache, sendApiResult } from "../../utils/http-utils";
 import { parsePaginationParameters } from "../../utils/pagination";
 import { DataFilter } from "tsbean-orm";
+import { EventExampleAssetModified } from "../../models/event-sync/example/asset-modified";
 import { EventExampleAssetRegistered } from "../../models/event-sync/example/asset-registered";
 import { EventExampleInitialized } from "../../models/event-sync/example/initialized";
 import { EventExamplePaused } from "../../models/event-sync/example/paused";
@@ -46,6 +47,7 @@ import { serializeEventABIParams, normalizeAddress } from "../../utils/blockchai
  */
 export class ExampleContractApiEventsController extends Controller {
     public registerAPI(prefix: string, application: Express.Express) {
+        application.get(prefix + "/contracts/example/events/asset-modified", noCache(this.getEventsAssetModified.bind(this)));
         application.get(prefix + "/contracts/example/events/asset-registered", noCache(this.getEventsAssetRegistered.bind(this)));
         application.get(prefix + "/contracts/example/events/initialized", noCache(this.getEventsInitialized.bind(this)));
         application.get(prefix + "/contracts/example/events/paused", noCache(this.getEventsPaused.bind(this)));
@@ -54,10 +56,69 @@ export class ExampleContractApiEventsController extends Controller {
     }
 
     /**
+     * @typedef EventParamsExampleAssetModified
+     * @property {string} assetId.required - assetId
+     * @property {string} newTitle.required - newTitle
+     * @property {string} timestamp.required - timestamp - eg: 0
+     */
+
+    /**
+     * @typedef EventItemExampleAssetModified
+     * @property {string} id.required - Event ID - eg: xxxx-yyyy-zzzz
+     * @property {number} block.required - Block number - eg: 1
+     * @property {number} eventIndex.required - Event index in the block - eg: 0
+     * @property {string} tx.required - Transaction hash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} timestamp.required - Event timestamp (Unix seconds) - eg: 0
+     * @property {EventParamsExampleAssetModified.model} parameters.required - Event parameters
+     */
+
+    /**
+     * @typedef EventListExampleAssetModified
+     * @property {Array.<EventItemExampleAssetModified>} events.required - List of events
+     * @property {string} continuationToken - Continuation token - eg: xxxx-yyyy-zzzz
+     */
+
+    /**
+     * Get a list of events of type AssetModified
+     * Smart contract: Example (ExampleContract)
+     * Event signature: AssetModified(string,string,uint256)
+     * Binding: GetEventsAssetModified
+     * @route GET /contracts/example/events/asset-modified
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {string} continuationToken.query - Continuation token
+     * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
+     * @returns {EventListExampleAssetModified.model} 200 - Event list
+     * @security BearerAuthorization
+     */
+    public async getEventsAssetModified(request: Express.Request, response: Express.Response) {
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "newTitle", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "name": "AssetModified", "type": "event" };
+
+        const [limit, continuationToken] = parsePaginationParameters(request);
+
+        const filters: DataFilter<EventExampleAssetModified>[] = [];
+
+        const [events, nextContinuationToken] = await EventExampleAssetModified.findPaginated(filters, limit, continuationToken);
+
+        sendApiResult(request, response, {
+            events: events.map(e => {
+                return {
+                    id: e.id,
+                    block: e.block,
+                    timestamp: e.timestamp,
+                    eventIndex: e.eventIndex,
+                    tx: e.tx,
+                    parameters: serializeEventABIParams(e.getParametersArray(), eventAbi),
+                };
+            }),
+            continuationToken: nextContinuationToken,
+        });
+    }
+    /**
      * @typedef EventParamsExampleAssetRegistered
      * @property {string} owner.required - owner - eg: 0x0000000000000000000000000000000000000000
      * @property {string} assetId.required - assetId
      * @property {string} timestamp.required - timestamp - eg: 0
+     * @property {string} title.required - title
      */
 
     /**
@@ -79,7 +140,7 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type AssetRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetRegistered(address,string,uint256)
+     * Event signature: AssetRegistered(address,string,uint256,string)
      * Binding: GetEventsAssetRegistered
      * @route GET /contracts/example/events/asset-registered
      * @group example - API for smart contract: Example (ExampleContract)
@@ -90,7 +151,7 @@ export class ExampleContractApiEventsController extends Controller {
      * @security BearerAuthorization
      */
     public async getEventsAssetRegistered(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "name": "AssetRegistered", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "title", "type": "string" }], "name": "AssetRegistered", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 

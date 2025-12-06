@@ -21,6 +21,7 @@ app.use(express.static("public"));
 const logs = [];
 const MAX_LOGS = 100;
 const Asset='http://localhost:11000/api/management/v3/assets';
+const Policy='http://localhost:11000/api/management/v3/policydefinitions';
 
 // Override console.log per inviare log anche via socket e salvarli
 const originalConsoleLog = console.log.bind(console);
@@ -109,10 +110,11 @@ const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 const CONTRACT_ADDRESS = "0xd0fc4e931b6d67bcecc65c2afec2faa278d0d769";
 
 const CONTRACT_ABI = [
-  "function registerAsset(string assetId) external",
-  "function getAsset(string assetId) external view returns (string id, address owner, uint256 timestamp)",
+  "function registerAsset(string assetId, string assetTitle) external",
+  "function getAsset(string assetId) external view returns (string id, address owner, uint256 timestamp, string title)",
   "function isRegistered(string assetId) external view returns (bool)",
-  "event AssetRegistered(address indexed owner, string assetId, uint256 timestamp)"
+  "event AssetRegistered(address indexed owner, string assetId, uint256 timestamp, string title)",
+  "function modifyAsset(string assetId, string newTitle) external"
 ];
 
 
@@ -140,6 +142,24 @@ app.get("/", (req, res) => {
   res.sendFile(require("path").join(__dirname, "public", "index.html"));
 });
 
+function extractPolicyInfo(cleanedData) {
+  const body = cleanedData.request?.body || {};
+
+  const id = body["@id"] || body.id || null;
+
+  const constraints =
+    body.policy?.permission?.[0]?.constraint || [];
+
+  const timeConstraints = constraints
+    .filter(c => c.leftOperand === "POLICY_EVALUATION_TIME")
+    .map(c => c.rightOperand);
+
+  const time1 = timeConstraints[0] || null;
+  const time2 = timeConstraints[1] || null;
+
+  return { id, time1, time2 };
+}
+
 // --- Webhook endpoint ---
 app.post("/event", async (req, res) => {
   try {
@@ -149,7 +169,7 @@ app.post("/event", async (req, res) => {
     const prettyHtml = renderAsList(cleanedData);
 
     let assetId = "";
-    let assetTitle=;
+    let assetTitle="";
     let transactionId = "";
     let policiesId = "";
     let method="";
@@ -194,7 +214,7 @@ app.post("/event", async (req, res) => {
 
         console.log(`📤 Registrazione asset ID: ${newAssetId}`);
 
-        const estimatedGas = await contract.registerAsset.estimateGas(newAssetId);
+        const estimatedGas = await contract.registerAsset.estimateGas(newAssetId, assetTitle);
         console.log(`⛽ Gas stimato: ${estimatedGas.toString()}`);
 
         const tx = await contract.registerAsset(newAssetId, assetTitle,{
@@ -222,11 +242,34 @@ app.post("/event", async (req, res) => {
 
         const data = await contract.getAsset(newAssetId);
         console.log(`📄 Asset trovato:`, data);
+		let newAssetTitle=cleanedData.request?.body?.properties?.title;
+		
+		const estimatedGas = await contract.modifyAsset.estimateGas(newAssetId, newAssetTitle);
+        console.log(`⛽ Gas stimato: ${estimatedGas.toString()}`);
+
+        const tx = await contract.modifyAsset(newAssetId, newAssetTitle,{
+          gasLimit: estimatedGas + 50000n, // margine di sicurezza
+        });
+		const receipt = await tx.wait();
+		console.log(`✅ Asset "${newAssetId}" modificato nel blocco ${receipt.blockNumber}`);
+		
+		const datamodificato = await contract.getAsset(newAssetId);
+        console.log(`📄 Asset modificato:`, datamodificato);
        } catch (err) {
         console.error("❌ Errore durante la registrazione asset (consumer):", err);
        }
 
       }
+	  else if (rawPort==Policy&&method=='POST')
+	  {
+		  console.log("i am here");
+		  const { id: policyid, time1, time2 } = extractPolicyInfo(cleanedData);
+
+          console.log("policyid:", policyid);
+          console.log("time1:", time1);
+          console.log("time2:", time2);
+	  }
+	  
 
       // Invio aggiornamento realtime
       io.emit("event", {

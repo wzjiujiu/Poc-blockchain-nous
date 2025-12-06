@@ -9,6 +9,10 @@
             "field": "configKey"
         },
         {
+            "collection": "event_example_asset_modified",
+            "field": "id"
+        },
+        {
             "collection": "event_example_asset_registered",
             "field": "id"
         },
@@ -78,6 +82,36 @@
         }
     ],
     "indexes": [
+        {
+            "collection": "event_example_asset_modified",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_asset_modified",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_asset_modified",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
         {
             "collection": "event_example_asset_registered",
             "unique": false,

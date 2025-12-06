@@ -27,7 +27,7 @@
 
 import { RequestErrorHandler, RequestParams, CommonAuthenticatedErrorHandler } from "@asanrom/request-axios";
 import { getApiUrl, generateURIQuery } from "./utils";
-import { SmartContractInformation, TxResponse, TxRequestExampleInitialize, TxRequestExamplePause, TxRequestExampleRegisterAsset, TxRequestExampleUnpause, TxRequestExampleUpgradeToAndCall, EventListExampleAssetRegistered, EventListExampleInitialized, EventListExamplePaused, EventListExampleUnpaused, EventListExampleUpgraded, CallResponseExampleUPGRADE_INTERFACE_VERSION, CallResponseExampleGetAsset, CallRequestExampleGetAsset, CallResponseExampleGetInitializedVersion, CallResponseExampleIsRegistered, CallRequestExampleIsRegistered, CallResponseExamplePaused, CallResponseExampleProxiableUUID } from "./definitions";
+import { SmartContractInformation, TxResponse, TxRequestExampleInitialize, TxRequestExampleModifyAsset, TxRequestExamplePause, TxRequestExampleRegisterAsset, TxRequestExampleUnpause, TxRequestExampleUpgradeToAndCall, EventListExampleAssetModified, EventListExampleAssetRegistered, EventListExampleInitialized, EventListExamplePaused, EventListExampleUnpaused, EventListExampleUpgraded, CallResponseExampleUPGRADE_INTERFACE_VERSION, CallResponseExampleGetAsset, CallRequestExampleGetAsset, CallResponseExampleGetInitializedVersion, CallResponseExampleIsRegistered, CallRequestExampleIsRegistered, CallResponseExamplePaused, CallResponseExampleProxiableUUID } from "./definitions";
 
 export class ApiExample {
     /**
@@ -63,6 +63,39 @@ export class ApiExample {
         return {
             method: "POST",
             url: getApiUrl(`/contracts/example/tx/initialize`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(403, "INVALID_PRIVATE_KEY", handler.forbiddenInvalidPrivateKey)
+                    .add(403, "INVALID_WALLET_PASSWORD", handler.forbiddenInvalidWalletPassword)
+                    .add(403, "WALLET_NOT_FOUND", handler.forbiddenWalletNotFound)
+                    .add(403, "ACCESS_DENIED", handler.forbiddenAccessDenied)
+                    .add(403, "*", handler.forbidden)
+                    .add(400, "INVALID_VALUE", handler.badRequestInvalidValue)
+                    .add(400, "INVALID_PARAMETERS", handler.badRequestInvalidParameters)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
+     * Path: /contracts/example/tx/modify-asset
+     * Sends transaction for method: modifyAsset
+     * Smart contract: Example (ExampleContract)
+     * Method signature: modifyAsset(string,string)
+     * Modifica titolo di un asset esistente
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static TxModifyAsset(body: TxRequestExampleModifyAsset): RequestParams<TxResponse, TxModifyAssetErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/tx/modify-asset`),
             json: body,
             handleError: (err, handler) => {
                 new RequestErrorHandler()
@@ -120,8 +153,8 @@ export class ApiExample {
      * Path: /contracts/example/tx/register-asset
      * Sends transaction for method: registerAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerAsset(string)
-     * Registra un nuovo asset sulla blockchain
+     * Method signature: registerAsset(string,string)
+     * Registra un nuovo asset
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -215,10 +248,33 @@ export class ApiExample {
 
     /**
      * Method: GET
+     * Path: /contracts/example/events/asset-modified
+     * Get a list of events of type AssetModified
+     * Smart contract: Example (ExampleContract)
+     * Event signature: AssetModified(string,string,uint256)
+     * @param queryParams Query parameters
+     * @returns The request parameters
+     */
+    public static GetEventsAssetModified(queryParams: GetEventsAssetModifiedQueryParameters): RequestParams<EventListExampleAssetModified, CommonAuthenticatedErrorHandler> {
+        return {
+            method: "GET",
+            url: getApiUrl(`/contracts/example/events/asset-modified` + generateURIQuery(queryParams)),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: GET
      * Path: /contracts/example/events/asset-registered
      * Get a list of events of type AssetRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetRegistered(address,string,uint256)
+     * Event signature: AssetRegistered(address,string,uint256,string)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
@@ -412,7 +468,7 @@ export class ApiExample {
      * Calls the view method: isRegistered
      * Smart contract: Example (ExampleContract)
      * Method signature: isRegistered(string)
-     * Verifica se un asset e' gia' registrato
+     * Controlla se un asset è registrato
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -487,6 +543,51 @@ export class ApiExample {
  * Error handler for TxInitialize
  */
 export type TxInitializeErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * Invalid smart contract function parameters
+     */
+    badRequestInvalidParameters: () => void;
+
+    /**
+     * Invalid transaction value
+     */
+    badRequestInvalidValue: () => void;
+
+    /**
+     * General handler for status = 403
+     */
+    forbidden: () => void;
+
+    /**
+     * Access denied to the API
+     */
+    forbiddenAccessDenied: () => void;
+
+    /**
+     * Wallet not found
+     */
+    forbiddenWalletNotFound: () => void;
+
+    /**
+     * Invalid wallet password
+     */
+    forbiddenInvalidWalletPassword: () => void;
+
+    /**
+     * Invalid private key provided
+     */
+    forbiddenInvalidPrivateKey: () => void;
+};
+
+/**
+ * Error handler for TxModifyAsset
+ */
+export type TxModifyAssetErrorHandler = CommonAuthenticatedErrorHandler & {
     /**
      * General handler for status = 400
      */
@@ -707,6 +808,21 @@ export type TxUpgradeToAndCallErrorHandler = CommonAuthenticatedErrorHandler & {
      */
     forbiddenInvalidPrivateKey: () => void;
 };
+
+/**
+ * Query parameters for GetEventsAssetModified
+ */
+export interface GetEventsAssetModifiedQueryParameters {
+    /**
+     * Continuation token
+     */
+    continuationToken?: string;
+
+    /**
+     * Max number of items to get. Default: 25, Max: 256
+     */
+    limit?: string;
+}
 
 /**
  * Query parameters for GetEventsAssetRegistered
