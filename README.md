@@ -38,9 +38,9 @@ POSTMAN
 
 Git
 
-Installation
-Clone the repository
+
 
 #  STEP1 
-
+Clone the repository
+FOR THE evm-bridge folder please refer to https://gitlab.eclipse.org/eclipse-research-labs/nous-project/common-administration-services/decentralised-services/evm-bridge/-/tree/main?ref_type=heads for the turorial to initialize the test node and deploying the smart contract on chain
 
