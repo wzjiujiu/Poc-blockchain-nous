@@ -1,6 +1,6 @@
 # Poc-blockchain-nous
 PoC Blockchain - NOUS
-A blockchain-based Proof of Concept implementation for vulnerable road user safety systems, leveraging 5G MEC architecture and Ethereum Virtual Machine technology.
+A blockchain-based Proof of Concept implementation for vulnerable road user safety systems, leveraging Ethereum Virtual Machine technology.
 
 # Overview
 This repository contains a comprehensive Proof of Concept for a blockchain solution focused on preventing accidents involving vulnerable road users (pedestrians, cyclists, etc.) through 5G Mobile Edge Computing and distributed ledger technology.
@@ -34,9 +34,13 @@ Node.js (check individual component requirements)
 
 Docker (recommended for containerized services)
 
+POSTMAN
+
 Git
 
-Installation
-Clone the repository
 
+
+#  STEP1 
+Clone the repository
+FOR THE evm-bridge folder please refer to https://gitlab.eclipse.org/eclipse-research-labs/nous-project/common-administration-services/decentralised-services/evm-bridge/-/tree/main?ref_type=heads for the turorial to initialize the test node and deploying the smart contract on chain
 
