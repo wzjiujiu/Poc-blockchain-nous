@@ -22,6 +22,13 @@ contract ExampleContract is BaseContract {
         uint256 timestamp; // Momento della registrazione
         string title;      // Nuovo campo titolo
     }
+
+    struct Dataoffer {
+        string id;         // ID univoco dell'asset
+        address owner;     // Indirizzo che ha registrato l'asset
+        uint256 timestamp; // Momento della registrazione
+        string title;      // Nuovo campo titolo
+    }
 	
 
     function initialize(
@@ -33,11 +40,14 @@ contract ExampleContract is BaseContract {
 
     mapping(string => Asset) private assets;
 	mapping(string => Policy) private policies;
+    mapping(string => Dataoffer) private offers;
 
     event AssetRegistered(address indexed owner, string assetId, uint256 timestamp, string title);
     event AssetModified(string assetId, string newTitle, uint256 timestamp);
 	event PolicyRegistered(address indexed owner, string policyId, uint256 timestamp, string title);
     event PolicyModified(string policyId, string newTitle, uint256 timestamp);
+    event DataofferRegistered(address indexed owner, string offerId, uint256 timestamp, string title);
+    event DataofferModified(string offerId, string newTitle, uint256 timestamp);
 
     /// @notice Registra un nuovo asset
     function registerAsset(string memory assetId, string memory assetTitle) external {
@@ -69,6 +79,21 @@ contract ExampleContract is BaseContract {
         emit PolicyRegistered(msg.sender, policyId, block.timestamp, policyTitle);
     }
 
+    /// @notice Registra un nuovo Dataoffer
+       function registerDataoffer(string memory offerId, string memory offerTitle) external {
+        require(bytes(offerId).length > 0, "ID non valido");
+        require(offers[offerId].owner == address(0), "Asset gia' registrato");
+
+        offers[offerId] = Asset({
+            id: offerId,
+            owner: msg.sender,
+            timestamp: block.timestamp,
+            title: offerTitle
+        });
+
+        emit DataofferRegistered(msg.sender, policyId, block.timestamp, policyTitle);
+    }
+
     /// @notice Modifica titolo di un asset esistente
     function modifyAsset(string memory assetId, string memory newTitle) external {
         require(bytes(assetId).length > 0, "ID non valido");
@@ -87,20 +112,37 @@ contract ExampleContract is BaseContract {
     }
 
     /// @notice Modifica titolo di un policy esistente
-    function modifyAsset(string memory policyId, string memory newTitle) external {
+    function modifyPolicy(string memory policyId, string memory newTitle) external {
         require(bytes(policyId).length > 0, "ID non valido");
-        require(assets[policyId].owner != address(0), "Asset non trovato");
+        require(policies[policyId].owner != address(0), "Asset non trovato");
 
         // Permesso: solo owner o admin
         require(
-            msg.sender == assets[policyId].owner,
+            msg.sender == policies[policyId].owner,
             "Non autorizzato"
         );
 
-        assets[policyId].title = newTitle;
-        assets[policyId].timestamp = block.timestamp;
+        policies[policyId].title = newTitle;
+        policies[policyId].timestamp = block.timestamp;
 
-        emit AssetModified(policyId, newTitle, block.timestamp);
+        emit PolicyModified(policyId, newTitle, block.timestamp);
+    }
+
+    /// @notice Modifica titolo di un dataoffer
+    function modifyDataoffer(string memory offerId, string memory newTitle) external {
+        require(bytes(offerId).length > 0, "ID non valido");
+        require(offers[offerId].owner != address(0), "Asset non trovato");
+
+        // Permesso: solo owner o admin
+        require(
+            msg.sender == offers[offerId].owner,
+            "Non autorizzato"
+        );
+
+        offers[offerId].title = newTitle;
+        offers[offerId].timestamp = block.timestamp;
+
+        emit DataofferModified(offerId, newTitle, block.timestamp);
     }
 
     /// @notice Restituisce i dettagli di un asset
@@ -115,13 +157,24 @@ contract ExampleContract is BaseContract {
     }
 
     /// @notice Restituisce i dettagli di un policy
-    function getAsset(string memory policyId)
+    function getPolicy(string memory policyId)
         external
         view
         returns (string memory id, address owner, uint256 timestamp, string memory title)
     {
-        Asset memory a = policies[policyId];
-        require(a.owner != address(0), "Asset non trovato");
+        Policy memory a = policies[policyId];
+        require(a.owner != address(0), "policy non trovato");
+        return (a.id, a.owner, a.timestamp, a.title);
+    }
+
+        /// @notice Restituisce i dettagli di un policy
+    function getDataoffer(string memory offerId)
+        external
+        view
+        returns (string memory id, address owner, uint256 timestamp, string memory title)
+    {
+        Offer memory a = offers[offerId];
+        require(a.owner != address(0), "offer non trovato");
         return (a.id, a.owner, a.timestamp, a.title);
     }
 
