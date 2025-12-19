@@ -1,46 +1,67 @@
-# Poc-blockchain-nous
-PoC Blockchain - NOUS
-A blockchain-based Proof of Concept implementation for vulnerable road user safety systems, leveraging Ethereum Virtual Machine technology.
+# PoC Blockchain – NOUS  
+**poc-blockchain-nous**
 
-# Overview
-This repository contains a comprehensive Proof of Concept for a blockchain solution focused on preventing accidents involving vulnerable road users (pedestrians, cyclists, etc.) through 5G Mobile Edge Computing and distributed ledger technology.
+A blockchain-based **Proof of Concept (PoC)** for vulnerable road user (VRU) safety systems, leveraging **Ethereum Virtual Machine (EVM)** technology, **5G Mobile Edge Computing (MEC)**, and **distributed ledger technologies**.
 
-# 🏗️ Architecture Components
-Core Services
-evm-bridge-main - Ethereum Virtual Machine bridge for cross-chain interoperability
+---
 
-ganache - Local blockchain network for development and testing
+## Overview
 
-minio - High-performance object storage for data management
+This repository contains a comprehensive Proof of Concept focused on improving **road safety for vulnerable road users** (pedestrians, cyclists, etc.) by combining:
 
-sovity - Integration with Sovity platform services
+- Blockchain-based trust and data integrity  
+- 5G Mobile Edge Computing for low-latency processing  
+- Event-driven architectures for real-time safety alerts  
 
-webbook-server - Webhook server for real-time event processing
+The project explores how decentralized services can support **accident prevention**, **secure data sharing**, and **cross-platform interoperability**.
 
-# Key Documentation
-Grant Agreement - Official Horizon Europe grant documentation (GAP-101135927)
+---
 
-Project Proposal - Detailed project scope and objectives
+## Architecture Components
 
-5G MEC Architecture - Technical design for Mobile Edge Computing implementation
+### Core Services
 
-Vulnerable Road User Safety - Research on accident prevention systems
+| Component | Description |
+|---------|-------------|
+| **evm-bridge-main** | Ethereum Virtual Machine bridge for cross-chain interoperability |
+| **ganache** | Local blockchain network for development and testing |
+| **minio** | High-performance object storage for data management |
+| **sovity** | Integration with Sovity platform services |
+| **webhook-server** | Node.js webhook server for real-time event processing |
 
-UML Diagrams - Comprehensive system architecture and workflow diagrams
+---
 
-# 🚀 Quick Start
-Prerequisites
-Node.js (check individual component requirements)
+##  Key Documentation
 
-Docker (recommended for containerized services)
+- **Grant Agreement** – Horizon Europe Grant Agreement (GAP-101135927)
+- **Project Proposal** – Detailed project scope and objectives
+- **5G MEC Architecture** – Technical design for Mobile Edge Computing
+- **Vulnerable Road User Safety** – Research on accident prevention systems
+- **UML Diagrams** – System architecture and workflow diagrams
 
-POSTMAN
+---
 
-Git
+##  Quick Start
 
+### Prerequisites
 
+Make sure the following tools are installed:
 
-#  STEP1 
-Clone the repository
-FOR THE evm-bridge folder please refer to https://gitlab.eclipse.org/eclipse-research-labs/nous-project/common-administration-services/decentralised-services/evm-bridge/-/tree/main?ref_type=heads for the turorial to initialize the test node and deploying the smart contract on chain
+- Node.js (check individual component requirements)
+- Docker (recommended)
+- Postman
+- Git
+
+---
+
+##  Setup Instructions
+
+### STEP 1: Clone the Repository
+
+```bash
+git clone https://github.com/<your-org>/poc-blockchain-nous.git
+cd poc-blockchain-nous
+
+---
+### STEP 1: Clone the Repository
 
