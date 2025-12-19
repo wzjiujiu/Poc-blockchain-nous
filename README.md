@@ -62,6 +62,23 @@ Make sure the following tools are installed:
 git clone https://github.com/<your-org>/poc-blockchain-nous.git
 cd poc-blockchain-nous
 
----
-### STEP 1: Clone the Repository
+```
+### STEP 2: Initialize EVM Bridge & Deploy Smart Contracts
+The EVM Bridge setup, test node initialization, and smart contract deployment are maintained in a separate repository.
 
+Please follow the official tutorial here:
+https://gitlab.eclipse.org/eclipse-research-labs/nous-project/common-administration-services/decentralised-services/evm-bridge/-/tree/main?ref_type=heads
+
+This guide covers:
+
+Initializing the local blockchain test node
+
+Deploying smart contracts on-chain
+
+Verifying the deployment
+
+### STEP 3: CStart the Webhook Server
+```bash
+cd webhook-server
+node index.js
+```
