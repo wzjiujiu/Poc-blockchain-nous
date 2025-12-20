@@ -8,6 +8,7 @@ import "./interfaces/IExampleContract.sol";
  * This is an example smart contract
  */
 contract ExampleContract is BaseContract {
+    enum TransferStatus {Requested, Approved, Completed, Rejected}
     
     struct Asset {
         string id;         // ID univoco dell'asset
@@ -29,6 +30,17 @@ contract ExampleContract is BaseContract {
         uint256 timestamp; // Momento della registrazione
         string title;      // Nuovo campo titolo
     }
+
+    struct DataTransfer {
+        string id;              // ID univoco del trasferimento
+        string assetId;         // Asset coinvolto
+        string offerId;         // Data offer utilizzata
+        address provider;       // Fornitore del dato
+        address consumer;       // Consumatore del dato
+        bytes32 dataHash;       // Hash del dataset trasferito
+        TransferStatus status;  // Stato del trasferimento
+        uint256 timestamp;      // Ultimo aggiornamento
+}
 	
 
     function initialize(
@@ -41,6 +53,8 @@ contract ExampleContract is BaseContract {
     mapping(string => Asset) private assets;
 	mapping(string => Policy) private policies;
     mapping(string => Dataoffer) private offers;
+    mapping(string => DataTransfer) private transfers;
+
 
     event AssetRegistered(address indexed owner, string assetId, uint256 timestamp, string title);
     event AssetModified(string assetId, string newTitle, uint256 timestamp);
@@ -48,6 +62,10 @@ contract ExampleContract is BaseContract {
     event PolicyModified(string policyId, string newTitle, uint256 timestamp);
     event DataofferRegistered(address indexed owner, string offerId, uint256 timestamp, string title);
     event DataofferModified(string offerId, string newTitle, uint256 timestamp);
+    event DataTransferRequested(string transferId, string assetId, address indexed consumer, uint256 timestamp);
+    event DataTransferApproved(string transferId, address indexed provider, uint256 timestamp);
+    event DataTransferCompleted(string transferId, bytes32 dataHash, uint256 timestamp);
+    event DataTransferRejected(string transferId, uint256 timestamp);
 
     /// @notice Registra un nuovo asset
     function registerAsset(string memory assetId, string memory assetTitle) external {
@@ -69,7 +87,7 @@ contract ExampleContract is BaseContract {
         require(bytes(policyId).length > 0, "ID non valido");
         require(policies[policyId].owner == address(0), "Asset gia' registrato");
 
-        policies[policyId] = Asset({
+        policies[policyId] = Policy({
             id: policyId,
             owner: msg.sender,
             timestamp: block.timestamp,
@@ -84,14 +102,14 @@ contract ExampleContract is BaseContract {
         require(bytes(offerId).length > 0, "ID non valido");
         require(offers[offerId].owner == address(0), "Asset gia' registrato");
 
-        offers[offerId] = Asset({
+        offers[offerId] = Dataoffer({
             id: offerId,
             owner: msg.sender,
             timestamp: block.timestamp,
             title: offerTitle
         });
 
-        emit DataofferRegistered(msg.sender, policyId, block.timestamp, policyTitle);
+        emit DataofferRegistered(msg.sender, offerId, block.timestamp, offerTitle);
     }
 
     /// @notice Modifica titolo di un asset esistente
@@ -173,7 +191,7 @@ contract ExampleContract is BaseContract {
         view
         returns (string memory id, address owner, uint256 timestamp, string memory title)
     {
-        Offer memory a = offers[offerId];
+        Dataoffer memory a = offers[offerId];
         require(a.owner != address(0), "offer non trovato");
         return (a.id, a.owner, a.timestamp, a.title);
     }

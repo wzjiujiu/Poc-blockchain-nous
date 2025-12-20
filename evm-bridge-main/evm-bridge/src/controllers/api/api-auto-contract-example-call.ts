@@ -43,7 +43,9 @@ export class ExampleContractApiCallController extends Controller {
     public registerAPI(prefix: string, application: Express.Express) {
         application.post(prefix + "/contracts/example/call/upgrade-interface-version", ensureObjectBody(this.callUPGRADE_INTERFACE_VERSION.bind(this)));
         application.post(prefix + "/contracts/example/call/get-asset", ensureObjectBody(this.callGetAsset.bind(this)));
+        application.post(prefix + "/contracts/example/call/get-dataoffer", ensureObjectBody(this.callGetDataoffer.bind(this)));
         application.post(prefix + "/contracts/example/call/get-initialized-version", ensureObjectBody(this.callGetInitializedVersion.bind(this)));
+        application.post(prefix + "/contracts/example/call/get-policy", ensureObjectBody(this.callGetPolicy.bind(this)));
         application.post(prefix + "/contracts/example/call/is-registered", ensureObjectBody(this.callIsRegistered.bind(this)));
         application.post(prefix + "/contracts/example/call/paused", ensureObjectBody(this.callPaused.bind(this)));
         application.post(prefix + "/contracts/example/call/proxiable-uuid", ensureObjectBody(this.callProxiableUUID.bind(this)));
@@ -150,6 +152,63 @@ export class ExampleContractApiCallController extends Controller {
         sendApiResult(request, response, result);
     }
     /**
+     * @typedef CallRequestExampleGetDataoffer
+     * @property {string} offerId.required - offerId
+     */
+
+    /**
+     * @typedef CallResponseExampleGetDataoffer
+     * @property {string} id.required - id
+     * @property {string} owner.required - owner - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} timestamp.required - timestamp - eg: 0
+     * @property {string} title.required - title
+     */
+
+    /**
+     * Calls the view method: getDataoffer
+     * Smart contract: Example (ExampleContract)
+     * Method signature: getDataoffer(string)
+     * Binding: CallGetDataoffer
+     * Restituisce i dettagli di un policy
+     * @route POST /contracts/example/call/get-dataoffer
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {CallRequestExampleGetDataoffer.model} request.body.required - Request body
+     * @returns {CallResponseExampleGetDataoffer.model} 200 - OK
+     * @returns {void} 400 - Invalid parameters
+     * @returns {void} 404 - Error calling the method
+     * @security BearerAuthorization
+     */
+    public async callGetDataoffer(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "offerId", "type": "string" }], "name": "getDataoffer", "outputs": [{ "internalType": "string", "name": "id", "type": "string" }, { "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "string", "name": "title", "type": "string" }], "stateMutability": "view", "type": "function" };
+
+        const [callParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        let result: any;
+        try {
+            const callResult = await wrapper.getDataoffer.call(wrapper, ...callParams);
+
+            result = serializeOutputABIParams([
+                callResult.id,
+                callResult.owner,
+                callResult.timestamp,
+                callResult.title,
+            ], methodAbi);
+        } catch (ex) {
+            Monitor.debugException(ex)
+            sendApiError(request, response, NOT_FOUND, "CALL_ERROR", ex.message);
+            return;
+        }
+
+        sendApiResult(request, response, result);
+    }
+    /**
      * @typedef CallResponseExampleGetInitializedVersion
      * @property {string} v.required - The current initialized version - eg: 0
      */
@@ -184,6 +243,63 @@ export class ExampleContractApiCallController extends Controller {
             const callResult = await wrapper.getInitializedVersion.call(wrapper, ...callParams);
 
             result = serializeOutputABIParams([callResult], methodAbi);
+        } catch (ex) {
+            Monitor.debugException(ex)
+            sendApiError(request, response, NOT_FOUND, "CALL_ERROR", ex.message);
+            return;
+        }
+
+        sendApiResult(request, response, result);
+    }
+    /**
+     * @typedef CallRequestExampleGetPolicy
+     * @property {string} policyId.required - policyId
+     */
+
+    /**
+     * @typedef CallResponseExampleGetPolicy
+     * @property {string} id.required - id
+     * @property {string} owner.required - owner - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} timestamp.required - timestamp - eg: 0
+     * @property {string} title.required - title
+     */
+
+    /**
+     * Calls the view method: getPolicy
+     * Smart contract: Example (ExampleContract)
+     * Method signature: getPolicy(string)
+     * Binding: CallGetPolicy
+     * Restituisce i dettagli di un policy
+     * @route POST /contracts/example/call/get-policy
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {CallRequestExampleGetPolicy.model} request.body.required - Request body
+     * @returns {CallResponseExampleGetPolicy.model} 200 - OK
+     * @returns {void} 400 - Invalid parameters
+     * @returns {void} 404 - Error calling the method
+     * @security BearerAuthorization
+     */
+    public async callGetPolicy(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "policyId", "type": "string" }], "name": "getPolicy", "outputs": [{ "internalType": "string", "name": "id", "type": "string" }, { "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "string", "name": "title", "type": "string" }], "stateMutability": "view", "type": "function" };
+
+        const [callParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        let result: any;
+        try {
+            const callResult = await wrapper.getPolicy.call(wrapper, ...callParams);
+
+            result = serializeOutputABIParams([
+                callResult.id,
+                callResult.owner,
+                callResult.timestamp,
+                callResult.title,
+            ], methodAbi);
         } catch (ex) {
             Monitor.debugException(ex)
             sendApiError(request, response, NOT_FOUND, "CALL_ERROR", ex.message);

@@ -43,8 +43,12 @@ export class ExampleContractApiTxController extends Controller {
     public registerAPI(prefix: string, application: Express.Express) {
         application.post(prefix + "/contracts/example/tx/initialize", ensureObjectBody(this.txInitialize.bind(this)));
         application.post(prefix + "/contracts/example/tx/modify-asset", ensureObjectBody(this.txModifyAsset.bind(this)));
+        application.post(prefix + "/contracts/example/tx/modify-dataoffer", ensureObjectBody(this.txModifyDataoffer.bind(this)));
+        application.post(prefix + "/contracts/example/tx/modify-policy", ensureObjectBody(this.txModifyPolicy.bind(this)));
         application.post(prefix + "/contracts/example/tx/pause", ensureObjectBody(this.txPause.bind(this)));
         application.post(prefix + "/contracts/example/tx/register-asset", ensureObjectBody(this.txRegisterAsset.bind(this)));
+        application.post(prefix + "/contracts/example/tx/register-dataoffer", ensureObjectBody(this.txRegisterDataoffer.bind(this)));
+        application.post(prefix + "/contracts/example/tx/register-policy", ensureObjectBody(this.txRegisterPolicy.bind(this)));
         application.post(prefix + "/contracts/example/tx/unpause", ensureObjectBody(this.txUnpause.bind(this)));
         application.post(prefix + "/contracts/example/tx/upgrade-to-and-call", ensureObjectBody(this.txUpgradeToAndCall.bind(this)));
     }
@@ -134,6 +138,90 @@ export class ExampleContractApiTxController extends Controller {
         await handleTransactionSending(request, response, txBuildData, wrapper.address);
     }
     /**
+     * @typedef TxParamsExampleModifyDataoffer
+     * @property {string} offerId.required - offerId
+     * @property {string} newTitle.required - newTitle
+     */
+
+    /**
+     * @typedef TxRequestExampleModifyDataoffer
+     * @property {TxParamsExampleModifyDataoffer.model} parameters.required - Transaction parameters
+     * @property {TxSigningOptions.model} txSign.required - Transaction signing options
+     */
+
+    /**
+     * Sends transaction for method: modifyDataoffer
+     * Smart contract: Example (ExampleContract)
+     * Method signature: modifyDataoffer(string,string)
+     * Binding: TxModifyDataoffer
+     * Modifica titolo di un dataoffer
+     * @route POST /contracts/example/tx/modify-dataoffer
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {TxRequestExampleModifyDataoffer.model} request.body.required - Request body
+     * @returns {TxResponse.model} 200 - Transaction result
+     * @returns {TxBadRequest.model} 400 - Bad request
+     * @returns {TxSigningForbiddenResponse.model} 403 - Access denied
+     * @security BearerAuthorization
+     */
+    public async txModifyDataoffer(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }], "name": "modifyDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+
+        const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        const txBuildData = wrapper.modifyDataoffer$txBuildDetails.call(wrapper, ...txParams);
+
+        await handleTransactionSending(request, response, txBuildData, wrapper.address);
+    }
+    /**
+     * @typedef TxParamsExampleModifyPolicy
+     * @property {string} policyId.required - policyId
+     * @property {string} newTitle.required - newTitle
+     */
+
+    /**
+     * @typedef TxRequestExampleModifyPolicy
+     * @property {TxParamsExampleModifyPolicy.model} parameters.required - Transaction parameters
+     * @property {TxSigningOptions.model} txSign.required - Transaction signing options
+     */
+
+    /**
+     * Sends transaction for method: modifyPolicy
+     * Smart contract: Example (ExampleContract)
+     * Method signature: modifyPolicy(string,string)
+     * Binding: TxModifyPolicy
+     * Modifica titolo di un policy esistente
+     * @route POST /contracts/example/tx/modify-policy
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {TxRequestExampleModifyPolicy.model} request.body.required - Request body
+     * @returns {TxResponse.model} 200 - Transaction result
+     * @returns {TxBadRequest.model} 400 - Bad request
+     * @returns {TxSigningForbiddenResponse.model} 403 - Access denied
+     * @security BearerAuthorization
+     */
+    public async txModifyPolicy(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "policyId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }], "name": "modifyPolicy", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+
+        const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        const txBuildData = wrapper.modifyPolicy$txBuildDetails.call(wrapper, ...txParams);
+
+        await handleTransactionSending(request, response, txBuildData, wrapper.address);
+    }
+    /**
      * @typedef TxRequestExamplePause
      * @property {TxSigningOptions.model} txSign.required - Transaction signing options
      */
@@ -207,6 +295,90 @@ export class ExampleContractApiTxController extends Controller {
         const wrapper = SmartContractsConfig.getInstance().example;
 
         const txBuildData = wrapper.registerAsset$txBuildDetails.call(wrapper, ...txParams);
+
+        await handleTransactionSending(request, response, txBuildData, wrapper.address);
+    }
+    /**
+     * @typedef TxParamsExampleRegisterDataoffer
+     * @property {string} offerId.required - offerId
+     * @property {string} offerTitle.required - offerTitle
+     */
+
+    /**
+     * @typedef TxRequestExampleRegisterDataoffer
+     * @property {TxParamsExampleRegisterDataoffer.model} parameters.required - Transaction parameters
+     * @property {TxSigningOptions.model} txSign.required - Transaction signing options
+     */
+
+    /**
+     * Sends transaction for method: registerDataoffer
+     * Smart contract: Example (ExampleContract)
+     * Method signature: registerDataoffer(string,string)
+     * Binding: TxRegisterDataoffer
+     * Registra un nuovo Dataoffer
+     * @route POST /contracts/example/tx/register-dataoffer
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {TxRequestExampleRegisterDataoffer.model} request.body.required - Request body
+     * @returns {TxResponse.model} 200 - Transaction result
+     * @returns {TxBadRequest.model} 400 - Bad request
+     * @returns {TxSigningForbiddenResponse.model} 403 - Access denied
+     * @security BearerAuthorization
+     */
+    public async txRegisterDataoffer(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "offerTitle", "type": "string" }], "name": "registerDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+
+        const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        const txBuildData = wrapper.registerDataoffer$txBuildDetails.call(wrapper, ...txParams);
+
+        await handleTransactionSending(request, response, txBuildData, wrapper.address);
+    }
+    /**
+     * @typedef TxParamsExampleRegisterPolicy
+     * @property {string} policyId.required - policyId
+     * @property {string} policyTitle.required - policyTitle
+     */
+
+    /**
+     * @typedef TxRequestExampleRegisterPolicy
+     * @property {TxParamsExampleRegisterPolicy.model} parameters.required - Transaction parameters
+     * @property {TxSigningOptions.model} txSign.required - Transaction signing options
+     */
+
+    /**
+     * Sends transaction for method: registerPolicy
+     * Smart contract: Example (ExampleContract)
+     * Method signature: registerPolicy(string,string)
+     * Binding: TxRegisterPolicy
+     * Registra un nuovo policy
+     * @route POST /contracts/example/tx/register-policy
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {TxRequestExampleRegisterPolicy.model} request.body.required - Request body
+     * @returns {TxResponse.model} 200 - Transaction result
+     * @returns {TxBadRequest.model} 400 - Bad request
+     * @returns {TxSigningForbiddenResponse.model} 403 - Access denied
+     * @security BearerAuthorization
+     */
+    public async txRegisterPolicy(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "policyId", "type": "string" }, { "internalType": "string", "name": "policyTitle", "type": "string" }], "name": "registerPolicy", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+
+        const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        const txBuildData = wrapper.registerPolicy$txBuildDetails.call(wrapper, ...txParams);
 
         await handleTransactionSending(request, response, txBuildData, wrapper.address);
     }

@@ -27,7 +27,7 @@
 
 import { RequestErrorHandler, RequestParams, CommonAuthenticatedErrorHandler } from "@asanrom/request-axios";
 import { getApiUrl, generateURIQuery } from "./utils";
-import { SmartContractInformation, TxResponse, TxRequestExampleInitialize, TxRequestExampleModifyAsset, TxRequestExamplePause, TxRequestExampleRegisterAsset, TxRequestExampleUnpause, TxRequestExampleUpgradeToAndCall, EventListExampleAssetModified, EventListExampleAssetRegistered, EventListExampleInitialized, EventListExamplePaused, EventListExampleUnpaused, EventListExampleUpgraded, CallResponseExampleUPGRADE_INTERFACE_VERSION, CallResponseExampleGetAsset, CallRequestExampleGetAsset, CallResponseExampleGetInitializedVersion, CallResponseExampleIsRegistered, CallRequestExampleIsRegistered, CallResponseExamplePaused, CallResponseExampleProxiableUUID } from "./definitions";
+import { SmartContractInformation, TxResponse, TxRequestExampleInitialize, TxRequestExampleModifyAsset, TxRequestExampleModifyDataoffer, TxRequestExampleModifyPolicy, TxRequestExamplePause, TxRequestExampleRegisterAsset, TxRequestExampleRegisterDataoffer, TxRequestExampleRegisterPolicy, TxRequestExampleUnpause, TxRequestExampleUpgradeToAndCall, EventListExampleAssetModified, EventListExampleAssetRegistered, EventListExampleDataTransferApproved, EventListExampleDataTransferCompleted, EventListExampleDataTransferRejected, EventListExampleDataTransferRequested, EventListExampleDataofferModified, EventListExampleDataofferRegistered, EventListExampleInitialized, EventListExamplePaused, EventListExamplePolicyModified, EventListExamplePolicyRegistered, EventListExampleUnpaused, EventListExampleUpgraded, CallResponseExampleUPGRADE_INTERFACE_VERSION, CallResponseExampleGetAsset, CallRequestExampleGetAsset, CallResponseExampleGetDataoffer, CallRequestExampleGetDataoffer, CallResponseExampleGetInitializedVersion, CallResponseExampleGetPolicy, CallRequestExampleGetPolicy, CallResponseExampleIsRegistered, CallRequestExampleIsRegistered, CallResponseExamplePaused, CallResponseExampleProxiableUUID } from "./definitions";
 
 export class ApiExample {
     /**
@@ -117,6 +117,72 @@ export class ApiExample {
 
     /**
      * Method: POST
+     * Path: /contracts/example/tx/modify-dataoffer
+     * Sends transaction for method: modifyDataoffer
+     * Smart contract: Example (ExampleContract)
+     * Method signature: modifyDataoffer(string,string)
+     * Modifica titolo di un dataoffer
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static TxModifyDataoffer(body: TxRequestExampleModifyDataoffer): RequestParams<TxResponse, TxModifyDataofferErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/tx/modify-dataoffer`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(403, "INVALID_PRIVATE_KEY", handler.forbiddenInvalidPrivateKey)
+                    .add(403, "INVALID_WALLET_PASSWORD", handler.forbiddenInvalidWalletPassword)
+                    .add(403, "WALLET_NOT_FOUND", handler.forbiddenWalletNotFound)
+                    .add(403, "ACCESS_DENIED", handler.forbiddenAccessDenied)
+                    .add(403, "*", handler.forbidden)
+                    .add(400, "INVALID_VALUE", handler.badRequestInvalidValue)
+                    .add(400, "INVALID_PARAMETERS", handler.badRequestInvalidParameters)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
+     * Path: /contracts/example/tx/modify-policy
+     * Sends transaction for method: modifyPolicy
+     * Smart contract: Example (ExampleContract)
+     * Method signature: modifyPolicy(string,string)
+     * Modifica titolo di un policy esistente
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static TxModifyPolicy(body: TxRequestExampleModifyPolicy): RequestParams<TxResponse, TxModifyPolicyErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/tx/modify-policy`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(403, "INVALID_PRIVATE_KEY", handler.forbiddenInvalidPrivateKey)
+                    .add(403, "INVALID_WALLET_PASSWORD", handler.forbiddenInvalidWalletPassword)
+                    .add(403, "WALLET_NOT_FOUND", handler.forbiddenWalletNotFound)
+                    .add(403, "ACCESS_DENIED", handler.forbiddenAccessDenied)
+                    .add(403, "*", handler.forbidden)
+                    .add(400, "INVALID_VALUE", handler.badRequestInvalidValue)
+                    .add(400, "INVALID_PARAMETERS", handler.badRequestInvalidParameters)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
      * Path: /contracts/example/tx/pause
      * Sends transaction for method: pause
      * Smart contract: Example (ExampleContract)
@@ -162,6 +228,72 @@ export class ApiExample {
         return {
             method: "POST",
             url: getApiUrl(`/contracts/example/tx/register-asset`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(403, "INVALID_PRIVATE_KEY", handler.forbiddenInvalidPrivateKey)
+                    .add(403, "INVALID_WALLET_PASSWORD", handler.forbiddenInvalidWalletPassword)
+                    .add(403, "WALLET_NOT_FOUND", handler.forbiddenWalletNotFound)
+                    .add(403, "ACCESS_DENIED", handler.forbiddenAccessDenied)
+                    .add(403, "*", handler.forbidden)
+                    .add(400, "INVALID_VALUE", handler.badRequestInvalidValue)
+                    .add(400, "INVALID_PARAMETERS", handler.badRequestInvalidParameters)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
+     * Path: /contracts/example/tx/register-dataoffer
+     * Sends transaction for method: registerDataoffer
+     * Smart contract: Example (ExampleContract)
+     * Method signature: registerDataoffer(string,string)
+     * Registra un nuovo Dataoffer
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static TxRegisterDataoffer(body: TxRequestExampleRegisterDataoffer): RequestParams<TxResponse, TxRegisterDataofferErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/tx/register-dataoffer`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(403, "INVALID_PRIVATE_KEY", handler.forbiddenInvalidPrivateKey)
+                    .add(403, "INVALID_WALLET_PASSWORD", handler.forbiddenInvalidWalletPassword)
+                    .add(403, "WALLET_NOT_FOUND", handler.forbiddenWalletNotFound)
+                    .add(403, "ACCESS_DENIED", handler.forbiddenAccessDenied)
+                    .add(403, "*", handler.forbidden)
+                    .add(400, "INVALID_VALUE", handler.badRequestInvalidValue)
+                    .add(400, "INVALID_PARAMETERS", handler.badRequestInvalidParameters)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
+     * Path: /contracts/example/tx/register-policy
+     * Sends transaction for method: registerPolicy
+     * Smart contract: Example (ExampleContract)
+     * Method signature: registerPolicy(string,string)
+     * Registra un nuovo policy
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static TxRegisterPolicy(body: TxRequestExampleRegisterPolicy): RequestParams<TxResponse, TxRegisterPolicyErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/tx/register-policy`),
             json: body,
             handleError: (err, handler) => {
                 new RequestErrorHandler()
@@ -294,6 +426,144 @@ export class ApiExample {
 
     /**
      * Method: GET
+     * Path: /contracts/example/events/data-transfer-approved
+     * Get a list of events of type DataTransferApproved
+     * Smart contract: Example (ExampleContract)
+     * Event signature: DataTransferApproved(string,address,uint256)
+     * @param queryParams Query parameters
+     * @returns The request parameters
+     */
+    public static GetEventsDataTransferApproved(queryParams: GetEventsDataTransferApprovedQueryParameters): RequestParams<EventListExampleDataTransferApproved, CommonAuthenticatedErrorHandler> {
+        return {
+            method: "GET",
+            url: getApiUrl(`/contracts/example/events/data-transfer-approved` + generateURIQuery(queryParams)),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: GET
+     * Path: /contracts/example/events/data-transfer-completed
+     * Get a list of events of type DataTransferCompleted
+     * Smart contract: Example (ExampleContract)
+     * Event signature: DataTransferCompleted(string,bytes32,uint256)
+     * @param queryParams Query parameters
+     * @returns The request parameters
+     */
+    public static GetEventsDataTransferCompleted(queryParams: GetEventsDataTransferCompletedQueryParameters): RequestParams<EventListExampleDataTransferCompleted, CommonAuthenticatedErrorHandler> {
+        return {
+            method: "GET",
+            url: getApiUrl(`/contracts/example/events/data-transfer-completed` + generateURIQuery(queryParams)),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: GET
+     * Path: /contracts/example/events/data-transfer-rejected
+     * Get a list of events of type DataTransferRejected
+     * Smart contract: Example (ExampleContract)
+     * Event signature: DataTransferRejected(string,uint256)
+     * @param queryParams Query parameters
+     * @returns The request parameters
+     */
+    public static GetEventsDataTransferRejected(queryParams: GetEventsDataTransferRejectedQueryParameters): RequestParams<EventListExampleDataTransferRejected, CommonAuthenticatedErrorHandler> {
+        return {
+            method: "GET",
+            url: getApiUrl(`/contracts/example/events/data-transfer-rejected` + generateURIQuery(queryParams)),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: GET
+     * Path: /contracts/example/events/data-transfer-requested
+     * Get a list of events of type DataTransferRequested
+     * Smart contract: Example (ExampleContract)
+     * Event signature: DataTransferRequested(string,string,address,uint256)
+     * @param queryParams Query parameters
+     * @returns The request parameters
+     */
+    public static GetEventsDataTransferRequested(queryParams: GetEventsDataTransferRequestedQueryParameters): RequestParams<EventListExampleDataTransferRequested, CommonAuthenticatedErrorHandler> {
+        return {
+            method: "GET",
+            url: getApiUrl(`/contracts/example/events/data-transfer-requested` + generateURIQuery(queryParams)),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: GET
+     * Path: /contracts/example/events/dataoffer-modified
+     * Get a list of events of type DataofferModified
+     * Smart contract: Example (ExampleContract)
+     * Event signature: DataofferModified(string,string,uint256)
+     * @param queryParams Query parameters
+     * @returns The request parameters
+     */
+    public static GetEventsDataofferModified(queryParams: GetEventsDataofferModifiedQueryParameters): RequestParams<EventListExampleDataofferModified, CommonAuthenticatedErrorHandler> {
+        return {
+            method: "GET",
+            url: getApiUrl(`/contracts/example/events/dataoffer-modified` + generateURIQuery(queryParams)),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: GET
+     * Path: /contracts/example/events/dataoffer-registered
+     * Get a list of events of type DataofferRegistered
+     * Smart contract: Example (ExampleContract)
+     * Event signature: DataofferRegistered(address,string,uint256,string)
+     * @param queryParams Query parameters
+     * @returns The request parameters
+     */
+    public static GetEventsDataofferRegistered(queryParams: GetEventsDataofferRegisteredQueryParameters): RequestParams<EventListExampleDataofferRegistered, CommonAuthenticatedErrorHandler> {
+        return {
+            method: "GET",
+            url: getApiUrl(`/contracts/example/events/dataoffer-registered` + generateURIQuery(queryParams)),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: GET
      * Path: /contracts/example/events/initialized
      * Get a list of events of type Initialized
      * Smart contract: Example (ExampleContract)
@@ -329,6 +599,52 @@ export class ApiExample {
         return {
             method: "GET",
             url: getApiUrl(`/contracts/example/events/paused` + generateURIQuery(queryParams)),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: GET
+     * Path: /contracts/example/events/policy-modified
+     * Get a list of events of type PolicyModified
+     * Smart contract: Example (ExampleContract)
+     * Event signature: PolicyModified(string,string,uint256)
+     * @param queryParams Query parameters
+     * @returns The request parameters
+     */
+    public static GetEventsPolicyModified(queryParams: GetEventsPolicyModifiedQueryParameters): RequestParams<EventListExamplePolicyModified, CommonAuthenticatedErrorHandler> {
+        return {
+            method: "GET",
+            url: getApiUrl(`/contracts/example/events/policy-modified` + generateURIQuery(queryParams)),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: GET
+     * Path: /contracts/example/events/policy-registered
+     * Get a list of events of type PolicyRegistered
+     * Smart contract: Example (ExampleContract)
+     * Event signature: PolicyRegistered(address,string,uint256,string)
+     * @param queryParams Query parameters
+     * @returns The request parameters
+     */
+    public static GetEventsPolicyRegistered(queryParams: GetEventsPolicyRegisteredQueryParameters): RequestParams<EventListExamplePolicyRegistered, CommonAuthenticatedErrorHandler> {
+        return {
+            method: "GET",
+            url: getApiUrl(`/contracts/example/events/policy-registered` + generateURIQuery(queryParams)),
             handleError: (err, handler) => {
                 new RequestErrorHandler()
                     .add(401, "*", handler.unauthorized)
@@ -439,6 +755,33 @@ export class ApiExample {
 
     /**
      * Method: POST
+     * Path: /contracts/example/call/get-dataoffer
+     * Calls the view method: getDataoffer
+     * Smart contract: Example (ExampleContract)
+     * Method signature: getDataoffer(string)
+     * Restituisce i dettagli di un policy
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static CallGetDataoffer(body: CallRequestExampleGetDataoffer): RequestParams<CallResponseExampleGetDataoffer, CallGetDataofferErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/call/get-dataoffer`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(404, "*", handler.notFound)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
      * Path: /contracts/example/call/get-initialized-version
      * Calls the view method: getInitializedVersion
      * Smart contract: Example (ExampleContract)
@@ -450,6 +793,33 @@ export class ApiExample {
         return {
             method: "POST",
             url: getApiUrl(`/contracts/example/call/get-initialized-version`),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(404, "*", handler.notFound)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
+     * Path: /contracts/example/call/get-policy
+     * Calls the view method: getPolicy
+     * Smart contract: Example (ExampleContract)
+     * Method signature: getPolicy(string)
+     * Restituisce i dettagli di un policy
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static CallGetPolicy(body: CallRequestExampleGetPolicy): RequestParams<CallResponseExampleGetPolicy, CallGetPolicyErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/call/get-policy`),
+            json: body,
             handleError: (err, handler) => {
                 new RequestErrorHandler()
                     .add(404, "*", handler.notFound)
@@ -630,6 +1000,96 @@ export type TxModifyAssetErrorHandler = CommonAuthenticatedErrorHandler & {
 };
 
 /**
+ * Error handler for TxModifyDataoffer
+ */
+export type TxModifyDataofferErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * Invalid smart contract function parameters
+     */
+    badRequestInvalidParameters: () => void;
+
+    /**
+     * Invalid transaction value
+     */
+    badRequestInvalidValue: () => void;
+
+    /**
+     * General handler for status = 403
+     */
+    forbidden: () => void;
+
+    /**
+     * Access denied to the API
+     */
+    forbiddenAccessDenied: () => void;
+
+    /**
+     * Wallet not found
+     */
+    forbiddenWalletNotFound: () => void;
+
+    /**
+     * Invalid wallet password
+     */
+    forbiddenInvalidWalletPassword: () => void;
+
+    /**
+     * Invalid private key provided
+     */
+    forbiddenInvalidPrivateKey: () => void;
+};
+
+/**
+ * Error handler for TxModifyPolicy
+ */
+export type TxModifyPolicyErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * Invalid smart contract function parameters
+     */
+    badRequestInvalidParameters: () => void;
+
+    /**
+     * Invalid transaction value
+     */
+    badRequestInvalidValue: () => void;
+
+    /**
+     * General handler for status = 403
+     */
+    forbidden: () => void;
+
+    /**
+     * Access denied to the API
+     */
+    forbiddenAccessDenied: () => void;
+
+    /**
+     * Wallet not found
+     */
+    forbiddenWalletNotFound: () => void;
+
+    /**
+     * Invalid wallet password
+     */
+    forbiddenInvalidWalletPassword: () => void;
+
+    /**
+     * Invalid private key provided
+     */
+    forbiddenInvalidPrivateKey: () => void;
+};
+
+/**
  * Error handler for TxPause
  */
 export type TxPauseErrorHandler = CommonAuthenticatedErrorHandler & {
@@ -678,6 +1138,96 @@ export type TxPauseErrorHandler = CommonAuthenticatedErrorHandler & {
  * Error handler for TxRegisterAsset
  */
 export type TxRegisterAssetErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * Invalid smart contract function parameters
+     */
+    badRequestInvalidParameters: () => void;
+
+    /**
+     * Invalid transaction value
+     */
+    badRequestInvalidValue: () => void;
+
+    /**
+     * General handler for status = 403
+     */
+    forbidden: () => void;
+
+    /**
+     * Access denied to the API
+     */
+    forbiddenAccessDenied: () => void;
+
+    /**
+     * Wallet not found
+     */
+    forbiddenWalletNotFound: () => void;
+
+    /**
+     * Invalid wallet password
+     */
+    forbiddenInvalidWalletPassword: () => void;
+
+    /**
+     * Invalid private key provided
+     */
+    forbiddenInvalidPrivateKey: () => void;
+};
+
+/**
+ * Error handler for TxRegisterDataoffer
+ */
+export type TxRegisterDataofferErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * Invalid smart contract function parameters
+     */
+    badRequestInvalidParameters: () => void;
+
+    /**
+     * Invalid transaction value
+     */
+    badRequestInvalidValue: () => void;
+
+    /**
+     * General handler for status = 403
+     */
+    forbidden: () => void;
+
+    /**
+     * Access denied to the API
+     */
+    forbiddenAccessDenied: () => void;
+
+    /**
+     * Wallet not found
+     */
+    forbiddenWalletNotFound: () => void;
+
+    /**
+     * Invalid wallet password
+     */
+    forbiddenInvalidWalletPassword: () => void;
+
+    /**
+     * Invalid private key provided
+     */
+    forbiddenInvalidPrivateKey: () => void;
+};
+
+/**
+ * Error handler for TxRegisterPolicy
+ */
+export type TxRegisterPolicyErrorHandler = CommonAuthenticatedErrorHandler & {
     /**
      * General handler for status = 400
      */
@@ -845,6 +1395,111 @@ export interface GetEventsAssetRegisteredQueryParameters {
 }
 
 /**
+ * Query parameters for GetEventsDataTransferApproved
+ */
+export interface GetEventsDataTransferApprovedQueryParameters {
+    /**
+     * Continuation token
+     */
+    continuationToken?: string;
+
+    /**
+     * Max number of items to get. Default: 25, Max: 256
+     */
+    limit?: string;
+
+    /**
+     * Filter event with a value for the parameter 'provider' equal than the one specified.
+     */
+    filter_eq_pProvider?: string;
+}
+
+/**
+ * Query parameters for GetEventsDataTransferCompleted
+ */
+export interface GetEventsDataTransferCompletedQueryParameters {
+    /**
+     * Continuation token
+     */
+    continuationToken?: string;
+
+    /**
+     * Max number of items to get. Default: 25, Max: 256
+     */
+    limit?: string;
+}
+
+/**
+ * Query parameters for GetEventsDataTransferRejected
+ */
+export interface GetEventsDataTransferRejectedQueryParameters {
+    /**
+     * Continuation token
+     */
+    continuationToken?: string;
+
+    /**
+     * Max number of items to get. Default: 25, Max: 256
+     */
+    limit?: string;
+}
+
+/**
+ * Query parameters for GetEventsDataTransferRequested
+ */
+export interface GetEventsDataTransferRequestedQueryParameters {
+    /**
+     * Continuation token
+     */
+    continuationToken?: string;
+
+    /**
+     * Max number of items to get. Default: 25, Max: 256
+     */
+    limit?: string;
+
+    /**
+     * Filter event with a value for the parameter 'consumer' equal than the one specified.
+     */
+    filter_eq_pConsumer?: string;
+}
+
+/**
+ * Query parameters for GetEventsDataofferModified
+ */
+export interface GetEventsDataofferModifiedQueryParameters {
+    /**
+     * Continuation token
+     */
+    continuationToken?: string;
+
+    /**
+     * Max number of items to get. Default: 25, Max: 256
+     */
+    limit?: string;
+}
+
+/**
+ * Query parameters for GetEventsDataofferRegistered
+ */
+export interface GetEventsDataofferRegisteredQueryParameters {
+    /**
+     * Continuation token
+     */
+    continuationToken?: string;
+
+    /**
+     * Max number of items to get. Default: 25, Max: 256
+     */
+    limit?: string;
+
+    /**
+     * Filter event with a value for the parameter 'owner' equal than the one specified.
+     */
+    filter_eq_pOwner?: string;
+}
+
+/**
  * Query parameters for GetEventsInitialized
  */
 export interface GetEventsInitializedQueryParameters {
@@ -872,6 +1527,41 @@ export interface GetEventsPausedQueryParameters {
      * Max number of items to get. Default: 25, Max: 256
      */
     limit?: string;
+}
+
+/**
+ * Query parameters for GetEventsPolicyModified
+ */
+export interface GetEventsPolicyModifiedQueryParameters {
+    /**
+     * Continuation token
+     */
+    continuationToken?: string;
+
+    /**
+     * Max number of items to get. Default: 25, Max: 256
+     */
+    limit?: string;
+}
+
+/**
+ * Query parameters for GetEventsPolicyRegistered
+ */
+export interface GetEventsPolicyRegisteredQueryParameters {
+    /**
+     * Continuation token
+     */
+    continuationToken?: string;
+
+    /**
+     * Max number of items to get. Default: 25, Max: 256
+     */
+    limit?: string;
+
+    /**
+     * Filter event with a value for the parameter 'owner' equal than the one specified.
+     */
+    filter_eq_pOwner?: string;
 }
 
 /**
@@ -940,9 +1630,39 @@ export type CallGetAssetErrorHandler = CommonAuthenticatedErrorHandler & {
 };
 
 /**
+ * Error handler for CallGetDataoffer
+ */
+export type CallGetDataofferErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * General handler for status = 404
+     */
+    notFound: () => void;
+};
+
+/**
  * Error handler for CallGetInitializedVersion
  */
 export type CallGetInitializedVersionErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * General handler for status = 404
+     */
+    notFound: () => void;
+};
+
+/**
+ * Error handler for CallGetPolicy
+ */
+export type CallGetPolicyErrorHandler = CommonAuthenticatedErrorHandler & {
     /**
      * General handler for status = 400
      */

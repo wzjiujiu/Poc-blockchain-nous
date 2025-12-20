@@ -30,11 +30,19 @@ import { SmartContractsConfig } from "../../config/config-smart-contracts";
 import { SmartContractEventSynchronizer } from "./event-synchronizer";
 import { EventExampleAssetModified } from "../../models/event-sync/example/asset-modified";
 import { EventExampleAssetRegistered } from "../../models/event-sync/example/asset-registered";
+import { EventExampleDataTransferApproved } from "../../models/event-sync/example/data-transfer-approved";
+import { EventExampleDataTransferCompleted } from "../../models/event-sync/example/data-transfer-completed";
+import { EventExampleDataTransferRejected } from "../../models/event-sync/example/data-transfer-rejected";
+import { EventExampleDataTransferRequested } from "../../models/event-sync/example/data-transfer-requested";
+import { EventExampleDataofferModified } from "../../models/event-sync/example/dataoffer-modified";
+import { EventExampleDataofferRegistered } from "../../models/event-sync/example/dataoffer-registered";
 import { EventExampleInitialized } from "../../models/event-sync/example/initialized";
 import { EventExamplePaused } from "../../models/event-sync/example/paused";
+import { EventExamplePolicyModified } from "../../models/event-sync/example/policy-modified";
+import { EventExamplePolicyRegistered } from "../../models/event-sync/example/policy-registered";
 import { EventExampleUnpaused } from "../../models/event-sync/example/unpaused";
 import { EventExampleUpgraded } from "../../models/event-sync/example/upgraded";
-import { createEventUID, normalizeDatabaseUint256, normalizeAddress } from "../../utils/blockchain";
+import { createEventUID, normalizeDatabaseUint256, normalizeAddress, normalizeBytes32 } from "../../utils/blockchain";
 
 /**
  * Event synchronizer for Example (ExampleContract)
@@ -120,6 +128,194 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                         }
                     }
                     break;
+                case "DataTransferApproved":
+                    {
+                        const ev = events.getDataTransferApprovedEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pTransferId = ev.data.transferId;
+                        const pProvider = normalizeAddress(ev.data.provider);
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const exists = await EventExampleDataTransferApproved.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExampleDataTransferApproved({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pTransferId,
+                                pProvider,
+                                pTimestamp,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
+                case "DataTransferCompleted":
+                    {
+                        const ev = events.getDataTransferCompletedEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pTransferId = ev.data.transferId;
+                        const pDataHash = normalizeBytes32(ev.data.dataHash);
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const exists = await EventExampleDataTransferCompleted.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExampleDataTransferCompleted({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pTransferId,
+                                pDataHash,
+                                pTimestamp,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
+                case "DataTransferRejected":
+                    {
+                        const ev = events.getDataTransferRejectedEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pTransferId = ev.data.transferId;
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const exists = await EventExampleDataTransferRejected.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExampleDataTransferRejected({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pTransferId,
+                                pTimestamp,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
+                case "DataTransferRequested":
+                    {
+                        const ev = events.getDataTransferRequestedEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pTransferId = ev.data.transferId;
+                        const pAssetId = ev.data.assetId;
+                        const pConsumer = normalizeAddress(ev.data.consumer);
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const exists = await EventExampleDataTransferRequested.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExampleDataTransferRequested({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pTransferId,
+                                pAssetId,
+                                pConsumer,
+                                pTimestamp,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
+                case "DataofferModified":
+                    {
+                        const ev = events.getDataofferModifiedEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pOfferId = ev.data.offerId;
+                        const pNewTitle = ev.data.newTitle;
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const exists = await EventExampleDataofferModified.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExampleDataofferModified({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pOfferId,
+                                pNewTitle,
+                                pTimestamp,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
+                case "DataofferRegistered":
+                    {
+                        const ev = events.getDataofferRegisteredEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pOwner = normalizeAddress(ev.data.owner);
+                        const pOfferId = ev.data.offerId;
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const pTitle = ev.data.title;
+                        const exists = await EventExampleDataofferRegistered.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExampleDataofferRegistered({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pOwner,
+                                pOfferId,
+                                pTimestamp,
+                                pTitle,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
                 case "Initialized":
                     {
                         const ev = events.getInitializedEvent(i);
@@ -168,6 +364,70 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 eventIndex,
                                 tx,
                                 pBy,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
+                case "PolicyModified":
+                    {
+                        const ev = events.getPolicyModifiedEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pPolicyId = ev.data.policyId;
+                        const pNewTitle = ev.data.newTitle;
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const exists = await EventExamplePolicyModified.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExamplePolicyModified({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pPolicyId,
+                                pNewTitle,
+                                pTimestamp,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
+                case "PolicyRegistered":
+                    {
+                        const ev = events.getPolicyRegisteredEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pOwner = normalizeAddress(ev.data.owner);
+                        const pPolicyId = ev.data.policyId;
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const pTitle = ev.data.title;
+                        const exists = await EventExamplePolicyRegistered.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExamplePolicyRegistered({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pOwner,
+                                pPolicyId,
+                                pTimestamp,
+                                pTitle,
                             });
 
                             await newEvent.insert();
@@ -234,8 +494,16 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
     async reset(): Promise<void> {
         await EventExampleAssetModified.reset();
         await EventExampleAssetRegistered.reset();
+        await EventExampleDataTransferApproved.reset();
+        await EventExampleDataTransferCompleted.reset();
+        await EventExampleDataTransferRejected.reset();
+        await EventExampleDataTransferRequested.reset();
+        await EventExampleDataofferModified.reset();
+        await EventExampleDataofferRegistered.reset();
         await EventExampleInitialized.reset();
         await EventExamplePaused.reset();
+        await EventExamplePolicyModified.reset();
+        await EventExamplePolicyRegistered.reset();
         await EventExampleUnpaused.reset();
         await EventExampleUpgraded.reset();
     }

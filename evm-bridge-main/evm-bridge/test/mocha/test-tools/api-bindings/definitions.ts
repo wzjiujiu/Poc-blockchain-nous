@@ -1582,6 +1582,42 @@ export interface TxRequestExampleModifyAsset {
     txSign: TxSigningOptions;
 }
 
+export interface TxParamsExampleModifyDataoffer {
+    /**
+     * offerId
+     */
+    offerId: string;
+
+    /**
+     * newTitle
+     */
+    newTitle: string;
+}
+
+export interface TxRequestExampleModifyDataoffer {
+    parameters: TxParamsExampleModifyDataoffer;
+
+    txSign: TxSigningOptions;
+}
+
+export interface TxParamsExampleModifyPolicy {
+    /**
+     * policyId
+     */
+    policyId: string;
+
+    /**
+     * newTitle
+     */
+    newTitle: string;
+}
+
+export interface TxRequestExampleModifyPolicy {
+    parameters: TxParamsExampleModifyPolicy;
+
+    txSign: TxSigningOptions;
+}
+
 export interface TxRequestExamplePause {
     txSign: TxSigningOptions;
 }
@@ -1600,6 +1636,42 @@ export interface TxParamsExampleRegisterAsset {
 
 export interface TxRequestExampleRegisterAsset {
     parameters: TxParamsExampleRegisterAsset;
+
+    txSign: TxSigningOptions;
+}
+
+export interface TxParamsExampleRegisterDataoffer {
+    /**
+     * offerId
+     */
+    offerId: string;
+
+    /**
+     * offerTitle
+     */
+    offerTitle: string;
+}
+
+export interface TxRequestExampleRegisterDataoffer {
+    parameters: TxParamsExampleRegisterDataoffer;
+
+    txSign: TxSigningOptions;
+}
+
+export interface TxParamsExampleRegisterPolicy {
+    /**
+     * policyId
+     */
+    policyId: string;
+
+    /**
+     * policyTitle
+     */
+    policyTitle: string;
+}
+
+export interface TxRequestExampleRegisterPolicy {
+    parameters: TxParamsExampleRegisterPolicy;
 
     txSign: TxSigningOptions;
 }
@@ -1741,6 +1813,341 @@ export interface EventListExampleAssetRegistered {
     continuationToken?: string;
 }
 
+export interface EventParamsExampleDataTransferApproved {
+    /**
+     * transferId
+     */
+    transferId: string;
+
+    /**
+     * provider 
+     */
+    provider: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+}
+
+export interface EventItemExampleDataTransferApproved {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExampleDataTransferApproved;
+}
+
+export interface EventListExampleDataTransferApproved {
+    events: EventItemExampleDataTransferApproved[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
+export interface EventParamsExampleDataTransferCompleted {
+    /**
+     * transferId
+     */
+    transferId: string;
+
+    /**
+     * dataHash 
+     */
+    dataHash: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+}
+
+export interface EventItemExampleDataTransferCompleted {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExampleDataTransferCompleted;
+}
+
+export interface EventListExampleDataTransferCompleted {
+    events: EventItemExampleDataTransferCompleted[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
+export interface EventParamsExampleDataTransferRejected {
+    /**
+     * transferId
+     */
+    transferId: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+}
+
+export interface EventItemExampleDataTransferRejected {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExampleDataTransferRejected;
+}
+
+export interface EventListExampleDataTransferRejected {
+    events: EventItemExampleDataTransferRejected[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
+export interface EventParamsExampleDataTransferRequested {
+    /**
+     * transferId
+     */
+    transferId: string;
+
+    /**
+     * assetId
+     */
+    assetId: string;
+
+    /**
+     * consumer 
+     */
+    consumer: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+}
+
+export interface EventItemExampleDataTransferRequested {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExampleDataTransferRequested;
+}
+
+export interface EventListExampleDataTransferRequested {
+    events: EventItemExampleDataTransferRequested[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
+export interface EventParamsExampleDataofferModified {
+    /**
+     * offerId
+     */
+    offerId: string;
+
+    /**
+     * newTitle
+     */
+    newTitle: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+}
+
+export interface EventItemExampleDataofferModified {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExampleDataofferModified;
+}
+
+export interface EventListExampleDataofferModified {
+    events: EventItemExampleDataofferModified[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
+export interface EventParamsExampleDataofferRegistered {
+    /**
+     * owner 
+     */
+    owner: string;
+
+    /**
+     * offerId
+     */
+    offerId: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+
+    /**
+     * title
+     */
+    title: string;
+}
+
+export interface EventItemExampleDataofferRegistered {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExampleDataofferRegistered;
+}
+
+export interface EventListExampleDataofferRegistered {
+    events: EventItemExampleDataofferRegistered[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
 export interface EventParamsExampleInitialized {
     /**
      * version 
@@ -1824,6 +2231,121 @@ export interface EventItemExamplePaused {
 
 export interface EventListExamplePaused {
     events: EventItemExamplePaused[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
+export interface EventParamsExamplePolicyModified {
+    /**
+     * policyId
+     */
+    policyId: string;
+
+    /**
+     * newTitle
+     */
+    newTitle: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+}
+
+export interface EventItemExamplePolicyModified {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExamplePolicyModified;
+}
+
+export interface EventListExamplePolicyModified {
+    events: EventItemExamplePolicyModified[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
+export interface EventParamsExamplePolicyRegistered {
+    /**
+     * owner 
+     */
+    owner: string;
+
+    /**
+     * policyId
+     */
+    policyId: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+
+    /**
+     * title
+     */
+    title: string;
+}
+
+export interface EventItemExamplePolicyRegistered {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExamplePolicyRegistered;
+}
+
+export interface EventListExamplePolicyRegistered {
+    events: EventItemExamplePolicyRegistered[];
 
     /**
      * Continuation token 
@@ -1957,11 +2479,69 @@ export interface CallResponseExampleGetAsset {
     title: string;
 }
 
+export interface CallRequestExampleGetDataoffer {
+    /**
+     * offerId
+     */
+    offerId: string;
+}
+
+export interface CallResponseExampleGetDataoffer {
+    /**
+     * id
+     */
+    id: string;
+
+    /**
+     * owner 
+     */
+    owner: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+
+    /**
+     * title
+     */
+    title: string;
+}
+
 export interface CallResponseExampleGetInitializedVersion {
     /**
      * The current initialized version 
      */
     v: string;
+}
+
+export interface CallRequestExampleGetPolicy {
+    /**
+     * policyId
+     */
+    policyId: string;
+}
+
+export interface CallResponseExampleGetPolicy {
+    /**
+     * id
+     */
+    id: string;
+
+    /**
+     * owner 
+     */
+    owner: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+
+    /**
+     * title
+     */
+    title: string;
 }
 
 export interface CallRequestExampleIsRegistered {

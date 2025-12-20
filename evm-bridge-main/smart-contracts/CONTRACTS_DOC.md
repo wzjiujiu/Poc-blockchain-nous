@@ -211,16 +211,28 @@ This is an example smart contract
 **getAsset(string)**
  - Description: Restituisce i dettagli di un asset
 
+**getDataoffer(string)**
+ - Description: Restituisce i dettagli di un policy
+
 **getInitializedVersion()**
  - Description: Gets the current initialized version Use this method to figure out the last deployed version of the contract
  - Returns:
     - `v` - The current initialized version
+
+**getPolicy(string)**
+ - Description: Restituisce i dettagli di un policy
 
 **isRegistered(string)**
  - Description: Controlla se un asset è registrato
 
 **modifyAsset(string,string)**
  - Description: Modifica titolo di un asset esistente
+
+**modifyDataoffer(string,string)**
+ - Description: Modifica titolo di un dataoffer
+
+**modifyPolicy(string,string)**
+ - Description: Modifica titolo di un policy esistente
 
 **pause()**
  - Description: Pauses the smart contract Requires ADMIN role
@@ -235,6 +247,12 @@ This is an example smart contract
 
 **registerAsset(string,string)**
  - Description: Registra un nuovo asset
+
+**registerDataoffer(string,string)**
+ - Description: Registra un nuovo Dataoffer
+
+**registerPolicy(string,string)**
+ - Description: Registra un nuovo policy
 
 **unpause()**
  - Description: Unpauses the smart contract Requires ADMIN role

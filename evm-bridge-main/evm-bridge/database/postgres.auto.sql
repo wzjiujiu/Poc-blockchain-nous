@@ -45,6 +45,100 @@ CREATE INDEX "ix_event_example_asset_registered_s_2" ON "event_example_asset_reg
 CREATE INDEX "ix_event_example_asset_registered_s_3" ON "event_example_asset_registered"("tx");
 CREATE INDEX "ix_event_example_asset_registered_s_4" ON "event_example_asset_registered"("p_owner", "id" DESC);
 
+CREATE TABLE "event_example_data_transfer_approved" (
+    "id" VARCHAR(255) PRIMARY KEY,
+    "block" BIGINT,
+    "event_index" BIGINT,
+    "tx" VARCHAR(255),
+    "timestamp" BIGINT,
+    "p_transfer_id" TEXT,
+    "p_provider" VARCHAR(255),
+    "p_timestamp" VARCHAR(255)
+);
+
+CREATE INDEX "ix_event_example_data_transfer_approved_s_1" ON "event_example_data_transfer_approved"("id" DESC);
+CREATE INDEX "ix_event_example_data_transfer_approved_s_2" ON "event_example_data_transfer_approved"("block");
+CREATE INDEX "ix_event_example_data_transfer_approved_s_3" ON "event_example_data_transfer_approved"("tx");
+CREATE INDEX "ix_event_example_data_transfer_approved_s_4" ON "event_example_data_transfer_approved"("p_provider", "id" DESC);
+
+CREATE TABLE "event_example_data_transfer_completed" (
+    "id" VARCHAR(255) PRIMARY KEY,
+    "block" BIGINT,
+    "event_index" BIGINT,
+    "tx" VARCHAR(255),
+    "timestamp" BIGINT,
+    "p_transfer_id" TEXT,
+    "p_data_hash" VARCHAR(255),
+    "p_timestamp" VARCHAR(255)
+);
+
+CREATE INDEX "ix_event_example_data_transfer_completed_s_1" ON "event_example_data_transfer_completed"("id" DESC);
+CREATE INDEX "ix_event_example_data_transfer_completed_s_2" ON "event_example_data_transfer_completed"("block");
+CREATE INDEX "ix_event_example_data_transfer_completed_s_3" ON "event_example_data_transfer_completed"("tx");
+
+CREATE TABLE "event_example_data_transfer_rejected" (
+    "id" VARCHAR(255) PRIMARY KEY,
+    "block" BIGINT,
+    "event_index" BIGINT,
+    "tx" VARCHAR(255),
+    "timestamp" BIGINT,
+    "p_transfer_id" TEXT,
+    "p_timestamp" VARCHAR(255)
+);
+
+CREATE INDEX "ix_event_example_data_transfer_rejected_s_1" ON "event_example_data_transfer_rejected"("id" DESC);
+CREATE INDEX "ix_event_example_data_transfer_rejected_s_2" ON "event_example_data_transfer_rejected"("block");
+CREATE INDEX "ix_event_example_data_transfer_rejected_s_3" ON "event_example_data_transfer_rejected"("tx");
+
+CREATE TABLE "event_example_data_transfer_requested" (
+    "id" VARCHAR(255) PRIMARY KEY,
+    "block" BIGINT,
+    "event_index" BIGINT,
+    "tx" VARCHAR(255),
+    "timestamp" BIGINT,
+    "p_transfer_id" TEXT,
+    "p_asset_id" TEXT,
+    "p_consumer" VARCHAR(255),
+    "p_timestamp" VARCHAR(255)
+);
+
+CREATE INDEX "ix_event_example_data_transfer_requested_s_1" ON "event_example_data_transfer_requested"("id" DESC);
+CREATE INDEX "ix_event_example_data_transfer_requested_s_2" ON "event_example_data_transfer_requested"("block");
+CREATE INDEX "ix_event_example_data_transfer_requested_s_3" ON "event_example_data_transfer_requested"("tx");
+CREATE INDEX "ix_event_example_data_transfer_requested_s_4" ON "event_example_data_transfer_requested"("p_consumer", "id" DESC);
+
+CREATE TABLE "event_example_dataoffer_modified" (
+    "id" VARCHAR(255) PRIMARY KEY,
+    "block" BIGINT,
+    "event_index" BIGINT,
+    "tx" VARCHAR(255),
+    "timestamp" BIGINT,
+    "p_offer_id" TEXT,
+    "p_new_title" TEXT,
+    "p_timestamp" VARCHAR(255)
+);
+
+CREATE INDEX "ix_event_example_dataoffer_modified_s_1" ON "event_example_dataoffer_modified"("id" DESC);
+CREATE INDEX "ix_event_example_dataoffer_modified_s_2" ON "event_example_dataoffer_modified"("block");
+CREATE INDEX "ix_event_example_dataoffer_modified_s_3" ON "event_example_dataoffer_modified"("tx");
+
+CREATE TABLE "event_example_dataoffer_registered" (
+    "id" VARCHAR(255) PRIMARY KEY,
+    "block" BIGINT,
+    "event_index" BIGINT,
+    "tx" VARCHAR(255),
+    "timestamp" BIGINT,
+    "p_owner" VARCHAR(255),
+    "p_offer_id" TEXT,
+    "p_timestamp" VARCHAR(255),
+    "p_title" TEXT
+);
+
+CREATE INDEX "ix_event_example_dataoffer_registered_s_1" ON "event_example_dataoffer_registered"("id" DESC);
+CREATE INDEX "ix_event_example_dataoffer_registered_s_2" ON "event_example_dataoffer_registered"("block");
+CREATE INDEX "ix_event_example_dataoffer_registered_s_3" ON "event_example_dataoffer_registered"("tx");
+CREATE INDEX "ix_event_example_dataoffer_registered_s_4" ON "event_example_dataoffer_registered"("p_owner", "id" DESC);
+
 CREATE TABLE "event_example_initialized" (
     "id" VARCHAR(255) PRIMARY KEY,
     "block" BIGINT,
@@ -70,6 +164,38 @@ CREATE TABLE "event_example_paused" (
 CREATE INDEX "ix_event_example_paused_s_1" ON "event_example_paused"("id" DESC);
 CREATE INDEX "ix_event_example_paused_s_2" ON "event_example_paused"("block");
 CREATE INDEX "ix_event_example_paused_s_3" ON "event_example_paused"("tx");
+
+CREATE TABLE "event_example_policy_modified" (
+    "id" VARCHAR(255) PRIMARY KEY,
+    "block" BIGINT,
+    "event_index" BIGINT,
+    "tx" VARCHAR(255),
+    "timestamp" BIGINT,
+    "p_policy_id" TEXT,
+    "p_new_title" TEXT,
+    "p_timestamp" VARCHAR(255)
+);
+
+CREATE INDEX "ix_event_example_policy_modified_s_1" ON "event_example_policy_modified"("id" DESC);
+CREATE INDEX "ix_event_example_policy_modified_s_2" ON "event_example_policy_modified"("block");
+CREATE INDEX "ix_event_example_policy_modified_s_3" ON "event_example_policy_modified"("tx");
+
+CREATE TABLE "event_example_policy_registered" (
+    "id" VARCHAR(255) PRIMARY KEY,
+    "block" BIGINT,
+    "event_index" BIGINT,
+    "tx" VARCHAR(255),
+    "timestamp" BIGINT,
+    "p_owner" VARCHAR(255),
+    "p_policy_id" TEXT,
+    "p_timestamp" VARCHAR(255),
+    "p_title" TEXT
+);
+
+CREATE INDEX "ix_event_example_policy_registered_s_1" ON "event_example_policy_registered"("id" DESC);
+CREATE INDEX "ix_event_example_policy_registered_s_2" ON "event_example_policy_registered"("block");
+CREATE INDEX "ix_event_example_policy_registered_s_3" ON "event_example_policy_registered"("tx");
+CREATE INDEX "ix_event_example_policy_registered_s_4" ON "event_example_policy_registered"("p_owner", "id" DESC);
 
 CREATE TABLE "event_example_unpaused" (
     "id" VARCHAR(255) PRIMARY KEY,

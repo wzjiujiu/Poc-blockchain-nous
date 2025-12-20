@@ -88,6 +88,23 @@ export class ExampleContractWrapper {
     }
 
     /**
+     * Calls View method: getDataoffer(string)
+     * Restituisce i dettagli di un policy
+     * @param offerId offerId
+     * @param options The options for sending the request
+     * @returns The result for calling the method
+     */
+    public async getDataoffer(offerId: string, options?: MethodCallingOptions): Promise<{id: string, owner: Address, timestamp: Quantity, title: string}> {
+        const __r: any = await this._contractInterface.callViewMethod("getDataoffer", [offerId], options || {});
+        return {
+            id: __r[0],
+            owner: __r[1],
+            timestamp: __r[2],
+            title: __r[3],
+        };
+    }
+
+    /**
      * Calls View method: getInitializedVersion()
      * Gets the current initialized version Use this method to figure out the last deployed version of the contract
      * @param options The options for sending the request
@@ -96,6 +113,23 @@ export class ExampleContractWrapper {
     public async getInitializedVersion(options?: MethodCallingOptions): Promise<Quantity> {
         const __r: any = await this._contractInterface.callViewMethod("getInitializedVersion", [], options || {});
         return __r[0];
+    }
+
+    /**
+     * Calls View method: getPolicy(string)
+     * Restituisce i dettagli di un policy
+     * @param policyId policyId
+     * @param options The options for sending the request
+     * @returns The result for calling the method
+     */
+    public async getPolicy(policyId: string, options?: MethodCallingOptions): Promise<{id: string, owner: Address, timestamp: Quantity, title: string}> {
+        const __r: any = await this._contractInterface.callViewMethod("getPolicy", [policyId], options || {});
+        return {
+            id: __r[0],
+            owner: __r[1],
+            timestamp: __r[2],
+            title: __r[3],
+        };
     }
 
     /**
@@ -193,6 +227,66 @@ export class ExampleContractWrapper {
     }
 
     /**
+     * Calls Transaction method: modifyDataoffer(string,string)
+     * Modifica titolo di un dataoffer
+     * @param offerId offerId
+     * @param newTitle newTitle
+     * @param options The options for sending the transaction
+     * @returns The transaction result
+     */
+    public async modifyDataoffer(offerId: string, newTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("modifyDataoffer", [offerId, newTitle], options);
+    
+        if (__r.receipt.status > BigInt(0)) {
+            const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
+            return { receipt: __r.receipt, result: new ExampleContractEventCollection(decodedEvents) };
+        } else {
+            throw new Error("Transaction reverted");
+        }
+    }
+    
+    /**
+     * Gets details for building a transaction calling the method: modifyDataoffer(string,string)
+     * Modifica titolo di un dataoffer
+     * @param offerId offerId
+     * @param newTitle newTitle
+     * @returns The details for building the transaction
+     */
+    public modifyDataoffer$txBuildDetails(offerId: string, newTitle: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("modifyDataoffer", [offerId, newTitle]);
+    }
+
+    /**
+     * Calls Transaction method: modifyPolicy(string,string)
+     * Modifica titolo di un policy esistente
+     * @param policyId policyId
+     * @param newTitle newTitle
+     * @param options The options for sending the transaction
+     * @returns The transaction result
+     */
+    public async modifyPolicy(policyId: string, newTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("modifyPolicy", [policyId, newTitle], options);
+    
+        if (__r.receipt.status > BigInt(0)) {
+            const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
+            return { receipt: __r.receipt, result: new ExampleContractEventCollection(decodedEvents) };
+        } else {
+            throw new Error("Transaction reverted");
+        }
+    }
+    
+    /**
+     * Gets details for building a transaction calling the method: modifyPolicy(string,string)
+     * Modifica titolo di un policy esistente
+     * @param policyId policyId
+     * @param newTitle newTitle
+     * @returns The details for building the transaction
+     */
+    public modifyPolicy$txBuildDetails(policyId: string, newTitle: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("modifyPolicy", [policyId, newTitle]);
+    }
+
+    /**
      * Calls Transaction method: pause()
      * Pauses the smart contract Requires ADMIN role
      * @param options The options for sending the transaction
@@ -246,6 +340,66 @@ export class ExampleContractWrapper {
      */
     public registerAsset$txBuildDetails(assetId: string, assetTitle: string): TransactionBuildDetails {
         return this._contractInterface.encodeMutableMethod("registerAsset", [assetId, assetTitle]);
+    }
+
+    /**
+     * Calls Transaction method: registerDataoffer(string,string)
+     * Registra un nuovo Dataoffer
+     * @param offerId offerId
+     * @param offerTitle offerTitle
+     * @param options The options for sending the transaction
+     * @returns The transaction result
+     */
+    public async registerDataoffer(offerId: string, offerTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("registerDataoffer", [offerId, offerTitle], options);
+    
+        if (__r.receipt.status > BigInt(0)) {
+            const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
+            return { receipt: __r.receipt, result: new ExampleContractEventCollection(decodedEvents) };
+        } else {
+            throw new Error("Transaction reverted");
+        }
+    }
+    
+    /**
+     * Gets details for building a transaction calling the method: registerDataoffer(string,string)
+     * Registra un nuovo Dataoffer
+     * @param offerId offerId
+     * @param offerTitle offerTitle
+     * @returns The details for building the transaction
+     */
+    public registerDataoffer$txBuildDetails(offerId: string, offerTitle: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("registerDataoffer", [offerId, offerTitle]);
+    }
+
+    /**
+     * Calls Transaction method: registerPolicy(string,string)
+     * Registra un nuovo policy
+     * @param policyId policyId
+     * @param policyTitle policyTitle
+     * @param options The options for sending the transaction
+     * @returns The transaction result
+     */
+    public async registerPolicy(policyId: string, policyTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("registerPolicy", [policyId, policyTitle], options);
+    
+        if (__r.receipt.status > BigInt(0)) {
+            const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
+            return { receipt: __r.receipt, result: new ExampleContractEventCollection(decodedEvents) };
+        } else {
+            throw new Error("Transaction reverted");
+        }
+    }
+    
+    /**
+     * Gets details for building a transaction calling the method: registerPolicy(string,string)
+     * Registra un nuovo policy
+     * @param policyId policyId
+     * @param policyTitle policyTitle
+     * @returns The details for building the transaction
+     */
+    public registerPolicy$txBuildDetails(policyId: string, policyTitle: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("registerPolicy", [policyId, policyTitle]);
     }
 
     /**
@@ -319,7 +473,7 @@ export class ExampleContractWrapper {
 /**
  * Possible event types for contract: ExampleContract
  */
-export type ExampleContractEventType = "AssetModified" | "AssetRegistered" | "Initialized" | "Paused" | "Unpaused" | "Upgraded";
+export type ExampleContractEventType = "AssetModified" | "AssetRegistered" | "DataTransferApproved" | "DataTransferCompleted" | "DataTransferRejected" | "DataTransferRequested" | "DataofferModified" | "DataofferRegistered" | "Initialized" | "Paused" | "PolicyModified" | "PolicyRegistered" | "Unpaused" | "Upgraded";
 
 /**
  * Collection of events for contract: ExampleContract
@@ -400,6 +554,109 @@ export class ExampleContractEventCollection {
     }
 
     /**
+     * Get an event of type DataTransferApproved(string,address,uint256) from the collection
+     * @param index Event index in the collection (from 0 to length - 1)
+     * @returns The event object
+     */
+    public getDataTransferApprovedEvent(index: number): SmartContractEventWrapper<DataTransferApprovedEvent> {
+        const __r: any = this.events[index].parameters;
+        return {
+            event: this.events[index],
+            data: {
+                transferId: __r[0],
+                provider: __r[1],
+                timestamp: __r[2],
+            },
+        };
+    }
+
+    /**
+     * Get an event of type DataTransferCompleted(string,bytes32,uint256) from the collection
+     * @param index Event index in the collection (from 0 to length - 1)
+     * @returns The event object
+     */
+    public getDataTransferCompletedEvent(index: number): SmartContractEventWrapper<DataTransferCompletedEvent> {
+        const __r: any = this.events[index].parameters;
+        return {
+            event: this.events[index],
+            data: {
+                transferId: __r[0],
+                dataHash: __r[1],
+                timestamp: __r[2],
+            },
+        };
+    }
+
+    /**
+     * Get an event of type DataTransferRejected(string,uint256) from the collection
+     * @param index Event index in the collection (from 0 to length - 1)
+     * @returns The event object
+     */
+    public getDataTransferRejectedEvent(index: number): SmartContractEventWrapper<DataTransferRejectedEvent> {
+        const __r: any = this.events[index].parameters;
+        return {
+            event: this.events[index],
+            data: {
+                transferId: __r[0],
+                timestamp: __r[1],
+            },
+        };
+    }
+
+    /**
+     * Get an event of type DataTransferRequested(string,string,address,uint256) from the collection
+     * @param index Event index in the collection (from 0 to length - 1)
+     * @returns The event object
+     */
+    public getDataTransferRequestedEvent(index: number): SmartContractEventWrapper<DataTransferRequestedEvent> {
+        const __r: any = this.events[index].parameters;
+        return {
+            event: this.events[index],
+            data: {
+                transferId: __r[0],
+                assetId: __r[1],
+                consumer: __r[2],
+                timestamp: __r[3],
+            },
+        };
+    }
+
+    /**
+     * Get an event of type DataofferModified(string,string,uint256) from the collection
+     * @param index Event index in the collection (from 0 to length - 1)
+     * @returns The event object
+     */
+    public getDataofferModifiedEvent(index: number): SmartContractEventWrapper<DataofferModifiedEvent> {
+        const __r: any = this.events[index].parameters;
+        return {
+            event: this.events[index],
+            data: {
+                offerId: __r[0],
+                newTitle: __r[1],
+                timestamp: __r[2],
+            },
+        };
+    }
+
+    /**
+     * Get an event of type DataofferRegistered(address,string,uint256,string) from the collection
+     * @param index Event index in the collection (from 0 to length - 1)
+     * @returns The event object
+     */
+    public getDataofferRegisteredEvent(index: number): SmartContractEventWrapper<DataofferRegisteredEvent> {
+        const __r: any = this.events[index].parameters;
+        return {
+            event: this.events[index],
+            data: {
+                owner: __r[0],
+                offerId: __r[1],
+                timestamp: __r[2],
+                title: __r[3],
+            },
+        };
+    }
+
+    /**
      * Get an event of type Initialized(uint64) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
@@ -425,6 +682,41 @@ export class ExampleContractEventCollection {
             event: this.events[index],
             data: {
                 by: __r[0],
+            },
+        };
+    }
+
+    /**
+     * Get an event of type PolicyModified(string,string,uint256) from the collection
+     * @param index Event index in the collection (from 0 to length - 1)
+     * @returns The event object
+     */
+    public getPolicyModifiedEvent(index: number): SmartContractEventWrapper<PolicyModifiedEvent> {
+        const __r: any = this.events[index].parameters;
+        return {
+            event: this.events[index],
+            data: {
+                policyId: __r[0],
+                newTitle: __r[1],
+                timestamp: __r[2],
+            },
+        };
+    }
+
+    /**
+     * Get an event of type PolicyRegistered(address,string,uint256,string) from the collection
+     * @param index Event index in the collection (from 0 to length - 1)
+     * @returns The event object
+     */
+    public getPolicyRegisteredEvent(index: number): SmartContractEventWrapper<PolicyRegisteredEvent> {
+        const __r: any = this.events[index].parameters;
+        return {
+            event: this.events[index],
+            data: {
+                owner: __r[0],
+                policyId: __r[1],
+                timestamp: __r[2],
+                title: __r[3],
             },
         };
     }
@@ -485,6 +777,74 @@ export interface AssetRegisteredEvent {
 }
 
 /**
+ * Event: DataTransferApproved(string,address,uint256)
+ */
+export interface DataTransferApprovedEvent {
+    transferId: string,
+
+    provider: Address,
+
+    timestamp: Quantity,
+}
+
+/**
+ * Event: DataTransferCompleted(string,bytes32,uint256)
+ */
+export interface DataTransferCompletedEvent {
+    transferId: string,
+
+    dataHash: string,
+
+    timestamp: Quantity,
+}
+
+/**
+ * Event: DataTransferRejected(string,uint256)
+ */
+export interface DataTransferRejectedEvent {
+    transferId: string,
+
+    timestamp: Quantity,
+}
+
+/**
+ * Event: DataTransferRequested(string,string,address,uint256)
+ */
+export interface DataTransferRequestedEvent {
+    transferId: string,
+
+    assetId: string,
+
+    consumer: Address,
+
+    timestamp: Quantity,
+}
+
+/**
+ * Event: DataofferModified(string,string,uint256)
+ */
+export interface DataofferModifiedEvent {
+    offerId: string,
+
+    newTitle: string,
+
+    timestamp: Quantity,
+}
+
+/**
+ * Event: DataofferRegistered(address,string,uint256,string)
+ */
+export interface DataofferRegisteredEvent {
+    owner: Address,
+
+    offerId: string,
+
+    timestamp: Quantity,
+
+    title: string,
+}
+
+/**
  * Event: Initialized(uint64)
  */
 export interface InitializedEvent {
@@ -500,6 +860,30 @@ export interface PausedEvent {
      * The administrator who paused the smart contract
      */
     by: Address,
+}
+
+/**
+ * Event: PolicyModified(string,string,uint256)
+ */
+export interface PolicyModifiedEvent {
+    policyId: string,
+
+    newTitle: string,
+
+    timestamp: Quantity,
+}
+
+/**
+ * Event: PolicyRegistered(address,string,uint256,string)
+ */
+export interface PolicyRegisteredEvent {
+    owner: Address,
+
+    policyId: string,
+
+    timestamp: Quantity,
+
+    title: string,
 }
 
 /**
@@ -640,6 +1024,162 @@ const CONTRACT_ABI: ABILike = [
         "inputs": [
             {
                 "indexed": false,
+                "internalType": "string",
+                "name": "transferId",
+                "type": "string"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "provider",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            }
+        ],
+        "name": "DataTransferApproved",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "transferId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes32",
+                "name": "dataHash",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            }
+        ],
+        "name": "DataTransferCompleted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "transferId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            }
+        ],
+        "name": "DataTransferRejected",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "transferId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "assetId",
+                "type": "string"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "consumer",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            }
+        ],
+        "name": "DataTransferRequested",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "offerId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "newTitle",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            }
+        ],
+        "name": "DataofferModified",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "offerId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            }
+        ],
+        "name": "DataofferRegistered",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
                 "internalType": "uint64",
                 "name": "version",
                 "type": "uint64"
@@ -659,6 +1199,62 @@ const CONTRACT_ABI: ABILike = [
             }
         ],
         "name": "Paused",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "policyId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "newTitle",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            }
+        ],
+        "name": "PolicyModified",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "policyId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            }
+        ],
+        "name": "PolicyRegistered",
         "type": "event"
     },
     {
@@ -735,6 +1331,40 @@ const CONTRACT_ABI: ABILike = [
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "offerId",
+                "type": "string"
+            }
+        ],
+        "name": "getDataoffer",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "id",
+                "type": "string"
+            },
+            {
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "getInitializedVersion",
         "outputs": [
@@ -742,6 +1372,40 @@ const CONTRACT_ABI: ABILike = [
                 "internalType": "uint64",
                 "name": "v",
                 "type": "uint64"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "policyId",
+                "type": "string"
+            }
+        ],
+        "name": "getPolicy",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "id",
+                "type": "string"
+            },
+            {
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
             }
         ],
         "stateMutability": "view",
@@ -803,6 +1467,42 @@ const CONTRACT_ABI: ABILike = [
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "offerId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "newTitle",
+                "type": "string"
+            }
+        ],
+        "name": "modifyDataoffer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "policyId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "newTitle",
+                "type": "string"
+            }
+        ],
+        "name": "modifyPolicy",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "pause",
         "outputs": [],
@@ -849,6 +1549,42 @@ const CONTRACT_ABI: ABILike = [
             }
         ],
         "name": "registerAsset",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "offerId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "offerTitle",
+                "type": "string"
+            }
+        ],
+        "name": "registerDataoffer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "policyId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "policyTitle",
+                "type": "string"
+            }
+        ],
+        "name": "registerPolicy",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
