@@ -115,6 +115,58 @@ After starting local demo throught Docker you can see at [localhost 11000](http:
 
 After Loading POSTMAN API COLLECTION WE CAN SEE following screen 
 
-![POSTMAN API COLLECTION](docs/POSTMAN.jpg)
+![POSTMAN API COLLECTION](docs/postman.jpg)
+
+THE REST API Disponible to test are :
+| API | URL |
+|---------|-------------|
+| **CREATE ASSET POST** | {{PROVIDER_EDC_MANAGEMENT_URL}}/v3/assets |
+| **EDIT ASSET METADATA(WITHOUT DATAADRESS) PUT** | {{PROVIDER_EDC_MANAGEMENT_URL}}/v3/assets |
+| **CREATE POLICY POST** |{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/policydefinitions  |
+| **CREATE POLICY (TIME-PERIOD-RESTRICTION) POST** |{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/policydefinitions  |
+| **EDIT POLICY (TEMPLATE) POST** |{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/policydefinitions/{POLICY ID}  |
+
+THE POST RESPONSE SCRIPT TO ADD FOR redirecting to the webhook:
+```bash
+let responseData = {};
+try {
+    responseData = pm.response.json();
+} catch (e) {
+    responseData = { raw: pm.response.text() };
+}
+
+// Extract target port (11000 / 22000)
+let requestUrl = pm.request.url;
+let port = requestUrl.port ? requestUrl.port.toString() : null;
+
+// Build payload
+let logPayload = {
+    request: {
+        method: pm.request.method,
+        url: requestUrl.toString(),
+        port: requestUrl.toString(),                // ← ADDED HERE
+        body: pm.request.body ? pm.request.body.toString() : null
+    },
+    response: responseData,
+    timestamp: new Date().toISOString()
+};
+
+// Send webhook to Express
+pm.sendRequest({
+    url: "http://localhost:3000/event",
+    method: "POST",
+    header: { "Content-Type": "application/json" },
+    body: {
+        mode: "raw",
+        raw: JSON.stringify(logPayload)
+    }
+}, function (err, res) {
+    if (err) {
+        console.log("❌ Errore invio log al webhook:", err);
+    } else {
+        console.log("✅ Log inviato al webhook:", res.json());
+    }
+});
+```
 
 
