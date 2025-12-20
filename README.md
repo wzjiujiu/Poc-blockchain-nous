@@ -101,3 +101,7 @@ To start the Sovity components, a local demo deployment was used for testing and
 
 Please refer to the official Sovity documentation for detailed setup instructions:
 https://github.com/sovity/edc-ce/tree/main/docs/deployment-guide/goals/local-demo-ce
+
+After starting local demo throught Docker you can see at [localhost ](http://localhost:11000/) this frontend:
+![Sovity Local frontend](docs/sovity.jpg)
+
