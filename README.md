@@ -113,4 +113,8 @@ After starting local demo throught Docker you can see at [localhost 11000](http:
 | **MODIFY** | ASSET,POLICY |
 | **DELETE** |  |
 
+After Loading POSTMAN API COLLECTION WE CAN SEE following screen 
+
+![POSTMAN API COLLECTION](docs/POSTMAN.jpg)
+
 
