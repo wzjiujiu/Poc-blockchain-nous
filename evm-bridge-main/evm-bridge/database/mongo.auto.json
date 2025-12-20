@@ -145,6 +145,20 @@
             ]
         },
         {
+            "collection": "event_example_asset_modified",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pNodeId",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
             "collection": "event_example_asset_registered",
             "unique": false,
             "fields": [
@@ -179,7 +193,21 @@
             "unique": false,
             "fields": [
                 {
-                    "name": "pOwner",
+                    "name": "pRegistrar",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_asset_registered",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pNodeId",
                     "dir": ""
                 },
                 {
@@ -367,6 +395,20 @@
             ]
         },
         {
+            "collection": "event_example_dataoffer_modified",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pNodeId",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
             "collection": "event_example_dataoffer_registered",
             "unique": false,
             "fields": [
@@ -401,7 +443,21 @@
             "unique": false,
             "fields": [
                 {
-                    "name": "pOwner",
+                    "name": "pRegistrar",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_dataoffer_registered",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pNodeId",
                     "dir": ""
                 },
                 {
@@ -501,6 +557,20 @@
             ]
         },
         {
+            "collection": "event_example_policy_modified",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pNodeId",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
             "collection": "event_example_policy_registered",
             "unique": false,
             "fields": [
@@ -535,7 +605,21 @@
             "unique": false,
             "fields": [
                 {
-                    "name": "pOwner",
+                    "name": "pRegistrar",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_policy_registered",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pNodeId",
                     "dir": ""
                 },
                 {

@@ -9,38 +9,46 @@ import "./interfaces/IExampleContract.sol";
  */
 contract ExampleContract is BaseContract {
     enum TransferStatus {Requested, Approved, Completed, Rejected}
+
     
-    struct Asset {
-        string id;         // ID univoco dell'asset
-        address owner;     // Indirizzo che ha registrato l'asset
-        uint256 timestamp; // Momento della registrazione
-        string title;      // Nuovo campo titolo
+     struct Asset {
+        string id;          // local asset id (node-scoped)
+        bytes32 nodeId;     // logical node identifier
+        address registrar;  // relayer that registered it
+        uint256 timestamp;
+        string title;
     }
-	
-	struct Policy {
-        string id;         // ID univoco dell'asset
-        address owner;     // Indirizzo che ha registrato l'asset
-        uint256 timestamp; // Momento della registrazione
-        string title;      // Nuovo campo titolo
+
+    struct Policy {
+        string id;          // local policy id (node-scoped)
+        bytes32 nodeId;     // logical node identifier
+        address registrar;  // relayer that registered it
+        uint256 timestamp;
+        string title;
     }
 
     struct Dataoffer {
-        string id;         // ID univoco dell'asset
-        address owner;     // Indirizzo che ha registrato l'asset
-        uint256 timestamp; // Momento della registrazione
-        string title;      // Nuovo campo titolo
+        string id;          // local offer id (node-scoped)
+        bytes32 nodeId;     // logical node identifier
+        address registrar;  // relayer that registered it
+        uint256 timestamp;
+        string title;
     }
 
     struct DataTransfer {
-        string id;              // ID univoco del trasferimento
-        string assetId;         // Asset coinvolto
-        string offerId;         // Data offer utilizzata
-        address provider;       // Fornitore del dato
-        address consumer;       // Consumatore del dato
-        bytes32 dataHash;       // Hash del dataset trasferito
-        TransferStatus status;  // Stato del trasferimento
-        uint256 timestamp;      // Ultimo aggiornamento
-}
+        string id;
+        bytes32 providerNodeId;
+        bytes32 consumerNodeId;
+        string assetId;
+        string offerId;
+        bytes32 dataHash;
+        TransferStatus status;
+        uint256 timestamp;
+    }
+
+    /* =====================================================
+                            INIT
+       ===================================================== */
 	
 
     function initialize(
@@ -50,155 +58,211 @@ contract ExampleContract is BaseContract {
         _initialize_base(roleManagerAddress, upgradeControlAddress);
     }
 
-    mapping(string => Asset) private assets;
-	mapping(string => Policy) private policies;
-    mapping(string => Dataoffer) private offers;
+     /* =====================================================
+                            STORAGE
+       ===================================================== */
+
+    // nodeId => localId => entity
+    mapping(bytes32 => mapping(string => Asset)) private assets;
+    mapping(bytes32 => mapping(string => Policy)) private policies;
+    mapping(bytes32 => mapping(string => Dataoffer)) private offers;
+
     mapping(string => DataTransfer) private transfers;
 
 
-    event AssetRegistered(address indexed owner, string assetId, uint256 timestamp, string title);
-    event AssetModified(string assetId, string newTitle, uint256 timestamp);
-	event PolicyRegistered(address indexed owner, string policyId, uint256 timestamp, string title);
-    event PolicyModified(string policyId, string newTitle, uint256 timestamp);
-    event DataofferRegistered(address indexed owner, string offerId, uint256 timestamp, string title);
-    event DataofferModified(string offerId, string newTitle, uint256 timestamp);
+    /* =====================================================
+                            EVENTS
+       ===================================================== */
+
+    event AssetRegistered(address indexed registrar, bytes32 indexed nodeId, string assetId, uint256 timestamp, string title);
+    event AssetModified(bytes32 indexed nodeId, string assetId, uint256 timestamp, string newTitle);
+
+    event PolicyRegistered(address indexed registrar, bytes32 indexed nodeId, string policyId, uint256 timestamp, string title);
+    event PolicyModified(bytes32 indexed nodeId, string policyId, uint256 timestamp, string newTitle);
+
+    event DataofferRegistered(address indexed registrar, bytes32 indexed nodeId, string offerId, uint256 timestamp, string title);
+    event DataofferModified(bytes32 indexed nodeId, string offerId, uint256 timestamp, string newTitle);
+
+
     event DataTransferRequested(string transferId, string assetId, address indexed consumer, uint256 timestamp);
     event DataTransferApproved(string transferId, address indexed provider, uint256 timestamp);
     event DataTransferCompleted(string transferId, bytes32 dataHash, uint256 timestamp);
     event DataTransferRejected(string transferId, uint256 timestamp);
 
-    /// @notice Registra un nuovo asset
-    function registerAsset(string memory assetId, string memory assetTitle) external {
-        require(bytes(assetId).length > 0, "ID non valido");
-        require(assets[assetId].owner == address(0), "Asset gia' registrato");
+     /* =====================================================
+                            ASSET
+       ===================================================== */
 
-        assets[assetId] = Asset({
+    function registerAsset(
+        bytes32 nodeId,
+        string memory assetId,
+        string memory assetTitle
+    ) external {
+        require(bytes(assetId).length > 0, "ID non valido");
+        require(assets[nodeId][assetId].registrar == address(0), "Asset gia' registrato per questo nodo");
+
+        assets[nodeId][assetId] = Asset({
             id: assetId,
-            owner: msg.sender,
+            nodeId: nodeId,
+            registrar: msg.sender,
             timestamp: block.timestamp,
             title: assetTitle
         });
 
-        emit AssetRegistered(msg.sender, assetId, block.timestamp, assetTitle);
+        emit AssetRegistered(msg.sender, nodeId, assetId, block.timestamp, assetTitle);
     }
 
-    /// @notice Registra un nuovo policy
-       function registerPolicy(string memory policyId, string memory policyTitle) external {
-        require(bytes(policyId).length > 0, "ID non valido");
-        require(policies[policyId].owner == address(0), "Asset gia' registrato");
+    function modifyAsset(
+        bytes32 nodeId,
+        string memory assetId,
+        string memory newTitle
+    ) external {
+        Asset storage a = assets[nodeId][assetId];
+        require(a.registrar != address(0), "Asset non trovato");
+        require(msg.sender == a.registrar, "Non autorizzato");
 
-        policies[policyId] = Policy({
+        a.title = newTitle;
+        a.timestamp = block.timestamp;
+
+        emit AssetModified(nodeId, assetId, block.timestamp, newTitle);
+    }
+
+    function getAsset(
+        bytes32 nodeId,
+        string memory assetId
+    )
+        external
+        view
+        returns (string memory id, bytes32 nId, address registrar, uint256 timestamp, string memory title)
+    {
+        Asset memory a = assets[nodeId][assetId];
+        require(a.registrar != address(0), "Asset non trovato");
+        return (a.id, a.nodeId, a.registrar, a.timestamp, a.title);
+    }
+
+    function assetExists(bytes32 nodeId, string memory assetId)
+        external
+        view
+        returns (bool)
+    {
+        return assets[nodeId][assetId].registrar != address(0);
+    }
+
+    /* =====================================================
+                            POLICY
+       ===================================================== */
+
+    function registerPolicy(
+        bytes32 nodeId,
+        string memory policyId,
+        string memory policyTitle
+    ) external {
+        require(bytes(policyId).length > 0, "ID non valido");
+        require(policies[nodeId][policyId].registrar == address(0), "Policy gia' registrata per questo nodo");
+
+        policies[nodeId][policyId] = Policy({
             id: policyId,
-            owner: msg.sender,
+            nodeId: nodeId,
+            registrar: msg.sender,
             timestamp: block.timestamp,
             title: policyTitle
         });
 
-        emit PolicyRegistered(msg.sender, policyId, block.timestamp, policyTitle);
+        emit PolicyRegistered(msg.sender, nodeId, policyId, block.timestamp, policyTitle);
     }
 
-    /// @notice Registra un nuovo Dataoffer
-       function registerDataoffer(string memory offerId, string memory offerTitle) external {
-        require(bytes(offerId).length > 0, "ID non valido");
-        require(offers[offerId].owner == address(0), "Asset gia' registrato");
+    function modifyPolicy(
+        bytes32 nodeId,
+        string memory policyId,
+        string memory newTitle
+    ) external {
+        Policy storage p = policies[nodeId][policyId];
+        require(p.registrar != address(0), "Policy non trovata");
+        require(msg.sender == p.registrar, "Non autorizzato");
 
-        offers[offerId] = Dataoffer({
+        p.title = newTitle;
+        p.timestamp = block.timestamp;
+
+        emit PolicyModified(nodeId, policyId, block.timestamp, newTitle);
+    }
+
+    function getPolicy(
+        bytes32 nodeId,
+        string memory policyId
+    )
+        external
+        view
+        returns (string memory id, bytes32 nId, address registrar, uint256 timestamp, string memory title)
+    {
+        Policy memory p = policies[nodeId][policyId];
+        require(p.registrar != address(0), "Policy non trovata");
+        return (p.id, p.nodeId, p.registrar, p.timestamp, p.title);
+    }
+
+    function policyExists(bytes32 nodeId, string memory policyId)
+        external
+        view
+        returns (bool)
+    {
+        return policies[nodeId][policyId].registrar != address(0);
+    }
+
+    /* =====================================================
+                          DATA OFFER
+       ===================================================== */
+
+    function registerDataoffer(
+        bytes32 nodeId,
+        string memory offerId,
+        string memory offerTitle
+    ) external {
+        require(bytes(offerId).length > 0, "ID non valido");
+        require(offers[nodeId][offerId].registrar == address(0), "Dataoffer gia' registrato per questo nodo");
+
+        offers[nodeId][offerId] = Dataoffer({
             id: offerId,
-            owner: msg.sender,
+            nodeId: nodeId,
+            registrar: msg.sender,
             timestamp: block.timestamp,
             title: offerTitle
         });
 
-        emit DataofferRegistered(msg.sender, offerId, block.timestamp, offerTitle);
+        emit DataofferRegistered(msg.sender, nodeId, offerId, block.timestamp, offerTitle);
     }
 
-    /// @notice Modifica titolo di un asset esistente
-    function modifyAsset(string memory assetId, string memory newTitle) external {
-        require(bytes(assetId).length > 0, "ID non valido");
-        require(assets[assetId].owner != address(0), "Asset non trovato");
+    function modifyDataoffer(
+        bytes32 nodeId,
+        string memory offerId,
+        string memory newTitle
+    ) external {
+        Dataoffer storage d = offers[nodeId][offerId];
+        require(d.registrar != address(0), "Dataoffer non trovato");
+        require(msg.sender == d.registrar, "Non autorizzato");
 
-        // Permesso: solo owner o admin
-        require(
-            msg.sender == assets[assetId].owner,
-            "Non autorizzato"
-        );
+        d.title = newTitle;
+        d.timestamp = block.timestamp;
 
-        assets[assetId].title = newTitle;
-        assets[assetId].timestamp = block.timestamp;
-
-        emit AssetModified(assetId, newTitle, block.timestamp);
+        emit DataofferModified(nodeId, offerId, block.timestamp, newTitle);
     }
 
-    /// @notice Modifica titolo di un policy esistente
-    function modifyPolicy(string memory policyId, string memory newTitle) external {
-        require(bytes(policyId).length > 0, "ID non valido");
-        require(policies[policyId].owner != address(0), "Asset non trovato");
-
-        // Permesso: solo owner o admin
-        require(
-            msg.sender == policies[policyId].owner,
-            "Non autorizzato"
-        );
-
-        policies[policyId].title = newTitle;
-        policies[policyId].timestamp = block.timestamp;
-
-        emit PolicyModified(policyId, newTitle, block.timestamp);
-    }
-
-    /// @notice Modifica titolo di un dataoffer
-    function modifyDataoffer(string memory offerId, string memory newTitle) external {
-        require(bytes(offerId).length > 0, "ID non valido");
-        require(offers[offerId].owner != address(0), "Asset non trovato");
-
-        // Permesso: solo owner o admin
-        require(
-            msg.sender == offers[offerId].owner,
-            "Non autorizzato"
-        );
-
-        offers[offerId].title = newTitle;
-        offers[offerId].timestamp = block.timestamp;
-
-        emit DataofferModified(offerId, newTitle, block.timestamp);
-    }
-
-    /// @notice Restituisce i dettagli di un asset
-    function getAsset(string memory assetId)
+    function getDataoffer(
+        bytes32 nodeId,
+        string memory offerId
+    )
         external
         view
-        returns (string memory id, address owner, uint256 timestamp, string memory title)
+        returns (string memory id, bytes32 nId, address registrar, uint256 timestamp, string memory title)
     {
-        Asset memory a = assets[assetId];
-        require(a.owner != address(0), "Asset non trovato");
-        return (a.id, a.owner, a.timestamp, a.title);
+        Dataoffer memory d = offers[nodeId][offerId];
+        require(d.registrar != address(0), "Dataoffer non trovato");
+        return (d.id, d.nodeId, d.registrar, d.timestamp, d.title);
     }
 
-    /// @notice Restituisce i dettagli di un policy
-    function getPolicy(string memory policyId)
+    function dataofferExists(bytes32 nodeId, string memory offerId)
         external
         view
-        returns (string memory id, address owner, uint256 timestamp, string memory title)
+        returns (bool)
     {
-        Policy memory a = policies[policyId];
-        require(a.owner != address(0), "policy non trovato");
-        return (a.id, a.owner, a.timestamp, a.title);
-    }
-
-        /// @notice Restituisce i dettagli di un policy
-    function getDataoffer(string memory offerId)
-        external
-        view
-        returns (string memory id, address owner, uint256 timestamp, string memory title)
-    {
-        Dataoffer memory a = offers[offerId];
-        require(a.owner != address(0), "offer non trovato");
-        return (a.id, a.owner, a.timestamp, a.title);
-    }
-
-
-    /// @notice Controlla se un asset è registrato
-    function isRegistered(string memory assetId) external view returns (bool) {
-        return assets[assetId].owner != address(0);
+        return offers[nodeId][offerId].registrar != address(0);
     }
 }

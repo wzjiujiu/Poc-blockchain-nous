@@ -111,14 +111,18 @@ export class EventExampleAssetModified extends DataModel {
     /* db-type: BIGINT */
     public timestamp: number;
 
+    /* db-index: pNodeId, id DESC */
+    /* db-type: VARCHAR 255 */
+    public pNodeId: string;
+
     /* db-type: TEXT */
     public pAssetId: string;
 
-    /* db-type: TEXT */
-    public pNewTitle: string;
-
     /* db-type: VARCHAR 255 */
     public pTimestamp: string;
+
+    /* db-type: TEXT */
+    public pNewTitle: string;
 
     constructor(data: TypedRow<EventExampleAssetModified>) {
         super(DATA_SOURCE, TABLE, PRIMARY_KEY);
@@ -128,9 +132,10 @@ export class EventExampleAssetModified extends DataModel {
         this.eventIndex = enforceType(data.eventIndex, "int") || 0;
         this.tx = enforceType(data.tx, "string") || '';
         this.timestamp = enforceType(data.timestamp, "int") || 0;
+        this.pNodeId = enforceType(data.pNodeId, "string") || '';
         this.pAssetId = enforceType(data.pAssetId, "string") || '';
-        this.pNewTitle = enforceType(data.pNewTitle, "string") || '';
         this.pTimestamp = enforceType(data.pTimestamp, "string") || '';
+        this.pNewTitle = enforceType(data.pNewTitle, "string") || '';
 
         this.init();
     }
@@ -138,9 +143,10 @@ export class EventExampleAssetModified extends DataModel {
     // Gets the parameters into a single array
     public getParametersArray(): (string | boolean)[] {
         return [
+            this.pNodeId,
             this.pAssetId,
-            this.pNewTitle,
             this.pTimestamp,
+            this.pNewTitle,
         ];
     }
 }

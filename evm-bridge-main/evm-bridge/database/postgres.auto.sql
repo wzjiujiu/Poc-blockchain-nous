@@ -19,14 +19,16 @@ CREATE TABLE "event_example_asset_modified" (
     "event_index" BIGINT,
     "tx" VARCHAR(255),
     "timestamp" BIGINT,
+    "p_node_id" VARCHAR(255),
     "p_asset_id" TEXT,
-    "p_new_title" TEXT,
-    "p_timestamp" VARCHAR(255)
+    "p_timestamp" VARCHAR(255),
+    "p_new_title" TEXT
 );
 
 CREATE INDEX "ix_event_example_asset_modified_s_1" ON "event_example_asset_modified"("id" DESC);
 CREATE INDEX "ix_event_example_asset_modified_s_2" ON "event_example_asset_modified"("block");
 CREATE INDEX "ix_event_example_asset_modified_s_3" ON "event_example_asset_modified"("tx");
+CREATE INDEX "ix_event_example_asset_modified_s_4" ON "event_example_asset_modified"("p_node_id", "id" DESC);
 
 CREATE TABLE "event_example_asset_registered" (
     "id" VARCHAR(255) PRIMARY KEY,
@@ -34,7 +36,8 @@ CREATE TABLE "event_example_asset_registered" (
     "event_index" BIGINT,
     "tx" VARCHAR(255),
     "timestamp" BIGINT,
-    "p_owner" VARCHAR(255),
+    "p_registrar" VARCHAR(255),
+    "p_node_id" VARCHAR(255),
     "p_asset_id" TEXT,
     "p_timestamp" VARCHAR(255),
     "p_title" TEXT
@@ -43,7 +46,8 @@ CREATE TABLE "event_example_asset_registered" (
 CREATE INDEX "ix_event_example_asset_registered_s_1" ON "event_example_asset_registered"("id" DESC);
 CREATE INDEX "ix_event_example_asset_registered_s_2" ON "event_example_asset_registered"("block");
 CREATE INDEX "ix_event_example_asset_registered_s_3" ON "event_example_asset_registered"("tx");
-CREATE INDEX "ix_event_example_asset_registered_s_4" ON "event_example_asset_registered"("p_owner", "id" DESC);
+CREATE INDEX "ix_event_example_asset_registered_s_4" ON "event_example_asset_registered"("p_registrar", "id" DESC);
+CREATE INDEX "ix_event_example_asset_registered_s_5" ON "event_example_asset_registered"("p_node_id", "id" DESC);
 
 CREATE TABLE "event_example_data_transfer_approved" (
     "id" VARCHAR(255) PRIMARY KEY,
@@ -113,14 +117,16 @@ CREATE TABLE "event_example_dataoffer_modified" (
     "event_index" BIGINT,
     "tx" VARCHAR(255),
     "timestamp" BIGINT,
+    "p_node_id" VARCHAR(255),
     "p_offer_id" TEXT,
-    "p_new_title" TEXT,
-    "p_timestamp" VARCHAR(255)
+    "p_timestamp" VARCHAR(255),
+    "p_new_title" TEXT
 );
 
 CREATE INDEX "ix_event_example_dataoffer_modified_s_1" ON "event_example_dataoffer_modified"("id" DESC);
 CREATE INDEX "ix_event_example_dataoffer_modified_s_2" ON "event_example_dataoffer_modified"("block");
 CREATE INDEX "ix_event_example_dataoffer_modified_s_3" ON "event_example_dataoffer_modified"("tx");
+CREATE INDEX "ix_event_example_dataoffer_modified_s_4" ON "event_example_dataoffer_modified"("p_node_id", "id" DESC);
 
 CREATE TABLE "event_example_dataoffer_registered" (
     "id" VARCHAR(255) PRIMARY KEY,
@@ -128,7 +134,8 @@ CREATE TABLE "event_example_dataoffer_registered" (
     "event_index" BIGINT,
     "tx" VARCHAR(255),
     "timestamp" BIGINT,
-    "p_owner" VARCHAR(255),
+    "p_registrar" VARCHAR(255),
+    "p_node_id" VARCHAR(255),
     "p_offer_id" TEXT,
     "p_timestamp" VARCHAR(255),
     "p_title" TEXT
@@ -137,7 +144,8 @@ CREATE TABLE "event_example_dataoffer_registered" (
 CREATE INDEX "ix_event_example_dataoffer_registered_s_1" ON "event_example_dataoffer_registered"("id" DESC);
 CREATE INDEX "ix_event_example_dataoffer_registered_s_2" ON "event_example_dataoffer_registered"("block");
 CREATE INDEX "ix_event_example_dataoffer_registered_s_3" ON "event_example_dataoffer_registered"("tx");
-CREATE INDEX "ix_event_example_dataoffer_registered_s_4" ON "event_example_dataoffer_registered"("p_owner", "id" DESC);
+CREATE INDEX "ix_event_example_dataoffer_registered_s_4" ON "event_example_dataoffer_registered"("p_registrar", "id" DESC);
+CREATE INDEX "ix_event_example_dataoffer_registered_s_5" ON "event_example_dataoffer_registered"("p_node_id", "id" DESC);
 
 CREATE TABLE "event_example_initialized" (
     "id" VARCHAR(255) PRIMARY KEY,
@@ -171,14 +179,16 @@ CREATE TABLE "event_example_policy_modified" (
     "event_index" BIGINT,
     "tx" VARCHAR(255),
     "timestamp" BIGINT,
+    "p_node_id" VARCHAR(255),
     "p_policy_id" TEXT,
-    "p_new_title" TEXT,
-    "p_timestamp" VARCHAR(255)
+    "p_timestamp" VARCHAR(255),
+    "p_new_title" TEXT
 );
 
 CREATE INDEX "ix_event_example_policy_modified_s_1" ON "event_example_policy_modified"("id" DESC);
 CREATE INDEX "ix_event_example_policy_modified_s_2" ON "event_example_policy_modified"("block");
 CREATE INDEX "ix_event_example_policy_modified_s_3" ON "event_example_policy_modified"("tx");
+CREATE INDEX "ix_event_example_policy_modified_s_4" ON "event_example_policy_modified"("p_node_id", "id" DESC);
 
 CREATE TABLE "event_example_policy_registered" (
     "id" VARCHAR(255) PRIMARY KEY,
@@ -186,7 +196,8 @@ CREATE TABLE "event_example_policy_registered" (
     "event_index" BIGINT,
     "tx" VARCHAR(255),
     "timestamp" BIGINT,
-    "p_owner" VARCHAR(255),
+    "p_registrar" VARCHAR(255),
+    "p_node_id" VARCHAR(255),
     "p_policy_id" TEXT,
     "p_timestamp" VARCHAR(255),
     "p_title" TEXT
@@ -195,7 +206,8 @@ CREATE TABLE "event_example_policy_registered" (
 CREATE INDEX "ix_event_example_policy_registered_s_1" ON "event_example_policy_registered"("id" DESC);
 CREATE INDEX "ix_event_example_policy_registered_s_2" ON "event_example_policy_registered"("block");
 CREATE INDEX "ix_event_example_policy_registered_s_3" ON "event_example_policy_registered"("tx");
-CREATE INDEX "ix_event_example_policy_registered_s_4" ON "event_example_policy_registered"("p_owner", "id" DESC);
+CREATE INDEX "ix_event_example_policy_registered_s_4" ON "event_example_policy_registered"("p_registrar", "id" DESC);
+CREATE INDEX "ix_event_example_policy_registered_s_5" ON "event_example_policy_registered"("p_node_id", "id" DESC);
 
 CREATE TABLE "event_example_unpaused" (
     "id" VARCHAR(255) PRIMARY KEY,

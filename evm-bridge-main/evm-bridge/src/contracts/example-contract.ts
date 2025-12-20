@@ -25,7 +25,7 @@
 
 "use strict";
 
-import { Quantity, SmartContractEventWrapper, SmartContractEvent, Address, MethodCallingOptions, AddressLike, MethodTransactionOptions, TransactionResult, BytesLike, SmartContractInterface, TransactionBuildDetails, QuantityLike, BlockTag, RPCOptions, ABILike } from "@asanrom/smart-contract-wrapper";
+import { Quantity, SmartContractEventWrapper, SmartContractEvent, Address, MethodCallingOptions, BytesLike, AddressLike, MethodTransactionOptions, TransactionResult, SmartContractInterface, TransactionBuildDetails, QuantityLike, BlockTag, RPCOptions, ABILike } from "@asanrom/smart-contract-wrapper";
 
 /**
  * Contract wrapper: ExampleContract
@@ -71,36 +71,66 @@ export class ExampleContractWrapper {
     }
 
     /**
-     * Calls View method: getAsset(string)
-     * Restituisce i dettagli di un asset
+     * Calls View method: assetExists(bytes32,string)
+     * Method: assetExists(bytes32,string)
+     * @param nodeId nodeId
      * @param assetId assetId
      * @param options The options for sending the request
      * @returns The result for calling the method
      */
-    public async getAsset(assetId: string, options?: MethodCallingOptions): Promise<{id: string, owner: Address, timestamp: Quantity, title: string}> {
-        const __r: any = await this._contractInterface.callViewMethod("getAsset", [assetId], options || {});
-        return {
-            id: __r[0],
-            owner: __r[1],
-            timestamp: __r[2],
-            title: __r[3],
-        };
+    public async assetExists(nodeId: BytesLike, assetId: string, options?: MethodCallingOptions): Promise<boolean> {
+        const __r: any = await this._contractInterface.callViewMethod("assetExists", [nodeId, assetId], options || {});
+        return __r[0];
     }
 
     /**
-     * Calls View method: getDataoffer(string)
-     * Restituisce i dettagli di un policy
+     * Calls View method: dataofferExists(bytes32,string)
+     * Method: dataofferExists(bytes32,string)
+     * @param nodeId nodeId
      * @param offerId offerId
      * @param options The options for sending the request
      * @returns The result for calling the method
      */
-    public async getDataoffer(offerId: string, options?: MethodCallingOptions): Promise<{id: string, owner: Address, timestamp: Quantity, title: string}> {
-        const __r: any = await this._contractInterface.callViewMethod("getDataoffer", [offerId], options || {});
+    public async dataofferExists(nodeId: BytesLike, offerId: string, options?: MethodCallingOptions): Promise<boolean> {
+        const __r: any = await this._contractInterface.callViewMethod("dataofferExists", [nodeId, offerId], options || {});
+        return __r[0];
+    }
+
+    /**
+     * Calls View method: getAsset(bytes32,string)
+     * Method: getAsset(bytes32,string)
+     * @param nodeId nodeId
+     * @param assetId assetId
+     * @param options The options for sending the request
+     * @returns The result for calling the method
+     */
+    public async getAsset(nodeId: BytesLike, assetId: string, options?: MethodCallingOptions): Promise<{id: string, nId: string, registrar: Address, timestamp: Quantity, title: string}> {
+        const __r: any = await this._contractInterface.callViewMethod("getAsset", [nodeId, assetId], options || {});
         return {
             id: __r[0],
-            owner: __r[1],
-            timestamp: __r[2],
-            title: __r[3],
+            nId: __r[1],
+            registrar: __r[2],
+            timestamp: __r[3],
+            title: __r[4],
+        };
+    }
+
+    /**
+     * Calls View method: getDataoffer(bytes32,string)
+     * Method: getDataoffer(bytes32,string)
+     * @param nodeId nodeId
+     * @param offerId offerId
+     * @param options The options for sending the request
+     * @returns The result for calling the method
+     */
+    public async getDataoffer(nodeId: BytesLike, offerId: string, options?: MethodCallingOptions): Promise<{id: string, nId: string, registrar: Address, timestamp: Quantity, title: string}> {
+        const __r: any = await this._contractInterface.callViewMethod("getDataoffer", [nodeId, offerId], options || {});
+        return {
+            id: __r[0],
+            nId: __r[1],
+            registrar: __r[2],
+            timestamp: __r[3],
+            title: __r[4],
         };
     }
 
@@ -116,32 +146,22 @@ export class ExampleContractWrapper {
     }
 
     /**
-     * Calls View method: getPolicy(string)
-     * Restituisce i dettagli di un policy
+     * Calls View method: getPolicy(bytes32,string)
+     * Method: getPolicy(bytes32,string)
+     * @param nodeId nodeId
      * @param policyId policyId
      * @param options The options for sending the request
      * @returns The result for calling the method
      */
-    public async getPolicy(policyId: string, options?: MethodCallingOptions): Promise<{id: string, owner: Address, timestamp: Quantity, title: string}> {
-        const __r: any = await this._contractInterface.callViewMethod("getPolicy", [policyId], options || {});
+    public async getPolicy(nodeId: BytesLike, policyId: string, options?: MethodCallingOptions): Promise<{id: string, nId: string, registrar: Address, timestamp: Quantity, title: string}> {
+        const __r: any = await this._contractInterface.callViewMethod("getPolicy", [nodeId, policyId], options || {});
         return {
             id: __r[0],
-            owner: __r[1],
-            timestamp: __r[2],
-            title: __r[3],
+            nId: __r[1],
+            registrar: __r[2],
+            timestamp: __r[3],
+            title: __r[4],
         };
-    }
-
-    /**
-     * Calls View method: isRegistered(string)
-     * Controlla se un asset è registrato
-     * @param assetId assetId
-     * @param options The options for sending the request
-     * @returns The result for calling the method
-     */
-    public async isRegistered(assetId: string, options?: MethodCallingOptions): Promise<boolean> {
-        const __r: any = await this._contractInterface.callViewMethod("isRegistered", [assetId], options || {});
-        return __r[0];
     }
 
     /**
@@ -152,6 +172,19 @@ export class ExampleContractWrapper {
      */
     public async paused(options?: MethodCallingOptions): Promise<boolean> {
         const __r: any = await this._contractInterface.callViewMethod("paused", [], options || {});
+        return __r[0];
+    }
+
+    /**
+     * Calls View method: policyExists(bytes32,string)
+     * Method: policyExists(bytes32,string)
+     * @param nodeId nodeId
+     * @param policyId policyId
+     * @param options The options for sending the request
+     * @returns The result for calling the method
+     */
+    public async policyExists(nodeId: BytesLike, policyId: string, options?: MethodCallingOptions): Promise<boolean> {
+        const __r: any = await this._contractInterface.callViewMethod("policyExists", [nodeId, policyId], options || {});
         return __r[0];
     }
 
@@ -197,15 +230,16 @@ export class ExampleContractWrapper {
     }
 
     /**
-     * Calls Transaction method: modifyAsset(string,string)
-     * Modifica titolo di un asset esistente
+     * Calls Transaction method: modifyAsset(bytes32,string,string)
+     * Method: modifyAsset(bytes32,string,string)
+     * @param nodeId nodeId
      * @param assetId assetId
      * @param newTitle newTitle
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async modifyAsset(assetId: string, newTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
-        const __r = await this._contractInterface.callMutableMethod("modifyAsset", [assetId, newTitle], options);
+    public async modifyAsset(nodeId: BytesLike, assetId: string, newTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("modifyAsset", [nodeId, assetId, newTitle], options);
     
         if (__r.receipt.status > BigInt(0)) {
             const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
@@ -216,26 +250,28 @@ export class ExampleContractWrapper {
     }
     
     /**
-     * Gets details for building a transaction calling the method: modifyAsset(string,string)
-     * Modifica titolo di un asset esistente
+     * Gets details for building a transaction calling the method: modifyAsset(bytes32,string,string)
+     * Method: modifyAsset(bytes32,string,string)
+     * @param nodeId nodeId
      * @param assetId assetId
      * @param newTitle newTitle
      * @returns The details for building the transaction
      */
-    public modifyAsset$txBuildDetails(assetId: string, newTitle: string): TransactionBuildDetails {
-        return this._contractInterface.encodeMutableMethod("modifyAsset", [assetId, newTitle]);
+    public modifyAsset$txBuildDetails(nodeId: BytesLike, assetId: string, newTitle: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("modifyAsset", [nodeId, assetId, newTitle]);
     }
 
     /**
-     * Calls Transaction method: modifyDataoffer(string,string)
-     * Modifica titolo di un dataoffer
+     * Calls Transaction method: modifyDataoffer(bytes32,string,string)
+     * Method: modifyDataoffer(bytes32,string,string)
+     * @param nodeId nodeId
      * @param offerId offerId
      * @param newTitle newTitle
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async modifyDataoffer(offerId: string, newTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
-        const __r = await this._contractInterface.callMutableMethod("modifyDataoffer", [offerId, newTitle], options);
+    public async modifyDataoffer(nodeId: BytesLike, offerId: string, newTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("modifyDataoffer", [nodeId, offerId, newTitle], options);
     
         if (__r.receipt.status > BigInt(0)) {
             const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
@@ -246,26 +282,28 @@ export class ExampleContractWrapper {
     }
     
     /**
-     * Gets details for building a transaction calling the method: modifyDataoffer(string,string)
-     * Modifica titolo di un dataoffer
+     * Gets details for building a transaction calling the method: modifyDataoffer(bytes32,string,string)
+     * Method: modifyDataoffer(bytes32,string,string)
+     * @param nodeId nodeId
      * @param offerId offerId
      * @param newTitle newTitle
      * @returns The details for building the transaction
      */
-    public modifyDataoffer$txBuildDetails(offerId: string, newTitle: string): TransactionBuildDetails {
-        return this._contractInterface.encodeMutableMethod("modifyDataoffer", [offerId, newTitle]);
+    public modifyDataoffer$txBuildDetails(nodeId: BytesLike, offerId: string, newTitle: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("modifyDataoffer", [nodeId, offerId, newTitle]);
     }
 
     /**
-     * Calls Transaction method: modifyPolicy(string,string)
-     * Modifica titolo di un policy esistente
+     * Calls Transaction method: modifyPolicy(bytes32,string,string)
+     * Method: modifyPolicy(bytes32,string,string)
+     * @param nodeId nodeId
      * @param policyId policyId
      * @param newTitle newTitle
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async modifyPolicy(policyId: string, newTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
-        const __r = await this._contractInterface.callMutableMethod("modifyPolicy", [policyId, newTitle], options);
+    public async modifyPolicy(nodeId: BytesLike, policyId: string, newTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("modifyPolicy", [nodeId, policyId, newTitle], options);
     
         if (__r.receipt.status > BigInt(0)) {
             const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
@@ -276,14 +314,15 @@ export class ExampleContractWrapper {
     }
     
     /**
-     * Gets details for building a transaction calling the method: modifyPolicy(string,string)
-     * Modifica titolo di un policy esistente
+     * Gets details for building a transaction calling the method: modifyPolicy(bytes32,string,string)
+     * Method: modifyPolicy(bytes32,string,string)
+     * @param nodeId nodeId
      * @param policyId policyId
      * @param newTitle newTitle
      * @returns The details for building the transaction
      */
-    public modifyPolicy$txBuildDetails(policyId: string, newTitle: string): TransactionBuildDetails {
-        return this._contractInterface.encodeMutableMethod("modifyPolicy", [policyId, newTitle]);
+    public modifyPolicy$txBuildDetails(nodeId: BytesLike, policyId: string, newTitle: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("modifyPolicy", [nodeId, policyId, newTitle]);
     }
 
     /**
@@ -313,15 +352,16 @@ export class ExampleContractWrapper {
     }
 
     /**
-     * Calls Transaction method: registerAsset(string,string)
-     * Registra un nuovo asset
+     * Calls Transaction method: registerAsset(bytes32,string,string)
+     * Method: registerAsset(bytes32,string,string)
+     * @param nodeId nodeId
      * @param assetId assetId
      * @param assetTitle assetTitle
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async registerAsset(assetId: string, assetTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
-        const __r = await this._contractInterface.callMutableMethod("registerAsset", [assetId, assetTitle], options);
+    public async registerAsset(nodeId: BytesLike, assetId: string, assetTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("registerAsset", [nodeId, assetId, assetTitle], options);
     
         if (__r.receipt.status > BigInt(0)) {
             const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
@@ -332,26 +372,28 @@ export class ExampleContractWrapper {
     }
     
     /**
-     * Gets details for building a transaction calling the method: registerAsset(string,string)
-     * Registra un nuovo asset
+     * Gets details for building a transaction calling the method: registerAsset(bytes32,string,string)
+     * Method: registerAsset(bytes32,string,string)
+     * @param nodeId nodeId
      * @param assetId assetId
      * @param assetTitle assetTitle
      * @returns The details for building the transaction
      */
-    public registerAsset$txBuildDetails(assetId: string, assetTitle: string): TransactionBuildDetails {
-        return this._contractInterface.encodeMutableMethod("registerAsset", [assetId, assetTitle]);
+    public registerAsset$txBuildDetails(nodeId: BytesLike, assetId: string, assetTitle: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("registerAsset", [nodeId, assetId, assetTitle]);
     }
 
     /**
-     * Calls Transaction method: registerDataoffer(string,string)
-     * Registra un nuovo Dataoffer
+     * Calls Transaction method: registerDataoffer(bytes32,string,string)
+     * Method: registerDataoffer(bytes32,string,string)
+     * @param nodeId nodeId
      * @param offerId offerId
      * @param offerTitle offerTitle
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async registerDataoffer(offerId: string, offerTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
-        const __r = await this._contractInterface.callMutableMethod("registerDataoffer", [offerId, offerTitle], options);
+    public async registerDataoffer(nodeId: BytesLike, offerId: string, offerTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("registerDataoffer", [nodeId, offerId, offerTitle], options);
     
         if (__r.receipt.status > BigInt(0)) {
             const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
@@ -362,26 +404,28 @@ export class ExampleContractWrapper {
     }
     
     /**
-     * Gets details for building a transaction calling the method: registerDataoffer(string,string)
-     * Registra un nuovo Dataoffer
+     * Gets details for building a transaction calling the method: registerDataoffer(bytes32,string,string)
+     * Method: registerDataoffer(bytes32,string,string)
+     * @param nodeId nodeId
      * @param offerId offerId
      * @param offerTitle offerTitle
      * @returns The details for building the transaction
      */
-    public registerDataoffer$txBuildDetails(offerId: string, offerTitle: string): TransactionBuildDetails {
-        return this._contractInterface.encodeMutableMethod("registerDataoffer", [offerId, offerTitle]);
+    public registerDataoffer$txBuildDetails(nodeId: BytesLike, offerId: string, offerTitle: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("registerDataoffer", [nodeId, offerId, offerTitle]);
     }
 
     /**
-     * Calls Transaction method: registerPolicy(string,string)
-     * Registra un nuovo policy
+     * Calls Transaction method: registerPolicy(bytes32,string,string)
+     * Method: registerPolicy(bytes32,string,string)
+     * @param nodeId nodeId
      * @param policyId policyId
      * @param policyTitle policyTitle
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async registerPolicy(policyId: string, policyTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
-        const __r = await this._contractInterface.callMutableMethod("registerPolicy", [policyId, policyTitle], options);
+    public async registerPolicy(nodeId: BytesLike, policyId: string, policyTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("registerPolicy", [nodeId, policyId, policyTitle], options);
     
         if (__r.receipt.status > BigInt(0)) {
             const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
@@ -392,14 +436,15 @@ export class ExampleContractWrapper {
     }
     
     /**
-     * Gets details for building a transaction calling the method: registerPolicy(string,string)
-     * Registra un nuovo policy
+     * Gets details for building a transaction calling the method: registerPolicy(bytes32,string,string)
+     * Method: registerPolicy(bytes32,string,string)
+     * @param nodeId nodeId
      * @param policyId policyId
      * @param policyTitle policyTitle
      * @returns The details for building the transaction
      */
-    public registerPolicy$txBuildDetails(policyId: string, policyTitle: string): TransactionBuildDetails {
-        return this._contractInterface.encodeMutableMethod("registerPolicy", [policyId, policyTitle]);
+    public registerPolicy$txBuildDetails(nodeId: BytesLike, policyId: string, policyTitle: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("registerPolicy", [nodeId, policyId, policyTitle]);
     }
 
     /**
@@ -519,7 +564,7 @@ export class ExampleContractEventCollection {
     }
 
     /**
-     * Get an event of type AssetModified(string,string,uint256) from the collection
+     * Get an event of type AssetModified(bytes32,string,uint256,string) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
      */
@@ -528,15 +573,16 @@ export class ExampleContractEventCollection {
         return {
             event: this.events[index],
             data: {
-                assetId: __r[0],
-                newTitle: __r[1],
+                nodeId: __r[0],
+                assetId: __r[1],
                 timestamp: __r[2],
+                newTitle: __r[3],
             },
         };
     }
 
     /**
-     * Get an event of type AssetRegistered(address,string,uint256,string) from the collection
+     * Get an event of type AssetRegistered(address,bytes32,string,uint256,string) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
      */
@@ -545,10 +591,11 @@ export class ExampleContractEventCollection {
         return {
             event: this.events[index],
             data: {
-                owner: __r[0],
-                assetId: __r[1],
-                timestamp: __r[2],
-                title: __r[3],
+                registrar: __r[0],
+                nodeId: __r[1],
+                assetId: __r[2],
+                timestamp: __r[3],
+                title: __r[4],
             },
         };
     }
@@ -622,7 +669,7 @@ export class ExampleContractEventCollection {
     }
 
     /**
-     * Get an event of type DataofferModified(string,string,uint256) from the collection
+     * Get an event of type DataofferModified(bytes32,string,uint256,string) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
      */
@@ -631,15 +678,16 @@ export class ExampleContractEventCollection {
         return {
             event: this.events[index],
             data: {
-                offerId: __r[0],
-                newTitle: __r[1],
+                nodeId: __r[0],
+                offerId: __r[1],
                 timestamp: __r[2],
+                newTitle: __r[3],
             },
         };
     }
 
     /**
-     * Get an event of type DataofferRegistered(address,string,uint256,string) from the collection
+     * Get an event of type DataofferRegistered(address,bytes32,string,uint256,string) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
      */
@@ -648,10 +696,11 @@ export class ExampleContractEventCollection {
         return {
             event: this.events[index],
             data: {
-                owner: __r[0],
-                offerId: __r[1],
-                timestamp: __r[2],
-                title: __r[3],
+                registrar: __r[0],
+                nodeId: __r[1],
+                offerId: __r[2],
+                timestamp: __r[3],
+                title: __r[4],
             },
         };
     }
@@ -687,7 +736,7 @@ export class ExampleContractEventCollection {
     }
 
     /**
-     * Get an event of type PolicyModified(string,string,uint256) from the collection
+     * Get an event of type PolicyModified(bytes32,string,uint256,string) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
      */
@@ -696,15 +745,16 @@ export class ExampleContractEventCollection {
         return {
             event: this.events[index],
             data: {
-                policyId: __r[0],
-                newTitle: __r[1],
+                nodeId: __r[0],
+                policyId: __r[1],
                 timestamp: __r[2],
+                newTitle: __r[3],
             },
         };
     }
 
     /**
-     * Get an event of type PolicyRegistered(address,string,uint256,string) from the collection
+     * Get an event of type PolicyRegistered(address,bytes32,string,uint256,string) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
      */
@@ -713,10 +763,11 @@ export class ExampleContractEventCollection {
         return {
             event: this.events[index],
             data: {
-                owner: __r[0],
-                policyId: __r[1],
-                timestamp: __r[2],
-                title: __r[3],
+                registrar: __r[0],
+                nodeId: __r[1],
+                policyId: __r[2],
+                timestamp: __r[3],
+                title: __r[4],
             },
         };
     }
@@ -753,21 +804,25 @@ export class ExampleContractEventCollection {
 }
 
 /**
- * Event: AssetModified(string,string,uint256)
+ * Event: AssetModified(bytes32,string,uint256,string)
  */
 export interface AssetModifiedEvent {
+    nodeId: string,
+
     assetId: string,
 
-    newTitle: string,
-
     timestamp: Quantity,
+
+    newTitle: string,
 }
 
 /**
- * Event: AssetRegistered(address,string,uint256,string)
+ * Event: AssetRegistered(address,bytes32,string,uint256,string)
  */
 export interface AssetRegisteredEvent {
-    owner: Address,
+    registrar: Address,
+
+    nodeId: string,
 
     assetId: string,
 
@@ -821,21 +876,25 @@ export interface DataTransferRequestedEvent {
 }
 
 /**
- * Event: DataofferModified(string,string,uint256)
+ * Event: DataofferModified(bytes32,string,uint256,string)
  */
 export interface DataofferModifiedEvent {
+    nodeId: string,
+
     offerId: string,
 
-    newTitle: string,
-
     timestamp: Quantity,
+
+    newTitle: string,
 }
 
 /**
- * Event: DataofferRegistered(address,string,uint256,string)
+ * Event: DataofferRegistered(address,bytes32,string,uint256,string)
  */
 export interface DataofferRegisteredEvent {
-    owner: Address,
+    registrar: Address,
+
+    nodeId: string,
 
     offerId: string,
 
@@ -863,21 +922,25 @@ export interface PausedEvent {
 }
 
 /**
- * Event: PolicyModified(string,string,uint256)
+ * Event: PolicyModified(bytes32,string,uint256,string)
  */
 export interface PolicyModifiedEvent {
+    nodeId: string,
+
     policyId: string,
 
-    newTitle: string,
-
     timestamp: Quantity,
+
+    newTitle: string,
 }
 
 /**
- * Event: PolicyRegistered(address,string,uint256,string)
+ * Event: PolicyRegistered(address,bytes32,string,uint256,string)
  */
 export interface PolicyRegisteredEvent {
-    owner: Address,
+    registrar: Address,
+
+    nodeId: string,
 
     policyId: string,
 
@@ -967,6 +1030,12 @@ const CONTRACT_ABI: ABILike = [
         "anonymous": false,
         "inputs": [
             {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
                 "indexed": false,
                 "internalType": "string",
                 "name": "assetId",
@@ -974,15 +1043,15 @@ const CONTRACT_ABI: ABILike = [
             },
             {
                 "indexed": false,
-                "internalType": "string",
-                "name": "newTitle",
-                "type": "string"
-            },
-            {
-                "indexed": false,
                 "internalType": "uint256",
                 "name": "timestamp",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "newTitle",
+                "type": "string"
             }
         ],
         "name": "AssetModified",
@@ -994,8 +1063,14 @@ const CONTRACT_ABI: ABILike = [
             {
                 "indexed": true,
                 "internalType": "address",
-                "name": "owner",
+                "name": "registrar",
                 "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
             },
             {
                 "indexed": false,
@@ -1123,6 +1198,12 @@ const CONTRACT_ABI: ABILike = [
         "anonymous": false,
         "inputs": [
             {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
                 "indexed": false,
                 "internalType": "string",
                 "name": "offerId",
@@ -1130,15 +1211,15 @@ const CONTRACT_ABI: ABILike = [
             },
             {
                 "indexed": false,
-                "internalType": "string",
-                "name": "newTitle",
-                "type": "string"
-            },
-            {
-                "indexed": false,
                 "internalType": "uint256",
                 "name": "timestamp",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "newTitle",
+                "type": "string"
             }
         ],
         "name": "DataofferModified",
@@ -1150,8 +1231,14 @@ const CONTRACT_ABI: ABILike = [
             {
                 "indexed": true,
                 "internalType": "address",
-                "name": "owner",
+                "name": "registrar",
                 "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
             },
             {
                 "indexed": false,
@@ -1205,6 +1292,12 @@ const CONTRACT_ABI: ABILike = [
         "anonymous": false,
         "inputs": [
             {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
                 "indexed": false,
                 "internalType": "string",
                 "name": "policyId",
@@ -1212,15 +1305,15 @@ const CONTRACT_ABI: ABILike = [
             },
             {
                 "indexed": false,
-                "internalType": "string",
-                "name": "newTitle",
-                "type": "string"
-            },
-            {
-                "indexed": false,
                 "internalType": "uint256",
                 "name": "timestamp",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "newTitle",
+                "type": "string"
             }
         ],
         "name": "PolicyModified",
@@ -1232,8 +1325,14 @@ const CONTRACT_ABI: ABILike = [
             {
                 "indexed": true,
                 "internalType": "address",
-                "name": "owner",
+                "name": "registrar",
                 "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
             },
             {
                 "indexed": false,
@@ -1299,6 +1398,59 @@ const CONTRACT_ABI: ABILike = [
     {
         "inputs": [
             {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
+                "name": "assetId",
+                "type": "string"
+            }
+        ],
+        "name": "assetExists",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
+                "name": "offerId",
+                "type": "string"
+            }
+        ],
+        "name": "dataofferExists",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
                 "internalType": "string",
                 "name": "assetId",
                 "type": "string"
@@ -1312,8 +1464,13 @@ const CONTRACT_ABI: ABILike = [
                 "type": "string"
             },
             {
+                "internalType": "bytes32",
+                "name": "nId",
+                "type": "bytes32"
+            },
+            {
                 "internalType": "address",
-                "name": "owner",
+                "name": "registrar",
                 "type": "address"
             },
             {
@@ -1333,6 +1490,11 @@ const CONTRACT_ABI: ABILike = [
     {
         "inputs": [
             {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
                 "internalType": "string",
                 "name": "offerId",
                 "type": "string"
@@ -1346,8 +1508,13 @@ const CONTRACT_ABI: ABILike = [
                 "type": "string"
             },
             {
+                "internalType": "bytes32",
+                "name": "nId",
+                "type": "bytes32"
+            },
+            {
                 "internalType": "address",
-                "name": "owner",
+                "name": "registrar",
                 "type": "address"
             },
             {
@@ -1380,6 +1547,11 @@ const CONTRACT_ABI: ABILike = [
     {
         "inputs": [
             {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
                 "internalType": "string",
                 "name": "policyId",
                 "type": "string"
@@ -1393,8 +1565,13 @@ const CONTRACT_ABI: ABILike = [
                 "type": "string"
             },
             {
+                "internalType": "bytes32",
+                "name": "nId",
+                "type": "bytes32"
+            },
+            {
                 "internalType": "address",
-                "name": "owner",
+                "name": "registrar",
                 "type": "address"
             },
             {
@@ -1432,24 +1609,10 @@ const CONTRACT_ABI: ABILike = [
     {
         "inputs": [
             {
-                "internalType": "string",
-                "name": "assetId",
-                "type": "string"
-            }
-        ],
-        "name": "isRegistered",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
             {
                 "internalType": "string",
                 "name": "assetId",
@@ -1469,6 +1632,11 @@ const CONTRACT_ABI: ABILike = [
     {
         "inputs": [
             {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
                 "internalType": "string",
                 "name": "offerId",
                 "type": "string"
@@ -1486,6 +1654,11 @@ const CONTRACT_ABI: ABILike = [
     },
     {
         "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
             {
                 "internalType": "string",
                 "name": "policyId",
@@ -1523,6 +1696,30 @@ const CONTRACT_ABI: ABILike = [
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
+                "name": "policyId",
+                "type": "string"
+            }
+        ],
+        "name": "policyExists",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "proxiableUUID",
         "outputs": [
@@ -1537,6 +1734,11 @@ const CONTRACT_ABI: ABILike = [
     },
     {
         "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
             {
                 "internalType": "string",
                 "name": "assetId",
@@ -1556,6 +1758,11 @@ const CONTRACT_ABI: ABILike = [
     {
         "inputs": [
             {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
                 "internalType": "string",
                 "name": "offerId",
                 "type": "string"
@@ -1573,6 +1780,11 @@ const CONTRACT_ABI: ABILike = [
     },
     {
         "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
             {
                 "internalType": "string",
                 "name": "policyId",

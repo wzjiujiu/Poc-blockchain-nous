@@ -22,6 +22,7 @@ const logs = [];
 const MAX_LOGS = 100;
 const Asset='http://localhost:11000/api/management/v3/assets';
 const Policy='http://localhost:11000/api/management/v3/policydefinitions';
+const DataOffer='http://localhost:11000/api/management/v3/contractdefinitions';
 
 // Override console.log per inviare log anche via socket e salvarli
 const originalConsoleLog = console.log.bind(console);
@@ -110,13 +111,47 @@ const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 const CONTRACT_ADDRESS = "0xd0fc4e931b6d67bcecc65c2afec2faa278d0d769";
 
 const CONTRACT_ABI = [
-  "function registerAsset(string assetId, string assetTitle) external",
-  "function getAsset(string assetId) external view returns (string id, address owner, uint256 timestamp, string title)",
-  "function isRegistered(string assetId) external view returns (bool)",
-  "event AssetRegistered(address indexed owner, string assetId, uint256 timestamp, string title)",
-  "function modifyAsset(string assetId, string newTitle) external"
+
+  // ───────────── Initialization ─────────────
+  "function initialize(address roleManagerAddress, address upgradeControlAddress) external",
+
+  // ───────────── Asset ─────────────
+  "function registerAsset(bytes32 nodeId, string assetId, string assetTitle) external",
+  "function modifyAsset(bytes32 nodeId, string assetId, string newTitle) external",
+  "function getAsset(bytes32 nodeId, string assetId) external view returns (string id, bytes32 nId, address registrar, uint256 timestamp, string title)",
+  "function assetExists(bytes32 nodeId, string assetId) external view returns (bool)",
+
+  // ───────────── Policy ─────────────
+  "function registerPolicy(bytes32 nodeId, string policyId, string policyTitle) external",
+  "function modifyPolicy(bytes32 nodeId, string policyId, string newTitle) external",
+  "function getPolicy(bytes32 nodeId, string policyId) external view returns (string id, bytes32 nId, address registrar, uint256 timestamp, string title)",
+  "function policyExists(bytes32 nodeId, string policyId) external view returns (bool)",
+
+  // ───────────── Data Offer ─────────────
+  "function registerDataoffer(bytes32 nodeId, string offerId, string offerTitle) external",
+  "function modifyDataoffer(bytes32 nodeId, string offerId, string newTitle) external",
+  "function getDataoffer(bytes32 nodeId, string offerId) external view returns (string id, bytes32 nId, address registrar, uint256 timestamp, string title)",
+  "function dataofferExists(bytes32 nodeId, string offerId) external view returns (bool)",
+
+  // ───────────── Events ─────────────
+  "event AssetRegistered(address indexed registrar, bytes32 indexed nodeId, string assetId, uint256 timestamp, string title)",
+  "event AssetModified(bytes32 indexed nodeId, string assetId, uint256 timestamp, string newTitle)",
+
+  "event PolicyRegistered(address indexed registrar, bytes32 indexed nodeId, string policyId, uint256 timestamp, string title)",
+  "event PolicyModified(bytes32 indexed nodeId, string policyId, uint256 timestamp, string newTitle)",
+
+  "event DataofferRegistered(address indexed registrar, bytes32 indexed nodeId, string offerId, uint256 timestamp, string title)",
+  "event DataofferModified(bytes32 indexed nodeId, string offerId, uint256 timestamp, string newTitle)"
 ];
 
+
+const NODE_ID_CONSUMER = ethers.keccak256(
+  ethers.toUtf8Bytes("localhost:11000")
+);
+
+const NODE_ID_PROVIDER = ethers.keccak256(
+  ethers.toUtf8Bytes("localhost:22000")
+);
 
 
 const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, wallet);
@@ -204,129 +239,193 @@ app.post("/event", async (req, res) => {
     // 2. LOGICA PER ASSET CONSUMER (PORTA 11000)
     //
     if (normalizedPort === "11000") {
-      console.log("📡 Evento proveniente dal CONSUMER (11000)");
-      console.dir(cleanedData, { depth: null, colors: true });
+  console.log("📡 Evento proveniente dal CONSUMER (11000)");
+  console.dir(cleanedData, { depth: null, colors: true });
 
-      if(rawPort==Asset&&method=='POST')
-      {
-        try {
-        const newAssetId =assetId.toString();
+  /* ======================= ASSET POST ======================= */
+  if (rawPort == Asset && method === "POST") {
+    try {
+      const newAssetId = assetId.toString();
 
-        console.log(`📤 Registrazione asset ID: ${newAssetId}`);
+      console.log(`📤 Registrazione asset ID: ${newAssetId}`);
 
-        const estimatedGas = await contract.registerAsset.estimateGas(newAssetId, assetTitle);
-        console.log(`⛽ Gas stimato: ${estimatedGas.toString()}`);
+      const estimatedGas = await contract.registerAsset.estimateGas(
+        NODE_ID_CONSUMER,
+        newAssetId,
+        assetTitle
+      );
 
-        const tx = await contract.registerAsset(newAssetId, assetTitle,{
-          gasLimit: estimatedGas + 50000n, // margine di sicurezza
-        });
+      console.log(`⛽ Gas stimato: ${estimatedGas}`);
 
-        console.log(`⏳ Transazione inviata: ${tx.hash}`);
+      const tx = await contract.registerAsset(
+        NODE_ID_CONSUMER,
+        newAssetId,
+        assetTitle,
+        { gasLimit: estimatedGas + 50_000n }
+      );
 
-        const receipt = await tx.wait();
-        console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
+      console.log(`⏳ Transazione inviata: ${tx.hash}`);
+      const receipt = await tx.wait();
 
-        const data = await contract.getAsset(newAssetId);
-        console.log(`📄 Asset registrato:`, data);
-       } catch (err) {
-        console.error("❌ Errore durante la registrazione asset (consumer):", err);
-       }
-      }
-      else if(rawPort==Asset&&method=='PUT')
-      {
-      try {
-        assetId=cleanedData.request?.body?.properties?.id;
-        const newAssetId =assetId.toString();
+      console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
 
-        console.log(`📤 cerco ID nel chain : ${newAssetId}`);
+      const data = await contract.getAsset(NODE_ID_CONSUMER, newAssetId);
+      console.log("📄 Asset registrato:", data);
 
-        const data = await contract.getAsset(newAssetId);
-        console.log(`📄 Asset trovato:`, data);
-		let newAssetTitle=cleanedData.request?.body?.properties?.title;
-		
-		const estimatedGas = await contract.modifyAsset.estimateGas(newAssetId, newAssetTitle);
-        console.log(`⛽ Gas stimato: ${estimatedGas.toString()}`);
-
-        const tx = await contract.modifyAsset(newAssetId, newAssetTitle,{
-          gasLimit: estimatedGas + 50000n, // margine di sicurezza
-        });
-		const receipt = await tx.wait();
-		console.log(`✅ Asset "${newAssetId}" modificato nel blocco ${receipt.blockNumber}`);
-		
-		const datamodificato = await contract.getAsset(newAssetId);
-        console.log(`📄 Asset modificato:`, datamodificato);
-       } catch (err) {
-        console.error("❌ Errore durante la registrazione asset (consumer):", err);
-       }
-
-      }
-	  else if (rawPort==Policy&&method=='POST')
-	  {
-		  console.log("i am here");
-		  const { id: policyid, time1, time2 } = extractPolicyInfo(cleanedData);
-
-          console.log("policyid:", policyid);
-          console.log("time1:", time1);
-          console.log("time2:", time2);
-		  const timePolicy = (time1 && time2) ? true : false;
-		  try {
-                 const newpolicyid =policyid.toString();
-				 
-				 if(timePolicy==true){
-			      console.log(`📤 Registrazione poliicy ID: ${newpolicyid}`);
-				 
-
-                  const estimatedGas = await contract.registerAsset.estimateGas(newAssetId, assetTitle);
-                  console.log(`⛽ Gas stimato: ${estimatedGas.toString()}`);
-
-                  const tx = await contract.registerAsset(newAssetId, assetTitle,{gasLimit: estimatedGas + 50000n, // margine di sicurezza
-				 });
-
-                  console.log(`⏳ Transazione inviata: ${tx.hash}`);
-
-                  const receipt = await tx.wait();
-                  console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
-
-                  const data = await contract.getAsset(newAssetId);
-                  console.log(`📄 Asset registrato:`, data);
-					 
-				 }
-				 else{
-			      console.log(`📤 Registrazione poliicy ID: ${newpolicyid}`);
-				 
-
-                  const estimatedGas = await contract.registerAsset.estimateGas(newAssetId, assetTitle);
-                  console.log(`⛽ Gas stimato: ${estimatedGas.toString()}`);
-
-                  const tx = await contract.registerAsset(newAssetId, assetTitle,{gasLimit: estimatedGas + 50000n, // margine di sicurezza
-				  });
-
-                  console.log(`⏳ Transazione inviata: ${tx.hash}`);
-
-                  const receipt = await tx.wait();
-                  console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
-
-                  const data = await contract.getAsset(newAssetId);
-                  console.log(`📄 Asset registrato:`, data);
-				 }
-
-
-                } catch (err) {
-                   console.error("❌ Errore durante la registrazione asset (consumer):", err);
-                }
-	  }
-	  
-
-      // Invio aggiornamento realtime
-      io.emit("event", {
-        ...cleanedData,
-        response,
-        ts: new Date().toISOString(),
-        html: prettyHtml,
-      });
-
-      return res.json(response);
+    } catch (err) {
+      console.error("❌ Errore durante la registrazione asset (consumer):", err);
     }
+  }
+
+  /* ======================= ASSET PUT ======================= */
+  else if (rawPort == Asset && method === "PUT") {
+    try {
+      const newAssetId = cleanedData.request?.body?.properties?.id?.toString();
+      const newAssetTitle = cleanedData.request?.body?.properties?.title;
+
+      console.log(`📤 Modifica asset ID: ${newAssetId}`);
+
+      const data = await contract.getAsset(NODE_ID_CONSUMER, newAssetId);
+      console.log("📄 Asset trovato:", data);
+
+      const estimatedGas = await contract.modifyAsset.estimateGas(
+        NODE_ID_CONSUMER,
+        newAssetId,
+        newAssetTitle
+      );
+
+      const tx = await contract.modifyAsset(
+        NODE_ID_CONSUMER,
+        newAssetId,
+        newAssetTitle,
+        { gasLimit: estimatedGas + 50_000n }
+      );
+
+      const receipt = await tx.wait();
+      console.log(`✅ Asset "${newAssetId}" modificato nel blocco ${receipt.blockNumber}`);
+
+      const updated = await contract.getAsset(NODE_ID_CONSUMER, newAssetId);
+      console.log("📄 Asset modificato:", updated);
+
+    } catch (err) {
+      console.error("❌ Errore durante la modifica asset (consumer):", err);
+    }
+  }
+
+  /* ======================= POLICY POST ======================= */
+  else if (rawPort == Policy && method === "POST") {
+    console.log("📤 Registrazione policy (consumer)");
+
+    const { id: policyid, time1, time2 } = extractPolicyInfo(cleanedData);
+    const newPolicyId = policyid.toString();
+
+    let policyContent = "";
+    if (time1 && time2) {
+      policyContent = `${time1}&${time2}`;
+    }
+
+    try {
+      const estimatedGas = await contract.registerPolicy.estimateGas(
+        NODE_ID_CONSUMER,
+        newPolicyId,
+        policyContent
+      );
+
+      console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+      const tx = await contract.registerPolicy(
+        NODE_ID_CONSUMER,
+        newPolicyId,
+        policyContent,
+        { gasLimit: estimatedGas + 50_000n }
+      );
+
+      console.log(`⏳ Transazione inviata: ${tx.hash}`);
+      const receipt = await tx.wait();
+
+      console.log(`✅ Policy "${newPolicyId}" registrata nel blocco ${receipt.blockNumber}`);
+
+      const data = await contract.getPolicy(NODE_ID_CONSUMER, newPolicyId);
+      console.log("📄 Policy registrata:", data);
+
+    } catch (err) {
+      console.error("❌ Errore durante la registrazione Policy (consumer):", err);
+    }
+  }
+  /* ======================= POLICY PUT ======================= */
+  else if(method === "PUT" && rawPort.startsWith(Policy)){
+    console.log("✏️ Modifica policy (consumer)");
+
+  try {
+    const policyId = cleanedData.request?.body?.['@id']
+      || cleanedData.request?.body?.id;
+
+    if (!policyId) {
+      throw new Error("Policy ID non trovato nella richiesta");
+    }
+
+    const newPolicyId = policyId.toString();
+
+    const { time1, time2 } = extractPolicyInfo(cleanedData);
+
+    let newPolicyContent = "";
+    if (time1 && time2) {
+      newPolicyContent = `${time1}&${time2}`;
+    }
+
+    console.log(`📤 Cerco policy ID: ${newPolicyId}`);
+
+    // Verifica esistenza
+    const existing = await contract.getPolicy(
+      NODE_ID_CONSUMER,
+      newPolicyId
+    );
+    console.log("📄 Policy trovata:", existing);
+
+    // Gas estimation
+    const estimatedGas = await contract.modifyPolicy.estimateGas(
+      NODE_ID_CONSUMER,
+      newPolicyId,
+      newPolicyContent
+    );
+
+    console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+    // Transazione
+    const tx = await contract.modifyPolicy(
+      NODE_ID_CONSUMER,
+      newPolicyId,
+      newPolicyContent,
+      { gasLimit: estimatedGas + 50_000n }
+    );
+
+    console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+    const receipt = await tx.wait();
+    console.log(`✅ Policy "${newPolicyId}" modificata nel blocco ${receipt.blockNumber}`);
+
+    // Verifica finale
+    const updated = await contract.getPolicy(
+      NODE_ID_CONSUMER,
+      newPolicyId
+    );
+    console.log("📄 Policy modificata:", updated);
+
+  } catch (err) {
+    console.error("❌ Errore durante la modifica Policy (consumer):", err);
+  }
+  }
+
+  /* ======================= EMIT EVENT ======================= */
+  io.emit("event", {
+    ...cleanedData,
+    response,
+    ts: new Date().toISOString(),
+    html: prettyHtml,
+  });
+
+  return res.json(response);
+}
 
     //
     // 3. LOGICA PER ASSET PROVIDER (PORTA 22000)
@@ -353,9 +452,9 @@ app.post("/event", async (req, res) => {
         console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
 
         const data = await contract.getAsset(newAssetId);
-        console.log(`📄 Asset registrato:`, data);
+        console.log(` Asset registrato:`, data);
       } catch (err) {
-        console.error("❌ Errore durante la registrazione asset (provider):", err);
+        console.error(" Errore durante la registrazione asset (provider):", err);
       }
 
       io.emit("event", {

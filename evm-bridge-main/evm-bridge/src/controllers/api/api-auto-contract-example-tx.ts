@@ -97,6 +97,7 @@ export class ExampleContractApiTxController extends Controller {
     }
     /**
      * @typedef TxParamsExampleModifyAsset
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} assetId.required - assetId
      * @property {string} newTitle.required - newTitle
      */
@@ -110,9 +111,9 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: modifyAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: modifyAsset(string,string)
+     * Method signature: modifyAsset(bytes32,string,string)
      * Binding: TxModifyAsset
-     * Modifica titolo di un asset esistente
+     * 
      * @route POST /contracts/example/tx/modify-asset
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {TxRequestExampleModifyAsset.model} request.body.required - Request body
@@ -122,7 +123,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txModifyAsset(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }], "name": "modifyAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }], "name": "modifyAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 
@@ -139,6 +140,7 @@ export class ExampleContractApiTxController extends Controller {
     }
     /**
      * @typedef TxParamsExampleModifyDataoffer
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} offerId.required - offerId
      * @property {string} newTitle.required - newTitle
      */
@@ -152,9 +154,9 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: modifyDataoffer
      * Smart contract: Example (ExampleContract)
-     * Method signature: modifyDataoffer(string,string)
+     * Method signature: modifyDataoffer(bytes32,string,string)
      * Binding: TxModifyDataoffer
-     * Modifica titolo di un dataoffer
+     * 
      * @route POST /contracts/example/tx/modify-dataoffer
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {TxRequestExampleModifyDataoffer.model} request.body.required - Request body
@@ -164,7 +166,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txModifyDataoffer(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }], "name": "modifyDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }], "name": "modifyDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 
@@ -181,6 +183,7 @@ export class ExampleContractApiTxController extends Controller {
     }
     /**
      * @typedef TxParamsExampleModifyPolicy
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} policyId.required - policyId
      * @property {string} newTitle.required - newTitle
      */
@@ -194,9 +197,9 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: modifyPolicy
      * Smart contract: Example (ExampleContract)
-     * Method signature: modifyPolicy(string,string)
+     * Method signature: modifyPolicy(bytes32,string,string)
      * Binding: TxModifyPolicy
-     * Modifica titolo di un policy esistente
+     * 
      * @route POST /contracts/example/tx/modify-policy
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {TxRequestExampleModifyPolicy.model} request.body.required - Request body
@@ -206,7 +209,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txModifyPolicy(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "string", "name": "policyId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }], "name": "modifyPolicy", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "policyId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }], "name": "modifyPolicy", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 
@@ -258,6 +261,7 @@ export class ExampleContractApiTxController extends Controller {
     }
     /**
      * @typedef TxParamsExampleRegisterAsset
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} assetId.required - assetId
      * @property {string} assetTitle.required - assetTitle
      */
@@ -271,9 +275,9 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: registerAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerAsset(string,string)
+     * Method signature: registerAsset(bytes32,string,string)
      * Binding: TxRegisterAsset
-     * Registra un nuovo asset
+     * 
      * @route POST /contracts/example/tx/register-asset
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {TxRequestExampleRegisterAsset.model} request.body.required - Request body
@@ -283,7 +287,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txRegisterAsset(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string", "name": "assetTitle", "type": "string" }], "name": "registerAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string", "name": "assetTitle", "type": "string" }], "name": "registerAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 
@@ -300,6 +304,7 @@ export class ExampleContractApiTxController extends Controller {
     }
     /**
      * @typedef TxParamsExampleRegisterDataoffer
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} offerId.required - offerId
      * @property {string} offerTitle.required - offerTitle
      */
@@ -313,9 +318,9 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: registerDataoffer
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerDataoffer(string,string)
+     * Method signature: registerDataoffer(bytes32,string,string)
      * Binding: TxRegisterDataoffer
-     * Registra un nuovo Dataoffer
+     * 
      * @route POST /contracts/example/tx/register-dataoffer
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {TxRequestExampleRegisterDataoffer.model} request.body.required - Request body
@@ -325,7 +330,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txRegisterDataoffer(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "offerTitle", "type": "string" }], "name": "registerDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "offerTitle", "type": "string" }], "name": "registerDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 
@@ -342,6 +347,7 @@ export class ExampleContractApiTxController extends Controller {
     }
     /**
      * @typedef TxParamsExampleRegisterPolicy
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} policyId.required - policyId
      * @property {string} policyTitle.required - policyTitle
      */
@@ -355,9 +361,9 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: registerPolicy
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerPolicy(string,string)
+     * Method signature: registerPolicy(bytes32,string,string)
      * Binding: TxRegisterPolicy
-     * Registra un nuovo policy
+     * 
      * @route POST /contracts/example/tx/register-policy
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {TxRequestExampleRegisterPolicy.model} request.body.required - Request body
@@ -367,7 +373,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txRegisterPolicy(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "string", "name": "policyId", "type": "string" }, { "internalType": "string", "name": "policyTitle", "type": "string" }], "name": "registerPolicy", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "policyId", "type": "string" }, { "internalType": "string", "name": "policyTitle", "type": "string" }], "name": "registerPolicy", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 

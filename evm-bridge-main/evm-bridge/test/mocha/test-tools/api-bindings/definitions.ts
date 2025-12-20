@@ -1566,6 +1566,11 @@ export interface TxRequestExampleInitialize {
 
 export interface TxParamsExampleModifyAsset {
     /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
      * assetId
      */
     assetId: string;
@@ -1584,6 +1589,11 @@ export interface TxRequestExampleModifyAsset {
 
 export interface TxParamsExampleModifyDataoffer {
     /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
      * offerId
      */
     offerId: string;
@@ -1601,6 +1611,11 @@ export interface TxRequestExampleModifyDataoffer {
 }
 
 export interface TxParamsExampleModifyPolicy {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
     /**
      * policyId
      */
@@ -1624,6 +1639,11 @@ export interface TxRequestExamplePause {
 
 export interface TxParamsExampleRegisterAsset {
     /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
      * assetId
      */
     assetId: string;
@@ -1642,6 +1662,11 @@ export interface TxRequestExampleRegisterAsset {
 
 export interface TxParamsExampleRegisterDataoffer {
     /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
      * offerId
      */
     offerId: string;
@@ -1659,6 +1684,11 @@ export interface TxRequestExampleRegisterDataoffer {
 }
 
 export interface TxParamsExampleRegisterPolicy {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
     /**
      * policyId
      */
@@ -1700,19 +1730,24 @@ export interface TxRequestExampleUpgradeToAndCall {
 
 export interface EventParamsExampleAssetModified {
     /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
      * assetId
      */
     assetId: string;
 
     /**
-     * newTitle
-     */
-    newTitle: string;
-
-    /**
      * timestamp 
      */
     timestamp: string;
+
+    /**
+     * newTitle
+     */
+    newTitle: string;
 }
 
 export interface EventItemExampleAssetModified {
@@ -1755,9 +1790,14 @@ export interface EventListExampleAssetModified {
 
 export interface EventParamsExampleAssetRegistered {
     /**
-     * owner 
+     * registrar 
      */
-    owner: string;
+    registrar: string;
+
+    /**
+     * nodeId 
+     */
+    nodeId: string;
 
     /**
      * assetId
@@ -2035,19 +2075,24 @@ export interface EventListExampleDataTransferRequested {
 
 export interface EventParamsExampleDataofferModified {
     /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
      * offerId
      */
     offerId: string;
 
     /**
-     * newTitle
-     */
-    newTitle: string;
-
-    /**
      * timestamp 
      */
     timestamp: string;
+
+    /**
+     * newTitle
+     */
+    newTitle: string;
 }
 
 export interface EventItemExampleDataofferModified {
@@ -2090,9 +2135,14 @@ export interface EventListExampleDataofferModified {
 
 export interface EventParamsExampleDataofferRegistered {
     /**
-     * owner 
+     * registrar 
      */
-    owner: string;
+    registrar: string;
+
+    /**
+     * nodeId 
+     */
+    nodeId: string;
 
     /**
      * offerId
@@ -2240,19 +2290,24 @@ export interface EventListExamplePaused {
 
 export interface EventParamsExamplePolicyModified {
     /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
      * policyId
      */
     policyId: string;
 
     /**
-     * newTitle
-     */
-    newTitle: string;
-
-    /**
      * timestamp 
      */
     timestamp: string;
+
+    /**
+     * newTitle
+     */
+    newTitle: string;
 }
 
 export interface EventItemExamplePolicyModified {
@@ -2295,9 +2350,14 @@ export interface EventListExamplePolicyModified {
 
 export interface EventParamsExamplePolicyRegistered {
     /**
-     * owner 
+     * registrar 
      */
-    owner: string;
+    registrar: string;
+
+    /**
+     * nodeId 
+     */
+    nodeId: string;
 
     /**
      * policyId
@@ -2450,7 +2510,50 @@ export interface CallResponseExampleUPGRADE_INTERFACE_VERSION {
     _0: string;
 }
 
+export interface CallRequestExampleAssetExists {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * assetId
+     */
+    assetId: string;
+}
+
+export interface CallResponseExampleAssetExists {
+    /**
+     * _0
+     */
+    _0: boolean;
+}
+
+export interface CallRequestExampleDataofferExists {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * offerId
+     */
+    offerId: string;
+}
+
+export interface CallResponseExampleDataofferExists {
+    /**
+     * _0
+     */
+    _0: boolean;
+}
+
 export interface CallRequestExampleGetAsset {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
     /**
      * assetId
      */
@@ -2464,9 +2567,14 @@ export interface CallResponseExampleGetAsset {
     id: string;
 
     /**
-     * owner 
+     * nId 
      */
-    owner: string;
+    nId: string;
+
+    /**
+     * registrar 
+     */
+    registrar: string;
 
     /**
      * timestamp 
@@ -2481,6 +2589,11 @@ export interface CallResponseExampleGetAsset {
 
 export interface CallRequestExampleGetDataoffer {
     /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
      * offerId
      */
     offerId: string;
@@ -2493,9 +2606,14 @@ export interface CallResponseExampleGetDataoffer {
     id: string;
 
     /**
-     * owner 
+     * nId 
      */
-    owner: string;
+    nId: string;
+
+    /**
+     * registrar 
+     */
+    registrar: string;
 
     /**
      * timestamp 
@@ -2517,6 +2635,11 @@ export interface CallResponseExampleGetInitializedVersion {
 
 export interface CallRequestExampleGetPolicy {
     /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
      * policyId
      */
     policyId: string;
@@ -2529,9 +2652,14 @@ export interface CallResponseExampleGetPolicy {
     id: string;
 
     /**
-     * owner 
+     * nId 
      */
-    owner: string;
+    nId: string;
+
+    /**
+     * registrar 
+     */
+    registrar: string;
 
     /**
      * timestamp 
@@ -2544,23 +2672,28 @@ export interface CallResponseExampleGetPolicy {
     title: string;
 }
 
-export interface CallRequestExampleIsRegistered {
+export interface CallResponseExamplePaused {
     /**
-     * assetId
-     */
-    assetId: string;
-}
-
-export interface CallResponseExampleIsRegistered {
-    /**
-     * _0
+     * bool True if paused, false otherwise
      */
     _0: boolean;
 }
 
-export interface CallResponseExamplePaused {
+export interface CallRequestExamplePolicyExists {
     /**
-     * bool True if paused, false otherwise
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * policyId
+     */
+    policyId: string;
+}
+
+export interface CallResponseExamplePolicyExists {
+    /**
+     * _0
      */
     _0: boolean;
 }

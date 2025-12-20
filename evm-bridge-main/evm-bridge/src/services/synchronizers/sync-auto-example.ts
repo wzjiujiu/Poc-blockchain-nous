@@ -75,9 +75,10 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
 
                         const id = createEventUID(block, eventIndex, tx);
 
+                        const pNodeId = normalizeBytes32(ev.data.nodeId);
                         const pAssetId = ev.data.assetId;
-                        const pNewTitle = ev.data.newTitle;
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const pNewTitle = ev.data.newTitle;
                         const exists = await EventExampleAssetModified.exists(id);
                         if (!exists) {
                             const newEvent = new EventExampleAssetModified({
@@ -86,9 +87,10 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 timestamp,
                                 eventIndex,
                                 tx,
+                                pNodeId,
                                 pAssetId,
-                                pNewTitle,
                                 pTimestamp,
+                                pNewTitle,
                             });
 
                             await newEvent.insert();
@@ -106,7 +108,8 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
 
                         const id = createEventUID(block, eventIndex, tx);
 
-                        const pOwner = normalizeAddress(ev.data.owner);
+                        const pRegistrar = normalizeAddress(ev.data.registrar);
+                        const pNodeId = normalizeBytes32(ev.data.nodeId);
                         const pAssetId = ev.data.assetId;
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
                         const pTitle = ev.data.title;
@@ -118,7 +121,8 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 timestamp,
                                 eventIndex,
                                 tx,
-                                pOwner,
+                                pRegistrar,
+                                pNodeId,
                                 pAssetId,
                                 pTimestamp,
                                 pTitle,
@@ -263,9 +267,10 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
 
                         const id = createEventUID(block, eventIndex, tx);
 
+                        const pNodeId = normalizeBytes32(ev.data.nodeId);
                         const pOfferId = ev.data.offerId;
-                        const pNewTitle = ev.data.newTitle;
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const pNewTitle = ev.data.newTitle;
                         const exists = await EventExampleDataofferModified.exists(id);
                         if (!exists) {
                             const newEvent = new EventExampleDataofferModified({
@@ -274,9 +279,10 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 timestamp,
                                 eventIndex,
                                 tx,
+                                pNodeId,
                                 pOfferId,
-                                pNewTitle,
                                 pTimestamp,
+                                pNewTitle,
                             });
 
                             await newEvent.insert();
@@ -294,7 +300,8 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
 
                         const id = createEventUID(block, eventIndex, tx);
 
-                        const pOwner = normalizeAddress(ev.data.owner);
+                        const pRegistrar = normalizeAddress(ev.data.registrar);
+                        const pNodeId = normalizeBytes32(ev.data.nodeId);
                         const pOfferId = ev.data.offerId;
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
                         const pTitle = ev.data.title;
@@ -306,7 +313,8 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 timestamp,
                                 eventIndex,
                                 tx,
-                                pOwner,
+                                pRegistrar,
+                                pNodeId,
                                 pOfferId,
                                 pTimestamp,
                                 pTitle,
@@ -381,9 +389,10 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
 
                         const id = createEventUID(block, eventIndex, tx);
 
+                        const pNodeId = normalizeBytes32(ev.data.nodeId);
                         const pPolicyId = ev.data.policyId;
-                        const pNewTitle = ev.data.newTitle;
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const pNewTitle = ev.data.newTitle;
                         const exists = await EventExamplePolicyModified.exists(id);
                         if (!exists) {
                             const newEvent = new EventExamplePolicyModified({
@@ -392,9 +401,10 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 timestamp,
                                 eventIndex,
                                 tx,
+                                pNodeId,
                                 pPolicyId,
-                                pNewTitle,
                                 pTimestamp,
+                                pNewTitle,
                             });
 
                             await newEvent.insert();
@@ -412,7 +422,8 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
 
                         const id = createEventUID(block, eventIndex, tx);
 
-                        const pOwner = normalizeAddress(ev.data.owner);
+                        const pRegistrar = normalizeAddress(ev.data.registrar);
+                        const pNodeId = normalizeBytes32(ev.data.nodeId);
                         const pPolicyId = ev.data.policyId;
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
                         const pTitle = ev.data.title;
@@ -424,7 +435,8 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 timestamp,
                                 eventIndex,
                                 tx,
-                                pOwner,
+                                pRegistrar,
+                                pNodeId,
                                 pPolicyId,
                                 pTimestamp,
                                 pTitle,

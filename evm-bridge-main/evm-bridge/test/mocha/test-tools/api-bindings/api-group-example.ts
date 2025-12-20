@@ -27,7 +27,7 @@
 
 import { RequestErrorHandler, RequestParams, CommonAuthenticatedErrorHandler } from "@asanrom/request-axios";
 import { getApiUrl, generateURIQuery } from "./utils";
-import { SmartContractInformation, TxResponse, TxRequestExampleInitialize, TxRequestExampleModifyAsset, TxRequestExampleModifyDataoffer, TxRequestExampleModifyPolicy, TxRequestExamplePause, TxRequestExampleRegisterAsset, TxRequestExampleRegisterDataoffer, TxRequestExampleRegisterPolicy, TxRequestExampleUnpause, TxRequestExampleUpgradeToAndCall, EventListExampleAssetModified, EventListExampleAssetRegistered, EventListExampleDataTransferApproved, EventListExampleDataTransferCompleted, EventListExampleDataTransferRejected, EventListExampleDataTransferRequested, EventListExampleDataofferModified, EventListExampleDataofferRegistered, EventListExampleInitialized, EventListExamplePaused, EventListExamplePolicyModified, EventListExamplePolicyRegistered, EventListExampleUnpaused, EventListExampleUpgraded, CallResponseExampleUPGRADE_INTERFACE_VERSION, CallResponseExampleGetAsset, CallRequestExampleGetAsset, CallResponseExampleGetDataoffer, CallRequestExampleGetDataoffer, CallResponseExampleGetInitializedVersion, CallResponseExampleGetPolicy, CallRequestExampleGetPolicy, CallResponseExampleIsRegistered, CallRequestExampleIsRegistered, CallResponseExamplePaused, CallResponseExampleProxiableUUID } from "./definitions";
+import { SmartContractInformation, TxResponse, TxRequestExampleInitialize, TxRequestExampleModifyAsset, TxRequestExampleModifyDataoffer, TxRequestExampleModifyPolicy, TxRequestExamplePause, TxRequestExampleRegisterAsset, TxRequestExampleRegisterDataoffer, TxRequestExampleRegisterPolicy, TxRequestExampleUnpause, TxRequestExampleUpgradeToAndCall, EventListExampleAssetModified, EventListExampleAssetRegistered, EventListExampleDataTransferApproved, EventListExampleDataTransferCompleted, EventListExampleDataTransferRejected, EventListExampleDataTransferRequested, EventListExampleDataofferModified, EventListExampleDataofferRegistered, EventListExampleInitialized, EventListExamplePaused, EventListExamplePolicyModified, EventListExamplePolicyRegistered, EventListExampleUnpaused, EventListExampleUpgraded, CallResponseExampleUPGRADE_INTERFACE_VERSION, CallResponseExampleAssetExists, CallRequestExampleAssetExists, CallResponseExampleDataofferExists, CallRequestExampleDataofferExists, CallResponseExampleGetAsset, CallRequestExampleGetAsset, CallResponseExampleGetDataoffer, CallRequestExampleGetDataoffer, CallResponseExampleGetInitializedVersion, CallResponseExampleGetPolicy, CallRequestExampleGetPolicy, CallResponseExamplePaused, CallResponseExamplePolicyExists, CallRequestExamplePolicyExists, CallResponseExampleProxiableUUID } from "./definitions";
 
 export class ApiExample {
     /**
@@ -87,8 +87,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/modify-asset
      * Sends transaction for method: modifyAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: modifyAsset(string,string)
-     * Modifica titolo di un asset esistente
+     * Method signature: modifyAsset(bytes32,string,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -120,8 +119,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/modify-dataoffer
      * Sends transaction for method: modifyDataoffer
      * Smart contract: Example (ExampleContract)
-     * Method signature: modifyDataoffer(string,string)
-     * Modifica titolo di un dataoffer
+     * Method signature: modifyDataoffer(bytes32,string,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -153,8 +151,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/modify-policy
      * Sends transaction for method: modifyPolicy
      * Smart contract: Example (ExampleContract)
-     * Method signature: modifyPolicy(string,string)
-     * Modifica titolo di un policy esistente
+     * Method signature: modifyPolicy(bytes32,string,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -219,8 +216,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/register-asset
      * Sends transaction for method: registerAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerAsset(string,string)
-     * Registra un nuovo asset
+     * Method signature: registerAsset(bytes32,string,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -252,8 +248,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/register-dataoffer
      * Sends transaction for method: registerDataoffer
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerDataoffer(string,string)
-     * Registra un nuovo Dataoffer
+     * Method signature: registerDataoffer(bytes32,string,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -285,8 +280,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/register-policy
      * Sends transaction for method: registerPolicy
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerPolicy(string,string)
-     * Registra un nuovo policy
+     * Method signature: registerPolicy(bytes32,string,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -383,7 +377,7 @@ export class ApiExample {
      * Path: /contracts/example/events/asset-modified
      * Get a list of events of type AssetModified
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetModified(string,string,uint256)
+     * Event signature: AssetModified(bytes32,string,uint256,string)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
@@ -406,7 +400,7 @@ export class ApiExample {
      * Path: /contracts/example/events/asset-registered
      * Get a list of events of type AssetRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetRegistered(address,string,uint256,string)
+     * Event signature: AssetRegistered(address,bytes32,string,uint256,string)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
@@ -521,7 +515,7 @@ export class ApiExample {
      * Path: /contracts/example/events/dataoffer-modified
      * Get a list of events of type DataofferModified
      * Smart contract: Example (ExampleContract)
-     * Event signature: DataofferModified(string,string,uint256)
+     * Event signature: DataofferModified(bytes32,string,uint256,string)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
@@ -544,7 +538,7 @@ export class ApiExample {
      * Path: /contracts/example/events/dataoffer-registered
      * Get a list of events of type DataofferRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: DataofferRegistered(address,string,uint256,string)
+     * Event signature: DataofferRegistered(address,bytes32,string,uint256,string)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
@@ -614,7 +608,7 @@ export class ApiExample {
      * Path: /contracts/example/events/policy-modified
      * Get a list of events of type PolicyModified
      * Smart contract: Example (ExampleContract)
-     * Event signature: PolicyModified(string,string,uint256)
+     * Event signature: PolicyModified(bytes32,string,uint256,string)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
@@ -637,7 +631,7 @@ export class ApiExample {
      * Path: /contracts/example/events/policy-registered
      * Get a list of events of type PolicyRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: PolicyRegistered(address,string,uint256,string)
+     * Event signature: PolicyRegistered(address,bytes32,string,uint256,string)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
@@ -728,11 +722,62 @@ export class ApiExample {
 
     /**
      * Method: POST
+     * Path: /contracts/example/call/asset-exists
+     * Calls the view method: assetExists
+     * Smart contract: Example (ExampleContract)
+     * Method signature: assetExists(bytes32,string)
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static CallAssetExists(body: CallRequestExampleAssetExists): RequestParams<CallResponseExampleAssetExists, CallAssetExistsErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/call/asset-exists`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(404, "*", handler.notFound)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
+     * Path: /contracts/example/call/dataoffer-exists
+     * Calls the view method: dataofferExists
+     * Smart contract: Example (ExampleContract)
+     * Method signature: dataofferExists(bytes32,string)
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static CallDataofferExists(body: CallRequestExampleDataofferExists): RequestParams<CallResponseExampleDataofferExists, CallDataofferExistsErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/call/dataoffer-exists`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(404, "*", handler.notFound)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
      * Path: /contracts/example/call/get-asset
      * Calls the view method: getAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: getAsset(string)
-     * Restituisce i dettagli di un asset
+     * Method signature: getAsset(bytes32,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -758,8 +803,7 @@ export class ApiExample {
      * Path: /contracts/example/call/get-dataoffer
      * Calls the view method: getDataoffer
      * Smart contract: Example (ExampleContract)
-     * Method signature: getDataoffer(string)
-     * Restituisce i dettagli di un policy
+     * Method signature: getDataoffer(bytes32,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -810,8 +854,7 @@ export class ApiExample {
      * Path: /contracts/example/call/get-policy
      * Calls the view method: getPolicy
      * Smart contract: Example (ExampleContract)
-     * Method signature: getPolicy(string)
-     * Restituisce i dettagli di un policy
+     * Method signature: getPolicy(bytes32,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -819,33 +862,6 @@ export class ApiExample {
         return {
             method: "POST",
             url: getApiUrl(`/contracts/example/call/get-policy`),
-            json: body,
-            handleError: (err, handler) => {
-                new RequestErrorHandler()
-                    .add(404, "*", handler.notFound)
-                    .add(400, "*", handler.badRequest)
-                    .add(401, "*", handler.unauthorized)
-                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
-                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
-                    .handle(err);
-            },
-        };
-    }
-
-    /**
-     * Method: POST
-     * Path: /contracts/example/call/is-registered
-     * Calls the view method: isRegistered
-     * Smart contract: Example (ExampleContract)
-     * Method signature: isRegistered(string)
-     * Controlla se un asset è registrato
-     * @param body Body parameters
-     * @returns The request parameters
-     */
-    public static CallIsRegistered(body: CallRequestExampleIsRegistered): RequestParams<CallResponseExampleIsRegistered, CallIsRegisteredErrorHandler> {
-        return {
-            method: "POST",
-            url: getApiUrl(`/contracts/example/call/is-registered`),
             json: body,
             handleError: (err, handler) => {
                 new RequestErrorHandler()
@@ -872,6 +888,32 @@ export class ApiExample {
         return {
             method: "POST",
             url: getApiUrl(`/contracts/example/call/paused`),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(404, "*", handler.notFound)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
+     * Path: /contracts/example/call/policy-exists
+     * Calls the view method: policyExists
+     * Smart contract: Example (ExampleContract)
+     * Method signature: policyExists(bytes32,string)
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static CallPolicyExists(body: CallRequestExamplePolicyExists): RequestParams<CallResponseExamplePolicyExists, CallPolicyExistsErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/call/policy-exists`),
+            json: body,
             handleError: (err, handler) => {
                 new RequestErrorHandler()
                     .add(404, "*", handler.notFound)
@@ -1372,6 +1414,11 @@ export interface GetEventsAssetModifiedQueryParameters {
      * Max number of items to get. Default: 25, Max: 256
      */
     limit?: string;
+
+    /**
+     * Filter event with a value for the parameter 'nodeId' equal than the one specified.
+     */
+    filter_eq_pNodeId?: string;
 }
 
 /**
@@ -1389,9 +1436,14 @@ export interface GetEventsAssetRegisteredQueryParameters {
     limit?: string;
 
     /**
-     * Filter event with a value for the parameter 'owner' equal than the one specified.
+     * Filter event with a value for the parameter 'registrar' equal than the one specified.
      */
-    filter_eq_pOwner?: string;
+    filter_eq_pRegistrar?: string;
+
+    /**
+     * Filter event with a value for the parameter 'nodeId' equal than the one specified.
+     */
+    filter_eq_pNodeId?: string;
 }
 
 /**
@@ -1477,6 +1529,11 @@ export interface GetEventsDataofferModifiedQueryParameters {
      * Max number of items to get. Default: 25, Max: 256
      */
     limit?: string;
+
+    /**
+     * Filter event with a value for the parameter 'nodeId' equal than the one specified.
+     */
+    filter_eq_pNodeId?: string;
 }
 
 /**
@@ -1494,9 +1551,14 @@ export interface GetEventsDataofferRegisteredQueryParameters {
     limit?: string;
 
     /**
-     * Filter event with a value for the parameter 'owner' equal than the one specified.
+     * Filter event with a value for the parameter 'registrar' equal than the one specified.
      */
-    filter_eq_pOwner?: string;
+    filter_eq_pRegistrar?: string;
+
+    /**
+     * Filter event with a value for the parameter 'nodeId' equal than the one specified.
+     */
+    filter_eq_pNodeId?: string;
 }
 
 /**
@@ -1542,6 +1604,11 @@ export interface GetEventsPolicyModifiedQueryParameters {
      * Max number of items to get. Default: 25, Max: 256
      */
     limit?: string;
+
+    /**
+     * Filter event with a value for the parameter 'nodeId' equal than the one specified.
+     */
+    filter_eq_pNodeId?: string;
 }
 
 /**
@@ -1559,9 +1626,14 @@ export interface GetEventsPolicyRegisteredQueryParameters {
     limit?: string;
 
     /**
-     * Filter event with a value for the parameter 'owner' equal than the one specified.
+     * Filter event with a value for the parameter 'registrar' equal than the one specified.
      */
-    filter_eq_pOwner?: string;
+    filter_eq_pRegistrar?: string;
+
+    /**
+     * Filter event with a value for the parameter 'nodeId' equal than the one specified.
+     */
+    filter_eq_pNodeId?: string;
 }
 
 /**
@@ -1603,6 +1675,36 @@ export interface GetEventsUpgradedQueryParameters {
  * Error handler for CallUPGRADEINTERFACEVERSION
  */
 export type CallUPGRADEINTERFACEVERSIONErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * General handler for status = 404
+     */
+    notFound: () => void;
+};
+
+/**
+ * Error handler for CallAssetExists
+ */
+export type CallAssetExistsErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * General handler for status = 404
+     */
+    notFound: () => void;
+};
+
+/**
+ * Error handler for CallDataofferExists
+ */
+export type CallDataofferExistsErrorHandler = CommonAuthenticatedErrorHandler & {
     /**
      * General handler for status = 400
      */
@@ -1675,9 +1777,9 @@ export type CallGetPolicyErrorHandler = CommonAuthenticatedErrorHandler & {
 };
 
 /**
- * Error handler for CallIsRegistered
+ * Error handler for CallPaused
  */
-export type CallIsRegisteredErrorHandler = CommonAuthenticatedErrorHandler & {
+export type CallPausedErrorHandler = CommonAuthenticatedErrorHandler & {
     /**
      * General handler for status = 400
      */
@@ -1690,9 +1792,9 @@ export type CallIsRegisteredErrorHandler = CommonAuthenticatedErrorHandler & {
 };
 
 /**
- * Error handler for CallPaused
+ * Error handler for CallPolicyExists
  */
-export type CallPausedErrorHandler = CommonAuthenticatedErrorHandler & {
+export type CallPolicyExistsErrorHandler = CommonAuthenticatedErrorHandler & {
     /**
      * General handler for status = 400
      */

@@ -45,7 +45,7 @@ import { EventExamplePolicyModified } from "../../models/event-sync/example/poli
 import { EventExamplePolicyRegistered } from "../../models/event-sync/example/policy-registered";
 import { EventExampleUnpaused } from "../../models/event-sync/example/unpaused";
 import { EventExampleUpgraded } from "../../models/event-sync/example/upgraded";
-import { serializeEventABIParams, normalizeAddress } from "../../utils/blockchain";
+import { serializeEventABIParams, normalizeAddress, normalizeBytes32 } from "../../utils/blockchain";
 
 /**
  * Auto generated smart contract API
@@ -73,9 +73,10 @@ export class ExampleContractApiEventsController extends Controller {
 
     /**
      * @typedef EventParamsExampleAssetModified
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} assetId.required - assetId
-     * @property {string} newTitle.required - newTitle
      * @property {string} timestamp.required - timestamp - eg: 0
+     * @property {string} newTitle.required - newTitle
      */
 
     /**
@@ -97,21 +98,26 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type AssetModified
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetModified(string,string,uint256)
+     * Event signature: AssetModified(bytes32,string,uint256,string)
      * Binding: GetEventsAssetModified
      * @route GET /contracts/example/events/asset-modified
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {string} continuationToken.query - Continuation token
      * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
+     * @param {string} filter_eq_pNodeId.query - Filter event with a value for the parameter 'nodeId' equal than the one specified.
      * @returns {EventListExampleAssetModified.model} 200 - Event list
      * @security BearerAuthorization
      */
     public async getEventsAssetModified(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "newTitle", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "name": "AssetModified", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newTitle", "type": "string" }], "name": "AssetModified", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 
         const filters: DataFilter<EventExampleAssetModified>[] = [];
+
+        if (request.query.filter_eq_pNodeId !== undefined && request.query.filter_eq_pNodeId !== null) {
+            filters.push(DataFilter.equals("pNodeId", normalizeBytes32(request.query.filter_eq_pNodeId + "")));
+        }
 
         const [events, nextContinuationToken] = await EventExampleAssetModified.findPaginated(filters, limit, continuationToken);
 
@@ -131,7 +137,8 @@ export class ExampleContractApiEventsController extends Controller {
     }
     /**
      * @typedef EventParamsExampleAssetRegistered
-     * @property {string} owner.required - owner - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} registrar.required - registrar - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} assetId.required - assetId
      * @property {string} timestamp.required - timestamp - eg: 0
      * @property {string} title.required - title
@@ -156,25 +163,30 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type AssetRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetRegistered(address,string,uint256,string)
+     * Event signature: AssetRegistered(address,bytes32,string,uint256,string)
      * Binding: GetEventsAssetRegistered
      * @route GET /contracts/example/events/asset-registered
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {string} continuationToken.query - Continuation token
      * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
-     * @param {string} filter_eq_pOwner.query - Filter event with a value for the parameter 'owner' equal than the one specified.
+     * @param {string} filter_eq_pRegistrar.query - Filter event with a value for the parameter 'registrar' equal than the one specified.
+     * @param {string} filter_eq_pNodeId.query - Filter event with a value for the parameter 'nodeId' equal than the one specified.
      * @returns {EventListExampleAssetRegistered.model} 200 - Event list
      * @security BearerAuthorization
      */
     public async getEventsAssetRegistered(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "title", "type": "string" }], "name": "AssetRegistered", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "registrar", "type": "address" }, { "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "title", "type": "string" }], "name": "AssetRegistered", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 
         const filters: DataFilter<EventExampleAssetRegistered>[] = [];
 
-        if (request.query.filter_eq_pOwner !== undefined && request.query.filter_eq_pOwner !== null) {
-            filters.push(DataFilter.equals("pOwner", normalizeAddress(request.query.filter_eq_pOwner + "")));
+        if (request.query.filter_eq_pRegistrar !== undefined && request.query.filter_eq_pRegistrar !== null) {
+            filters.push(DataFilter.equals("pRegistrar", normalizeAddress(request.query.filter_eq_pRegistrar + "")));
+        }
+
+        if (request.query.filter_eq_pNodeId !== undefined && request.query.filter_eq_pNodeId !== null) {
+            filters.push(DataFilter.equals("pNodeId", normalizeBytes32(request.query.filter_eq_pNodeId + "")));
         }
 
         const [events, nextContinuationToken] = await EventExampleAssetRegistered.findPaginated(filters, limit, continuationToken);
@@ -437,9 +449,10 @@ export class ExampleContractApiEventsController extends Controller {
     }
     /**
      * @typedef EventParamsExampleDataofferModified
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} offerId.required - offerId
-     * @property {string} newTitle.required - newTitle
      * @property {string} timestamp.required - timestamp - eg: 0
+     * @property {string} newTitle.required - newTitle
      */
 
     /**
@@ -461,21 +474,26 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type DataofferModified
      * Smart contract: Example (ExampleContract)
-     * Event signature: DataofferModified(string,string,uint256)
+     * Event signature: DataofferModified(bytes32,string,uint256,string)
      * Binding: GetEventsDataofferModified
      * @route GET /contracts/example/events/dataoffer-modified
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {string} continuationToken.query - Continuation token
      * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
+     * @param {string} filter_eq_pNodeId.query - Filter event with a value for the parameter 'nodeId' equal than the one specified.
      * @returns {EventListExampleDataofferModified.model} 200 - Event list
      * @security BearerAuthorization
      */
     public async getEventsDataofferModified(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "offerId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "newTitle", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "name": "DataofferModified", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "offerId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newTitle", "type": "string" }], "name": "DataofferModified", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 
         const filters: DataFilter<EventExampleDataofferModified>[] = [];
+
+        if (request.query.filter_eq_pNodeId !== undefined && request.query.filter_eq_pNodeId !== null) {
+            filters.push(DataFilter.equals("pNodeId", normalizeBytes32(request.query.filter_eq_pNodeId + "")));
+        }
 
         const [events, nextContinuationToken] = await EventExampleDataofferModified.findPaginated(filters, limit, continuationToken);
 
@@ -495,7 +513,8 @@ export class ExampleContractApiEventsController extends Controller {
     }
     /**
      * @typedef EventParamsExampleDataofferRegistered
-     * @property {string} owner.required - owner - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} registrar.required - registrar - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} offerId.required - offerId
      * @property {string} timestamp.required - timestamp - eg: 0
      * @property {string} title.required - title
@@ -520,25 +539,30 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type DataofferRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: DataofferRegistered(address,string,uint256,string)
+     * Event signature: DataofferRegistered(address,bytes32,string,uint256,string)
      * Binding: GetEventsDataofferRegistered
      * @route GET /contracts/example/events/dataoffer-registered
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {string} continuationToken.query - Continuation token
      * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
-     * @param {string} filter_eq_pOwner.query - Filter event with a value for the parameter 'owner' equal than the one specified.
+     * @param {string} filter_eq_pRegistrar.query - Filter event with a value for the parameter 'registrar' equal than the one specified.
+     * @param {string} filter_eq_pNodeId.query - Filter event with a value for the parameter 'nodeId' equal than the one specified.
      * @returns {EventListExampleDataofferRegistered.model} 200 - Event list
      * @security BearerAuthorization
      */
     public async getEventsDataofferRegistered(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "offerId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "title", "type": "string" }], "name": "DataofferRegistered", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "registrar", "type": "address" }, { "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "offerId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "title", "type": "string" }], "name": "DataofferRegistered", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 
         const filters: DataFilter<EventExampleDataofferRegistered>[] = [];
 
-        if (request.query.filter_eq_pOwner !== undefined && request.query.filter_eq_pOwner !== null) {
-            filters.push(DataFilter.equals("pOwner", normalizeAddress(request.query.filter_eq_pOwner + "")));
+        if (request.query.filter_eq_pRegistrar !== undefined && request.query.filter_eq_pRegistrar !== null) {
+            filters.push(DataFilter.equals("pRegistrar", normalizeAddress(request.query.filter_eq_pRegistrar + "")));
+        }
+
+        if (request.query.filter_eq_pNodeId !== undefined && request.query.filter_eq_pNodeId !== null) {
+            filters.push(DataFilter.equals("pNodeId", normalizeBytes32(request.query.filter_eq_pNodeId + "")));
         }
 
         const [events, nextContinuationToken] = await EventExampleDataofferRegistered.findPaginated(filters, limit, continuationToken);
@@ -672,9 +696,10 @@ export class ExampleContractApiEventsController extends Controller {
     }
     /**
      * @typedef EventParamsExamplePolicyModified
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} policyId.required - policyId
-     * @property {string} newTitle.required - newTitle
      * @property {string} timestamp.required - timestamp - eg: 0
+     * @property {string} newTitle.required - newTitle
      */
 
     /**
@@ -696,21 +721,26 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type PolicyModified
      * Smart contract: Example (ExampleContract)
-     * Event signature: PolicyModified(string,string,uint256)
+     * Event signature: PolicyModified(bytes32,string,uint256,string)
      * Binding: GetEventsPolicyModified
      * @route GET /contracts/example/events/policy-modified
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {string} continuationToken.query - Continuation token
      * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
+     * @param {string} filter_eq_pNodeId.query - Filter event with a value for the parameter 'nodeId' equal than the one specified.
      * @returns {EventListExamplePolicyModified.model} 200 - Event list
      * @security BearerAuthorization
      */
     public async getEventsPolicyModified(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "policyId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "newTitle", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "name": "PolicyModified", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "policyId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newTitle", "type": "string" }], "name": "PolicyModified", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 
         const filters: DataFilter<EventExamplePolicyModified>[] = [];
+
+        if (request.query.filter_eq_pNodeId !== undefined && request.query.filter_eq_pNodeId !== null) {
+            filters.push(DataFilter.equals("pNodeId", normalizeBytes32(request.query.filter_eq_pNodeId + "")));
+        }
 
         const [events, nextContinuationToken] = await EventExamplePolicyModified.findPaginated(filters, limit, continuationToken);
 
@@ -730,7 +760,8 @@ export class ExampleContractApiEventsController extends Controller {
     }
     /**
      * @typedef EventParamsExamplePolicyRegistered
-     * @property {string} owner.required - owner - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} registrar.required - registrar - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} policyId.required - policyId
      * @property {string} timestamp.required - timestamp - eg: 0
      * @property {string} title.required - title
@@ -755,25 +786,30 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type PolicyRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: PolicyRegistered(address,string,uint256,string)
+     * Event signature: PolicyRegistered(address,bytes32,string,uint256,string)
      * Binding: GetEventsPolicyRegistered
      * @route GET /contracts/example/events/policy-registered
      * @group example - API for smart contract: Example (ExampleContract)
      * @param {string} continuationToken.query - Continuation token
      * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
-     * @param {string} filter_eq_pOwner.query - Filter event with a value for the parameter 'owner' equal than the one specified.
+     * @param {string} filter_eq_pRegistrar.query - Filter event with a value for the parameter 'registrar' equal than the one specified.
+     * @param {string} filter_eq_pNodeId.query - Filter event with a value for the parameter 'nodeId' equal than the one specified.
      * @returns {EventListExamplePolicyRegistered.model} 200 - Event list
      * @security BearerAuthorization
      */
     public async getEventsPolicyRegistered(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "policyId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "title", "type": "string" }], "name": "PolicyRegistered", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "registrar", "type": "address" }, { "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "policyId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "title", "type": "string" }], "name": "PolicyRegistered", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 
         const filters: DataFilter<EventExamplePolicyRegistered>[] = [];
 
-        if (request.query.filter_eq_pOwner !== undefined && request.query.filter_eq_pOwner !== null) {
-            filters.push(DataFilter.equals("pOwner", normalizeAddress(request.query.filter_eq_pOwner + "")));
+        if (request.query.filter_eq_pRegistrar !== undefined && request.query.filter_eq_pRegistrar !== null) {
+            filters.push(DataFilter.equals("pRegistrar", normalizeAddress(request.query.filter_eq_pRegistrar + "")));
+        }
+
+        if (request.query.filter_eq_pNodeId !== undefined && request.query.filter_eq_pNodeId !== null) {
+            filters.push(DataFilter.equals("pNodeId", normalizeBytes32(request.query.filter_eq_pNodeId + "")));
         }
 
         const [events, nextContinuationToken] = await EventExamplePolicyRegistered.findPaginated(filters, limit, continuationToken);

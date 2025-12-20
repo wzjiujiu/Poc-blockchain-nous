@@ -111,9 +111,13 @@ export class EventExampleDataofferRegistered extends DataModel {
     /* db-type: BIGINT */
     public timestamp: number;
 
-    /* db-index: pOwner, id DESC */
+    /* db-index: pRegistrar, id DESC */
     /* db-type: VARCHAR 255 */
-    public pOwner: string;
+    public pRegistrar: string;
+
+    /* db-index: pNodeId, id DESC */
+    /* db-type: VARCHAR 255 */
+    public pNodeId: string;
 
     /* db-type: TEXT */
     public pOfferId: string;
@@ -132,7 +136,8 @@ export class EventExampleDataofferRegistered extends DataModel {
         this.eventIndex = enforceType(data.eventIndex, "int") || 0;
         this.tx = enforceType(data.tx, "string") || '';
         this.timestamp = enforceType(data.timestamp, "int") || 0;
-        this.pOwner = enforceType(data.pOwner, "string") || '';
+        this.pRegistrar = enforceType(data.pRegistrar, "string") || '';
+        this.pNodeId = enforceType(data.pNodeId, "string") || '';
         this.pOfferId = enforceType(data.pOfferId, "string") || '';
         this.pTimestamp = enforceType(data.pTimestamp, "string") || '';
         this.pTitle = enforceType(data.pTitle, "string") || '';
@@ -143,7 +148,8 @@ export class EventExampleDataofferRegistered extends DataModel {
     // Gets the parameters into a single array
     public getParametersArray(): (string | boolean)[] {
         return [
-            this.pOwner,
+            this.pRegistrar,
+            this.pNodeId,
             this.pOfferId,
             this.pTimestamp,
             this.pTitle,
