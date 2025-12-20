@@ -77,8 +77,15 @@ Deploying smart contracts on-chain
 
 Verifying the deployment
 
-### STEP 3: CStart the Webhook Server
+### STEP 3: Start the Webhook Server
+Before starting the webserver please fill right:
+
+your WALLET PRIVATE KEY in the .env file present in the folder webhook-server
+edit the index.js line 111 const CONTRACT_ADDRESS = "0xd0fc4e931b6d67bcecc65c2afec2faa278d0d769" with your own deployed contract address
+
 ```bash
 cd webhook-server
 node index.js
 ```
+
+### STEP 4: How to Test
