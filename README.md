@@ -89,3 +89,13 @@ node index.js
 ```
 
 ### STEP 4: How to Test
+To test the end-to-end workflow, REST APIs are used to simulate user behavior.
+
+Before proceeding, please review the Dataspace Documentation (2).docx located in the root directory of this repository, as it describes the expected workflow and API interactions.
+
+Sovity has provided a Postman API collection that can be used to execute and validate the required REST calls.
+
+To start the Sovity components, a local demo deployment was used for testing and POC purposes.
+
+Please refer to the official Sovity documentation for detailed setup instructions:
+https://github.com/sovity/edc-ce/tree/main/docs/deployment-guide/goals/local-demo-ce
