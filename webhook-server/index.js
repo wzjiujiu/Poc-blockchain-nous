@@ -128,9 +128,9 @@ const CONTRACT_ABI = [
   "function policyExists(bytes32 nodeId, string policyId) external view returns (bool)",
 
   // ───────────── Data Offer ─────────────
-  "function registerDataoffer(bytes32 nodeId, string offerId, string offerTitle) external",
-  "function modifyDataoffer(bytes32 nodeId, string offerId, string newTitle) external",
-  "function getDataoffer(bytes32 nodeId, string offerId) external view returns (string id, bytes32 nId, address registrar, uint256 timestamp, string title)",
+  "function registerDataoffer(bytes32 nodeId, string offerId, string accessPolicyId, string contractPolicyId, string assetSelector) external",
+  "function modifyDataoffer(bytes32 nodeId, string offerId, string newaccessPolicyId, string newcontractPolicyId, string newassetSelector) external",
+  "function getDataoffer(bytes32 nodeId, string offerId) external view returns (string id, bytes32 nId, address registrar, uint256 timestamp, string accessPolicyId, string contractPolicyId, string assetSelector)",
   "function dataofferExists(bytes32 nodeId, string offerId) external view returns (bool)",
 
   // ───────────── Events ─────────────
@@ -140,8 +140,8 @@ const CONTRACT_ABI = [
   "event PolicyRegistered(address indexed registrar, bytes32 indexed nodeId, string policyId, uint256 timestamp, string title)",
   "event PolicyModified(bytes32 indexed nodeId, string policyId, uint256 timestamp, string newTitle)",
 
-  "event DataofferRegistered(address indexed registrar, bytes32 indexed nodeId, string offerId, uint256 timestamp, string title)",
-  "event DataofferModified(bytes32 indexed nodeId, string offerId, uint256 timestamp, string newTitle)"
+  "event DataofferRegistered(address indexed registrar, bytes32 indexed nodeId, string offerId, uint256 timestamp, string accessPolicyId, string contractPolicyId, string assetSelector)",
+  "event DataofferModified(bytes32 indexed nodeId, string offerId, uint256 timestamp, string newaccessPolicyId, string newcontractPolicyId, string newassetSelector)"
 ];
 
 
@@ -149,7 +149,7 @@ const NODE_ID_CONSUMER = ethers.keccak256(
   ethers.toUtf8Bytes("localhost:11000")
 );
 
-const NODE_ID_PROVIDER = ethers.keccak256(
+const NODE_ID_PRODUCER = ethers.keccak256(
   ethers.toUtf8Bytes("localhost:22000")
 );
 
@@ -193,6 +193,38 @@ function extractPolicyInfo(cleanedData) {
   const time2 = timeConstraints[1] || null;
 
   return { id, time1, time2 };
+}
+
+function extractContractDefinitionInfo(cleanedData) {
+  const body = cleanedData?.request?.body;
+
+  if (!body) {
+    throw new Error("Request body mancante");
+  }
+
+  // 1️⃣ accessPolicyId
+  const accessPolicyId = body.accessPolicyId
+    ? body.accessPolicyId.toString()
+    : null;
+
+  // 2️⃣ contractPolicyId
+  const contractPolicyId = body.contractPolicyId
+    ? body.contractPolicyId.toString()
+    : null;
+
+  // 3️⃣ assetSelector (ASSET + operator + operandRight)
+  let assetSelector = null;
+
+  if (Array.isArray(body.assetsSelector) && body.assetsSelector.length > 0) {
+    const criterion = body.assetsSelector[0];
+
+    const operator = criterion.operator?.toString() || "";
+    const operandRight = criterion.operandRight?.toString() || "";
+
+    assetSelector = `ASSET${operator}${operandRight}`;
+  }
+
+  return [accessPolicyId, contractPolicyId, assetSelector];
 }
 
 // --- Webhook endpoint ---
@@ -415,6 +447,55 @@ app.post("/event", async (req, res) => {
     console.error("❌ Errore durante la modifica Policy (consumer):", err);
   }
   }
+  /* ======================= DATAOFFER POST ======================= */
+  else if(rawPort==DataOffer&& method=='POST')
+  {
+   const [accessPolicyId, contractPolicyId, assetSelector] = extractContractDefinitionInfo(cleanedData);
+   console.log(accessPolicyId)
+   console.log(contractPolicyId)
+   console.log(assetSelector)
+   try {
+
+      dataofferid = cleanedData.response?.['@id'];
+
+
+      const newDataofferid  = dataofferid.toString();
+
+      console.log(`📤 Registrazione data offer ID: ${newDataofferid}`);
+
+      const estimatedGas = await contract.registerDataoffer.estimateGas(
+        NODE_ID_CONSUMER,
+        newDataofferid,
+        accessPolicyId,
+        contractPolicyId,
+        assetSelector
+      );
+
+      console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+      const tx = await contract.registerDataoffer(
+        NODE_ID_CONSUMER,
+        newDataofferid,
+         accessPolicyId,
+        contractPolicyId,
+        assetSelector,
+        { gasLimit: estimatedGas + 50_000n }
+      );
+
+      console.log(`⏳ Transazione inviata: ${tx.hash}`);
+      const receipt = await tx.wait();
+
+      console.log(`✅ Dataoffer "${newDataofferid}" registrato nel blocco ${receipt.blockNumber}`);
+
+      const data = await contract.getDataoffer(NODE_ID_CONSUMER, newDataofferid);
+      console.log("📄 Dataoffer registrato:", data);
+
+    } catch (err) {
+      console.error("❌ Errore durante la registrazione Data offer (consumer):", err);
+    }
+
+
+  }
 
   /* ======================= EMIT EVENT ======================= */
   io.emit("event", {
@@ -430,42 +511,200 @@ app.post("/event", async (req, res) => {
     //
     // 3. LOGICA PER ASSET PROVIDER (PORTA 22000)
     //
-    if (normalizedPort === "22000") {
-      console.log("📡 Evento proveniente dal PROVIDER (22000)");
-      console.dir(cleanedData, { depth: null, colors: true });
+  if (normalizedPort === "22000") {
+  console.log("📡 Evento proveniente dal PRODUCER (22000)");
+  console.dir(cleanedData, { depth: null, colors: true });
 
-      try {
-        const newAssetId = "asset-" + Date.now();
+  /* ======================= ASSET POST ======================= */
+  if (rawPort == Asset && method === "POST") {
+    try {
+      const newAssetId = assetId.toString();
 
-        console.log(`📤 Registrazione asset ID: ${newAssetId}`);
+      console.log(`📤 Registrazione asset ID (producer): ${newAssetId}`);
 
-        const estimatedGas = await contract.registerAsset.estimateGas(newAssetId);
-        console.log(`⛽ Gas stimato: ${estimatedGas.toString()}`);
+      const estimatedGas = await contract.registerAsset.estimateGas(
+        NODE_ID_PRODUCER,
+        newAssetId,
+        assetTitle
+      );
 
-        const tx = await contract.registerAsset(newAssetId, {
-          gasLimit: estimatedGas + 50000n,
-        });
+      const tx = await contract.registerAsset(
+        NODE_ID_PRODUCER,
+        newAssetId,
+        assetTitle,
+        { gasLimit: estimatedGas + 50_000n }
+      );
 
-        console.log(`⏳ Transazione inviata: ${tx.hash}`);
+      console.log(`⏳ Transazione inviata: ${tx.hash}`);
+      const receipt = await tx.wait();
 
-        const receipt = await tx.wait();
-        console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
+      console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
 
-        const data = await contract.getAsset(newAssetId);
-        console.log(` Asset registrato:`, data);
-      } catch (err) {
-        console.error(" Errore durante la registrazione asset (provider):", err);
+      const data = await contract.getAsset(NODE_ID_PRODUCER, newAssetId);
+      console.log("📄 Asset registrato:", data);
+
+    } catch (err) {
+      console.error("❌ Errore durante la registrazione asset (producer):", err);
+    }
+  }
+
+  /* ======================= ASSET PUT ======================= */
+  else if (rawPort == Asset && method === "PUT") {
+    try {
+      const newAssetId = cleanedData.request?.body?.properties?.id?.toString();
+      const newAssetTitle = cleanedData.request?.body?.properties?.title;
+
+      console.log(`📤 Modifica asset ID (producer): ${newAssetId}`);
+
+      const estimatedGas = await contract.modifyAsset.estimateGas(
+        NODE_ID_PRODUCER,
+        newAssetId,
+        newAssetTitle
+      );
+
+      const tx = await contract.modifyAsset(
+        NODE_ID_PRODUCER,
+        newAssetId,
+        newAssetTitle,
+        { gasLimit: estimatedGas + 50_000n }
+      );
+
+      const receipt = await tx.wait();
+      console.log(`✅ Asset "${newAssetId}" modificato nel blocco ${receipt.blockNumber}`);
+
+      const updated = await contract.getAsset(NODE_ID_PRODUCER, newAssetId);
+      console.log("📄 Asset modificato:", updated);
+
+    } catch (err) {
+      console.error("❌ Errore durante la modifica asset (producer):", err);
+    }
+  }
+
+  /* ======================= POLICY POST ======================= */
+  else if (rawPort == Policy && method === "POST") {
+    console.log("📤 Registrazione policy (producer)");
+
+    const { id: policyid, time1, time2 } = extractPolicyInfo(cleanedData);
+    const newPolicyId = policyid.toString();
+
+    let policyContent = "";
+    if (time1 && time2) {
+      policyContent = `${time1}&${time2}`;
+    }
+
+    try {
+      const estimatedGas = await contract.registerPolicy.estimateGas(
+        NODE_ID_PRODUCER,
+        newPolicyId,
+        policyContent
+      );
+
+      const tx = await contract.registerPolicy(
+        NODE_ID_PRODUCER,
+        newPolicyId,
+        policyContent,
+        { gasLimit: estimatedGas + 50_000n }
+      );
+
+      console.log(`⏳ Transazione inviata: ${tx.hash}`);
+      const receipt = await tx.wait();
+
+      console.log(`✅ Policy "${newPolicyId}" registrata nel blocco ${receipt.blockNumber}`);
+
+      const data = await contract.getPolicy(NODE_ID_PRODUCER, newPolicyId);
+      console.log("📄 Policy registrata:", data);
+
+    } catch (err) {
+      console.error("❌ Errore durante la registrazione Policy (producer):", err);
+    }
+  }
+
+  /* ======================= POLICY PUT ======================= */
+  else if (method === "PUT" && rawPort.startsWith(Policy)) {
+    console.log("✏️ Modifica policy (producer)");
+
+    try {
+      const policyId = rawPort.split("/").pop();
+      const { time1, time2 } = extractPolicyInfo(cleanedData);
+
+      let newPolicyContent = "";
+      if (time1 && time2) {
+        newPolicyContent = `${time1}&${time2}`;
       }
 
-      io.emit("event", {
-        ...cleanedData,
-        response,
-        ts: new Date().toISOString(),
-        html: prettyHtml,
-      });
+      const estimatedGas = await contract.modifyPolicy.estimateGas(
+        NODE_ID_PRODUCER,
+        policyId,
+        newPolicyContent
+      );
 
-      return res.json(response);
+      const tx = await contract.modifyPolicy(
+        NODE_ID_PRODUCER,
+        policyId,
+        newPolicyContent,
+        { gasLimit: estimatedGas + 50_000n }
+      );
+
+      const receipt = await tx.wait();
+      console.log(`✅ Policy "${policyId}" modificata nel blocco ${receipt.blockNumber}`);
+
+      const updated = await contract.getPolicy(NODE_ID_PRODUCER, policyId);
+      console.log("📄 Policy modificata:", updated);
+
+    } catch (err) {
+      console.error("❌ Errore durante la modifica Policy (producer):", err);
     }
+  }
+
+  /* ======================= DATAOFFER POST ======================= */
+  else if (rawPort == DataOffer && method === "POST") {
+    const [accessPolicyId, contractPolicyId, assetSelector] =
+      extractContractDefinitionInfo(cleanedData);
+
+    try {
+      const dataofferid = cleanedData.response?.['@id'];
+      const newDataofferid = dataofferid.toString();
+
+      console.log(`📤 Registrazione data offer ID (producer): ${newDataofferid}`);
+
+      const estimatedGas = await contract.registerDataoffer.estimateGas(
+        NODE_ID_PRODUCER,
+        newDataofferid,
+        accessPolicyId,
+        contractPolicyId,
+        assetSelector
+      );
+
+      const tx = await contract.registerDataoffer(
+        NODE_ID_PRODUCER,
+        newDataofferid,
+        accessPolicyId,
+        contractPolicyId,
+        assetSelector,
+        { gasLimit: estimatedGas + 50_000n }
+      );
+
+      const receipt = await tx.wait();
+      console.log(`✅ Dataoffer "${newDataofferid}" registrato nel blocco ${receipt.blockNumber}`);
+
+      const data = await contract.getDataoffer(NODE_ID_PRODUCER, newDataofferid);
+      console.log("📄 Dataoffer registrato:", data);
+
+    } catch (err) {
+      console.error("❌ Errore durante la registrazione Dataoffer (producer):", err);
+    }
+  }
+
+  /* ======================= EMIT EVENT ======================= */
+  io.emit("event", {
+    ...cleanedData,
+    response,
+    ts: new Date().toISOString(),
+    html: prettyHtml,
+  });
+
+  return res.json(response);
+}
 
     //
     // 4. PORTA NON RICONOSCIUTA

@@ -270,7 +270,9 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                         const pNodeId = normalizeBytes32(ev.data.nodeId);
                         const pOfferId = ev.data.offerId;
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
-                        const pNewTitle = ev.data.newTitle;
+                        const pNewaccessPolicyId = ev.data.newaccessPolicyId;
+                        const pNewcontractPolicyId = ev.data.newcontractPolicyId;
+                        const pNewassetSelector = ev.data.newassetSelector;
                         const exists = await EventExampleDataofferModified.exists(id);
                         if (!exists) {
                             const newEvent = new EventExampleDataofferModified({
@@ -282,7 +284,9 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 pNodeId,
                                 pOfferId,
                                 pTimestamp,
-                                pNewTitle,
+                                pNewaccessPolicyId,
+                                pNewcontractPolicyId,
+                                pNewassetSelector,
                             });
 
                             await newEvent.insert();
@@ -304,7 +308,9 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                         const pNodeId = normalizeBytes32(ev.data.nodeId);
                         const pOfferId = ev.data.offerId;
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
-                        const pTitle = ev.data.title;
+                        const pAccessPolicyId = ev.data.accessPolicyId;
+                        const pContractPolicyId = ev.data.contractPolicyId;
+                        const pAssetSelector = ev.data.assetSelector;
                         const exists = await EventExampleDataofferRegistered.exists(id);
                         if (!exists) {
                             const newEvent = new EventExampleDataofferRegistered({
@@ -317,7 +323,9 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 pNodeId,
                                 pOfferId,
                                 pTimestamp,
-                                pTitle,
+                                pAccessPolicyId,
+                                pContractPolicyId,
+                                pAssetSelector,
                             });
 
                             await newEvent.insert();

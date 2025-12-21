@@ -119,7 +119,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/modify-dataoffer
      * Sends transaction for method: modifyDataoffer
      * Smart contract: Example (ExampleContract)
-     * Method signature: modifyDataoffer(bytes32,string,string)
+     * Method signature: modifyDataoffer(bytes32,string,string,string,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -248,7 +248,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/register-dataoffer
      * Sends transaction for method: registerDataoffer
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerDataoffer(bytes32,string,string)
+     * Method signature: registerDataoffer(bytes32,string,string,string,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -515,7 +515,7 @@ export class ApiExample {
      * Path: /contracts/example/events/dataoffer-modified
      * Get a list of events of type DataofferModified
      * Smart contract: Example (ExampleContract)
-     * Event signature: DataofferModified(bytes32,string,uint256,string)
+     * Event signature: DataofferModified(bytes32,string,uint256,string,string,string)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
@@ -538,7 +538,7 @@ export class ApiExample {
      * Path: /contracts/example/events/dataoffer-registered
      * Get a list of events of type DataofferRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: DataofferRegistered(address,bytes32,string,uint256,string)
+     * Event signature: DataofferRegistered(address,bytes32,string,uint256,string,string,string)
      * @param queryParams Query parameters
      * @returns The request parameters
      */

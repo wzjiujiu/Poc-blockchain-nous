@@ -122,7 +122,13 @@ export class EventExampleDataofferModified extends DataModel {
     public pTimestamp: string;
 
     /* db-type: TEXT */
-    public pNewTitle: string;
+    public pNewaccessPolicyId: string;
+
+    /* db-type: TEXT */
+    public pNewcontractPolicyId: string;
+
+    /* db-type: TEXT */
+    public pNewassetSelector: string;
 
     constructor(data: TypedRow<EventExampleDataofferModified>) {
         super(DATA_SOURCE, TABLE, PRIMARY_KEY);
@@ -135,7 +141,9 @@ export class EventExampleDataofferModified extends DataModel {
         this.pNodeId = enforceType(data.pNodeId, "string") || '';
         this.pOfferId = enforceType(data.pOfferId, "string") || '';
         this.pTimestamp = enforceType(data.pTimestamp, "string") || '';
-        this.pNewTitle = enforceType(data.pNewTitle, "string") || '';
+        this.pNewaccessPolicyId = enforceType(data.pNewaccessPolicyId, "string") || '';
+        this.pNewcontractPolicyId = enforceType(data.pNewcontractPolicyId, "string") || '';
+        this.pNewassetSelector = enforceType(data.pNewassetSelector, "string") || '';
 
         this.init();
     }
@@ -146,7 +154,9 @@ export class EventExampleDataofferModified extends DataModel {
             this.pNodeId,
             this.pOfferId,
             this.pTimestamp,
-            this.pNewTitle,
+            this.pNewaccessPolicyId,
+            this.pNewcontractPolicyId,
+            this.pNewassetSelector,
         ];
     }
 }

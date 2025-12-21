@@ -268,7 +268,9 @@ export class ExampleContractApiCallController extends Controller {
      * @property {string} nId.required - nId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} registrar.required - registrar - eg: 0x0000000000000000000000000000000000000000
      * @property {string} timestamp.required - timestamp - eg: 0
-     * @property {string} title.required - title
+     * @property {string} accessPolicyId.required - accessPolicyId
+     * @property {string} contractPolicyId.required - contractPolicyId
+     * @property {string} assetSelector.required - assetSelector
      */
 
     /**
@@ -286,7 +288,7 @@ export class ExampleContractApiCallController extends Controller {
      * @security BearerAuthorization
      */
     public async callGetDataoffer(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "offerId", "type": "string" }], "name": "getDataoffer", "outputs": [{ "internalType": "string", "name": "id", "type": "string" }, { "internalType": "bytes32", "name": "nId", "type": "bytes32" }, { "internalType": "address", "name": "registrar", "type": "address" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "string", "name": "title", "type": "string" }], "stateMutability": "view", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "offerId", "type": "string" }], "name": "getDataoffer", "outputs": [{ "internalType": "string", "name": "id", "type": "string" }, { "internalType": "bytes32", "name": "nId", "type": "bytes32" }, { "internalType": "address", "name": "registrar", "type": "address" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "string", "name": "accessPolicyId", "type": "string" }, { "internalType": "string", "name": "contractPolicyId", "type": "string" }, { "internalType": "string", "name": "assetSelector", "type": "string" }], "stateMutability": "view", "type": "function" };
 
         const [callParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body, methodAbi);
 
@@ -306,7 +308,9 @@ export class ExampleContractApiCallController extends Controller {
                 callResult.nId,
                 callResult.registrar,
                 callResult.timestamp,
-                callResult.title,
+                callResult.accessPolicyId,
+                callResult.contractPolicyId,
+                callResult.assetSelector,
             ], methodAbi);
         } catch (ex) {
             Monitor.debugException(ex)

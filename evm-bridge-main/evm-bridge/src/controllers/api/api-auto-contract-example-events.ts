@@ -452,7 +452,9 @@ export class ExampleContractApiEventsController extends Controller {
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} offerId.required - offerId
      * @property {string} timestamp.required - timestamp - eg: 0
-     * @property {string} newTitle.required - newTitle
+     * @property {string} newaccessPolicyId.required - newaccessPolicyId
+     * @property {string} newcontractPolicyId.required - newcontractPolicyId
+     * @property {string} newassetSelector.required - newassetSelector
      */
 
     /**
@@ -474,7 +476,7 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type DataofferModified
      * Smart contract: Example (ExampleContract)
-     * Event signature: DataofferModified(bytes32,string,uint256,string)
+     * Event signature: DataofferModified(bytes32,string,uint256,string,string,string)
      * Binding: GetEventsDataofferModified
      * @route GET /contracts/example/events/dataoffer-modified
      * @group example - API for smart contract: Example (ExampleContract)
@@ -485,7 +487,7 @@ export class ExampleContractApiEventsController extends Controller {
      * @security BearerAuthorization
      */
     public async getEventsDataofferModified(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "offerId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newTitle", "type": "string" }], "name": "DataofferModified", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "offerId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newaccessPolicyId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "newcontractPolicyId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "newassetSelector", "type": "string" }], "name": "DataofferModified", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 
@@ -517,7 +519,9 @@ export class ExampleContractApiEventsController extends Controller {
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} offerId.required - offerId
      * @property {string} timestamp.required - timestamp - eg: 0
-     * @property {string} title.required - title
+     * @property {string} accessPolicyId.required - accessPolicyId
+     * @property {string} contractPolicyId.required - contractPolicyId
+     * @property {string} assetSelector.required - assetSelector
      */
 
     /**
@@ -539,7 +543,7 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type DataofferRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: DataofferRegistered(address,bytes32,string,uint256,string)
+     * Event signature: DataofferRegistered(address,bytes32,string,uint256,string,string,string)
      * Binding: GetEventsDataofferRegistered
      * @route GET /contracts/example/events/dataoffer-registered
      * @group example - API for smart contract: Example (ExampleContract)
@@ -551,7 +555,7 @@ export class ExampleContractApiEventsController extends Controller {
      * @security BearerAuthorization
      */
     public async getEventsDataofferRegistered(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "registrar", "type": "address" }, { "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "offerId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "title", "type": "string" }], "name": "DataofferRegistered", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "registrar", "type": "address" }, { "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "offerId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "accessPolicyId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "contractPolicyId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "assetSelector", "type": "string" }], "name": "DataofferRegistered", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 

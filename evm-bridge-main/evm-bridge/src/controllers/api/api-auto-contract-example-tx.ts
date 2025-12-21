@@ -142,7 +142,9 @@ export class ExampleContractApiTxController extends Controller {
      * @typedef TxParamsExampleModifyDataoffer
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} offerId.required - offerId
-     * @property {string} newTitle.required - newTitle
+     * @property {string} newofferaccessPolicyId.required - newofferaccessPolicyId
+     * @property {string} newoffercontractPolicyId.required - newoffercontractPolicyId
+     * @property {string} newofferassetSelector.required - newofferassetSelector
      */
 
     /**
@@ -154,7 +156,7 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: modifyDataoffer
      * Smart contract: Example (ExampleContract)
-     * Method signature: modifyDataoffer(bytes32,string,string)
+     * Method signature: modifyDataoffer(bytes32,string,string,string,string)
      * Binding: TxModifyDataoffer
      * 
      * @route POST /contracts/example/tx/modify-dataoffer
@@ -166,7 +168,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txModifyDataoffer(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }], "name": "modifyDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "newofferaccessPolicyId", "type": "string" }, { "internalType": "string", "name": "newoffercontractPolicyId", "type": "string" }, { "internalType": "string", "name": "newofferassetSelector", "type": "string" }], "name": "modifyDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 
@@ -306,7 +308,9 @@ export class ExampleContractApiTxController extends Controller {
      * @typedef TxParamsExampleRegisterDataoffer
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} offerId.required - offerId
-     * @property {string} offerTitle.required - offerTitle
+     * @property {string} offeraccessPolicyId.required - offeraccessPolicyId
+     * @property {string} offercontractPolicyId.required - offercontractPolicyId
+     * @property {string} offerassetSelector.required - offerassetSelector
      */
 
     /**
@@ -318,7 +322,7 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: registerDataoffer
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerDataoffer(bytes32,string,string)
+     * Method signature: registerDataoffer(bytes32,string,string,string,string)
      * Binding: TxRegisterDataoffer
      * 
      * @route POST /contracts/example/tx/register-dataoffer
@@ -330,7 +334,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txRegisterDataoffer(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "offerTitle", "type": "string" }], "name": "registerDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "offeraccessPolicyId", "type": "string" }, { "internalType": "string", "name": "offercontractPolicyId", "type": "string" }, { "internalType": "string", "name": "offerassetSelector", "type": "string" }], "name": "registerDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 

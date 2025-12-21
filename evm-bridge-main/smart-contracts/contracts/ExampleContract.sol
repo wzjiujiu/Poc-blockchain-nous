@@ -32,7 +32,10 @@ contract ExampleContract is BaseContract {
         bytes32 nodeId;     // logical node identifier
         address registrar;  // relayer that registered it
         uint256 timestamp;
-        string title;
+        string accessPolicyId;
+        string contractPolicyId;
+        string assetSelector;
+
     }
 
     struct DataTransfer {
@@ -80,8 +83,8 @@ contract ExampleContract is BaseContract {
     event PolicyRegistered(address indexed registrar, bytes32 indexed nodeId, string policyId, uint256 timestamp, string title);
     event PolicyModified(bytes32 indexed nodeId, string policyId, uint256 timestamp, string newTitle);
 
-    event DataofferRegistered(address indexed registrar, bytes32 indexed nodeId, string offerId, uint256 timestamp, string title);
-    event DataofferModified(bytes32 indexed nodeId, string offerId, uint256 timestamp, string newTitle);
+    event DataofferRegistered(address indexed registrar, bytes32 indexed nodeId, string offerId, uint256 timestamp, string accessPolicyId,string contractPolicyId,string  assetSelector );
+    event DataofferModified(bytes32 indexed nodeId, string offerId, uint256 timestamp, string newaccessPolicyId,string newcontractPolicyId,string newassetSelector);
 
 
     event DataTransferRequested(string transferId, string assetId, address indexed consumer, uint256 timestamp);
@@ -214,7 +217,9 @@ contract ExampleContract is BaseContract {
     function registerDataoffer(
         bytes32 nodeId,
         string memory offerId,
-        string memory offerTitle
+        string memory offeraccessPolicyId,
+        string memory offercontractPolicyId,
+        string memory offerassetSelector
     ) external {
         require(bytes(offerId).length > 0, "ID non valido");
         require(offers[nodeId][offerId].registrar == address(0), "Dataoffer gia' registrato per questo nodo");
@@ -224,25 +229,31 @@ contract ExampleContract is BaseContract {
             nodeId: nodeId,
             registrar: msg.sender,
             timestamp: block.timestamp,
-            title: offerTitle
+            accessPolicyId:offeraccessPolicyId,
+            contractPolicyId:offercontractPolicyId,
+            assetSelector:offerassetSelector
         });
 
-        emit DataofferRegistered(msg.sender, nodeId, offerId, block.timestamp, offerTitle);
+        emit DataofferRegistered(msg.sender, nodeId, offerId, block.timestamp, offeraccessPolicyId,offercontractPolicyId,offerassetSelector);
     }
 
     function modifyDataoffer(
         bytes32 nodeId,
         string memory offerId,
-        string memory newTitle
+        string memory newofferaccessPolicyId,
+        string memory newoffercontractPolicyId,
+        string memory newofferassetSelector
     ) external {
         Dataoffer storage d = offers[nodeId][offerId];
         require(d.registrar != address(0), "Dataoffer non trovato");
         require(msg.sender == d.registrar, "Non autorizzato");
 
-        d.title = newTitle;
+        d.accessPolicyId= newofferaccessPolicyId;
+        d.contractPolicyId=newoffercontractPolicyId;
+        d.assetSelector=newofferassetSelector;
         d.timestamp = block.timestamp;
 
-        emit DataofferModified(nodeId, offerId, block.timestamp, newTitle);
+        emit DataofferModified(nodeId, offerId, block.timestamp, newofferaccessPolicyId,newoffercontractPolicyId,newofferassetSelector);
     }
 
     function getDataoffer(
@@ -251,11 +262,11 @@ contract ExampleContract is BaseContract {
     )
         external
         view
-        returns (string memory id, bytes32 nId, address registrar, uint256 timestamp, string memory title)
+        returns (string memory id, bytes32 nId, address registrar, uint256 timestamp, string memory accessPolicyId,string memory contractPolicyId,string memory assetSelector)
     {
         Dataoffer memory d = offers[nodeId][offerId];
         require(d.registrar != address(0), "Dataoffer non trovato");
-        return (d.id, d.nodeId, d.registrar, d.timestamp, d.title);
+        return (d.id, d.nodeId, d.registrar, d.timestamp, d.accessPolicyId,d.contractPolicyId,d.assetSelector);
     }
 
     function dataofferExists(bytes32 nodeId, string memory offerId)

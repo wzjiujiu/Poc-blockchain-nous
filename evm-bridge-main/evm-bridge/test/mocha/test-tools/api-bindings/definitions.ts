@@ -1599,9 +1599,19 @@ export interface TxParamsExampleModifyDataoffer {
     offerId: string;
 
     /**
-     * newTitle
+     * newofferaccessPolicyId
      */
-    newTitle: string;
+    newofferaccessPolicyId: string;
+
+    /**
+     * newoffercontractPolicyId
+     */
+    newoffercontractPolicyId: string;
+
+    /**
+     * newofferassetSelector
+     */
+    newofferassetSelector: string;
 }
 
 export interface TxRequestExampleModifyDataoffer {
@@ -1672,9 +1682,19 @@ export interface TxParamsExampleRegisterDataoffer {
     offerId: string;
 
     /**
-     * offerTitle
+     * offeraccessPolicyId
      */
-    offerTitle: string;
+    offeraccessPolicyId: string;
+
+    /**
+     * offercontractPolicyId
+     */
+    offercontractPolicyId: string;
+
+    /**
+     * offerassetSelector
+     */
+    offerassetSelector: string;
 }
 
 export interface TxRequestExampleRegisterDataoffer {
@@ -2090,9 +2110,19 @@ export interface EventParamsExampleDataofferModified {
     timestamp: string;
 
     /**
-     * newTitle
+     * newaccessPolicyId
      */
-    newTitle: string;
+    newaccessPolicyId: string;
+
+    /**
+     * newcontractPolicyId
+     */
+    newcontractPolicyId: string;
+
+    /**
+     * newassetSelector
+     */
+    newassetSelector: string;
 }
 
 export interface EventItemExampleDataofferModified {
@@ -2155,9 +2185,19 @@ export interface EventParamsExampleDataofferRegistered {
     timestamp: string;
 
     /**
-     * title
+     * accessPolicyId
      */
-    title: string;
+    accessPolicyId: string;
+
+    /**
+     * contractPolicyId
+     */
+    contractPolicyId: string;
+
+    /**
+     * assetSelector
+     */
+    assetSelector: string;
 }
 
 export interface EventItemExampleDataofferRegistered {
@@ -2621,9 +2661,19 @@ export interface CallResponseExampleGetDataoffer {
     timestamp: string;
 
     /**
-     * title
+     * accessPolicyId
      */
-    title: string;
+    accessPolicyId: string;
+
+    /**
+     * contractPolicyId
+     */
+    contractPolicyId: string;
+
+    /**
+     * assetSelector
+     */
+    assetSelector: string;
 }
 
 export interface CallResponseExampleGetInitializedVersion {

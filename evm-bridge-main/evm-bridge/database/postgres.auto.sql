@@ -120,7 +120,9 @@ CREATE TABLE "event_example_dataoffer_modified" (
     "p_node_id" VARCHAR(255),
     "p_offer_id" TEXT,
     "p_timestamp" VARCHAR(255),
-    "p_new_title" TEXT
+    "p_newaccess_policy_id" TEXT,
+    "p_newcontract_policy_id" TEXT,
+    "p_newasset_selector" TEXT
 );
 
 CREATE INDEX "ix_event_example_dataoffer_modified_s_1" ON "event_example_dataoffer_modified"("id" DESC);
@@ -138,7 +140,9 @@ CREATE TABLE "event_example_dataoffer_registered" (
     "p_node_id" VARCHAR(255),
     "p_offer_id" TEXT,
     "p_timestamp" VARCHAR(255),
-    "p_title" TEXT
+    "p_access_policy_id" TEXT,
+    "p_contract_policy_id" TEXT,
+    "p_asset_selector" TEXT
 );
 
 CREATE INDEX "ix_event_example_dataoffer_registered_s_1" ON "event_example_dataoffer_registered"("id" DESC);
