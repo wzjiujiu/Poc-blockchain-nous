@@ -268,4 +268,32 @@ pm.sendRequest({
 });
 ```
 
+---
+
+
+## 🔮 Future Work: Event-driven and Kafka-based Architecture
+
+As future work, the current webhook-based integration can be evolved toward a **fully event-driven architecture**
+based on a message broker such as **Apache Kafka**.
+
+In this model, EDC events would no longer be handled synchronously by a single webhook, but instead published
+to dedicated Kafka topics (e.g. `asset-events`, `policy-events`, `dataoffer-events`).
+A set of independent consumers would then process these events asynchronously and trigger the corresponding
+on-chain transactions.
+
+This evolution would provide several advantages:
+
+- **Decoupling** between EDC nodes and blockchain interaction logic  
+- **Horizontal scalability** through multiple event consumers  
+- **Fault tolerance and replayability** via Kafka’s persistence model  
+- **Improved observability** and monitoring of event flows  
+- **Clear separation of concerns** between event ingestion, normalization, and on-chain execution  
+
+The smart contract and ABI would remain unchanged, as the `nodeId`-based design already supports multiple
+independent producers of events.
+
+By adopting a Kafka-based solution, the system could scale to large dataspaces with many participants and
+high event throughput, while preserving the same on-chain semantics and audit guarantees.
+
+---
 
