@@ -207,7 +207,7 @@ After starting local demo throught Docker you can see at [localhost 11000](http:
 
 | ACTION | COMPONENTS |
 |---------|-------------|
-| **ADD** | ASSET,POLICY |
+| **ADD** | ASSET,POLICY,DATA OFFER |
 | **MODIFY** | ASSET,POLICY |
 | **DELETE** |  |
 
