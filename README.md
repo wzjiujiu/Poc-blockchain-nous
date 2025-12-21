@@ -139,8 +139,6 @@ No smart contract redeployment is required when:
 ---
 
 
----
-
 ##  Quick Start
 
 ### Prerequisites
