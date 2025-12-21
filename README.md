@@ -41,6 +41,20 @@ The project explores how decentralized services can support **accident preventio
 
 ---
 
+## 🏗️ Architecture Overview
+
+The system is composed of four main components:
+
+- **EDC Consumer node** (e.g. `localhost:11000`)
+- **EDC Producer node** (e.g. `localhost:22000`)
+- **Webhook / Relayer**
+- **Ethereum Smart Contract**
+
+All blockchain interactions are mediated by the webhook, which listens to EDC management API events
+and records normalized metadata on-chain.
+
+---
+
 ##  Quick Start
 
 ### Prerequisites
