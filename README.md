@@ -223,6 +223,7 @@ THE REST API Disponible to test are :
 | **CREATE POLICY POST** |{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/policydefinitions  |
 | **CREATE POLICY (TIME-PERIOD-RESTRICTION) POST** |{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/policydefinitions  |
 | **EDIT POLICY (TEMPLATE) POST** |{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/policydefinitions/{POLICY ID}  |
+| **CREATE CONTRACT DEFINITION** | {{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/contractdefinitions |
 
 THE POST RESPONSE SCRIPT TO ADD FOR redirecting to the webhook:
 ```bash
