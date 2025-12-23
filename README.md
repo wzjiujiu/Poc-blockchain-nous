@@ -208,7 +208,7 @@ After starting local demo throught Docker you can see at [localhost 11000](http:
 | ACTION | COMPONENTS |
 |---------|-------------|
 | **ADD** | ASSET,POLICY,DATA OFFER |
-| **MODIFY** | ASSET,POLICY |
+| **MODIFY** | ASSET,POLICY,DATA OFFER |
 | **DELETE** |  |
 
 After Loading POSTMAN API COLLECTION WE CAN SEE following screen 
@@ -223,7 +223,10 @@ THE REST API Disponible to test are :
 | **CREATE POLICY POST** |{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/policydefinitions  |
 | **CREATE POLICY (TIME-PERIOD-RESTRICTION) POST** |{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/policydefinitions  |
 | **EDIT POLICY (TEMPLATE) POST** |{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/policydefinitions/{POLICY ID}  |
-| **CREATE CONTRACT DEFINITION** | {{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/contractdefinitions |
+| **CREATE CONTRACT DEFINITION POST** | {{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/contractdefinitions |
+| **EDIT CONTRACT DEFINITION PUT** | {{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/contractdefinitions |
+
+
 
 THE POST RESPONSE SCRIPT TO ADD FOR redirecting to the webhook:
 ```bash
