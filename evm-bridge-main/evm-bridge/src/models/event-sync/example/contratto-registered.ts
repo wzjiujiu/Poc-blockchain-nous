@@ -21,7 +21,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// EventExampleDataofferModified - Model class to store events of type 'DataofferModified' for contract Example
+// EventExampleContrattoRegistered - Model class to store events of type 'ContrattoRegistered' for contract Example
 // WARNING: THIS FILE IS AUTO-GENERATED. DO NOT ADD ANY CHANGES OR THEY MAY BE LOST THE NEXT TIME YOU GENERATE THE CODE
 
 "use strict";
@@ -29,17 +29,17 @@
 import { DataModel, enforceType, TypedRow, DataSource, DataFinder, DataFilter, OrderBy, SelectOptions } from "tsbean-orm";
 
 const DATA_SOURCE = DataSource.DEFAULT;
-const TABLE = "event_example_dataoffer_modified";
+const TABLE = "event_example_contratto_registered";
 const PRIMARY_KEY = "id";
 
 /**
  * Model class for event storage
  * Contract name: ExampleContract
  * Contract name (instance): Example
- * Event name: DataofferModified
+ * Event name: ContrattoRegistered
  */
-export class EventExampleDataofferModified extends DataModel {
-    public static finder = new DataFinder<EventExampleDataofferModified, string>(DATA_SOURCE, TABLE, PRIMARY_KEY, (data: TypedRow<EventExampleDataofferModified>) => { return new EventExampleDataofferModified(data) });
+export class EventExampleContrattoRegistered extends DataModel {
+    public static finder = new DataFinder<EventExampleContrattoRegistered, string>(DATA_SOURCE, TABLE, PRIMARY_KEY, (data: TypedRow<EventExampleContrattoRegistered>) => { return new EventExampleContrattoRegistered(data) });
 
     /**
      * Finds events (paginated)
@@ -48,14 +48,14 @@ export class EventExampleDataofferModified extends DataModel {
      * @param continuationToken The continuation token
      * @returns The results and the next continuation token
      */
-    public static async findPaginated(filters: DataFilter<EventExampleDataofferModified>[], limit: number, continuationToken?: string): Promise<[list: EventExampleDataofferModified[], nextContinuationToken: string | null]> {
+    public static async findPaginated(filters: DataFilter<EventExampleContrattoRegistered>[], limit: number, continuationToken?: string): Promise<[list: EventExampleContrattoRegistered[], nextContinuationToken: string | null]> {
         const finalFilters = filters.slice();
 
         if (continuationToken) {
             finalFilters.push(DataFilter.greaterThan("id", continuationToken));
         }
 
-        let finalFilter: DataFilter<EventExampleDataofferModified>;
+        let finalFilter: DataFilter<EventExampleContrattoRegistered>;
 
         if (finalFilters.length === 1) {
             finalFilter = finalFilters[0];
@@ -65,7 +65,7 @@ export class EventExampleDataofferModified extends DataModel {
             finalFilter = DataFilter.any();
         }
 
-        const itemList = await EventExampleDataofferModified.finder.find(finalFilter, OrderBy.desc("id"), SelectOptions.configure().setMaxRows(limit));
+        const itemList = await EventExampleContrattoRegistered.finder.find(finalFilter, OrderBy.desc("id"), SelectOptions.configure().setMaxRows(limit));
 
         let nextContinuationToken: string | null = null;
 
@@ -80,7 +80,7 @@ export class EventExampleDataofferModified extends DataModel {
      * Resets the collection
      */
     public static async reset() {
-        await EventExampleDataofferModified.finder.delete(DataFilter.any());
+        await EventExampleContrattoRegistered.finder.delete(DataFilter.any());
     }
 
     /**
@@ -89,7 +89,7 @@ export class EventExampleDataofferModified extends DataModel {
      * @returns True only of the event exists
      */
     public static async exists(id: string): Promise<boolean> {
-        const count = await EventExampleDataofferModified.finder.count(DataFilter.equals("id", id));
+        const count = await EventExampleContrattoRegistered.finder.count(DataFilter.equals("id", id));
         return count > 0;
     }
 
@@ -111,26 +111,27 @@ export class EventExampleDataofferModified extends DataModel {
     /* db-type: BIGINT */
     public timestamp: number;
 
+    /* db-index: pRegistrar, id DESC */
+    /* db-type: VARCHAR 255 */
+    public pRegistrar: string;
+
     /* db-index: pNodeId, id DESC */
     /* db-type: VARCHAR 255 */
     public pNodeId: string;
 
     /* db-type: TEXT */
-    public pOfferId: string;
+    public pContractNegotiationId: string;
+
+    /* db-type: TEXT */
+    public pCounterpartyId: string;
 
     /* db-type: VARCHAR 255 */
-    public pTimestamp: string;
+    public pCreatedAt: string;
 
     /* db-type: TEXT */
-    public pNewAccessPolicyId: string;
+    public pState: string;
 
-    /* db-type: TEXT */
-    public pNewContractPolicyId: string;
-
-    /* db-type: TEXT */
-    public pNewAssetSelector: string;
-
-    constructor(data: TypedRow<EventExampleDataofferModified>) {
+    constructor(data: TypedRow<EventExampleContrattoRegistered>) {
         super(DATA_SOURCE, TABLE, PRIMARY_KEY);
 
         this.id = enforceType(data.id, "string") || '';
@@ -138,12 +139,12 @@ export class EventExampleDataofferModified extends DataModel {
         this.eventIndex = enforceType(data.eventIndex, "int") || 0;
         this.tx = enforceType(data.tx, "string") || '';
         this.timestamp = enforceType(data.timestamp, "int") || 0;
+        this.pRegistrar = enforceType(data.pRegistrar, "string") || '';
         this.pNodeId = enforceType(data.pNodeId, "string") || '';
-        this.pOfferId = enforceType(data.pOfferId, "string") || '';
-        this.pTimestamp = enforceType(data.pTimestamp, "string") || '';
-        this.pNewAccessPolicyId = enforceType(data.pNewAccessPolicyId, "string") || '';
-        this.pNewContractPolicyId = enforceType(data.pNewContractPolicyId, "string") || '';
-        this.pNewAssetSelector = enforceType(data.pNewAssetSelector, "string") || '';
+        this.pContractNegotiationId = enforceType(data.pContractNegotiationId, "string") || '';
+        this.pCounterpartyId = enforceType(data.pCounterpartyId, "string") || '';
+        this.pCreatedAt = enforceType(data.pCreatedAt, "string") || '';
+        this.pState = enforceType(data.pState, "string") || '';
 
         this.init();
     }
@@ -151,12 +152,12 @@ export class EventExampleDataofferModified extends DataModel {
     // Gets the parameters into a single array
     public getParametersArray(): (string | boolean)[] {
         return [
+            this.pRegistrar,
             this.pNodeId,
-            this.pOfferId,
-            this.pTimestamp,
-            this.pNewAccessPolicyId,
-            this.pNewContractPolicyId,
-            this.pNewAssetSelector,
+            this.pContractNegotiationId,
+            this.pCounterpartyId,
+            this.pCreatedAt,
+            this.pState,
         ];
     }
 }

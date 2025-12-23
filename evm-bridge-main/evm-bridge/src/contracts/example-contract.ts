@@ -25,11 +25,11 @@
 
 "use strict";
 
-import { Quantity, SmartContractEventWrapper, SmartContractEvent, Address, MethodCallingOptions, BytesLike, AddressLike, MethodTransactionOptions, TransactionResult, SmartContractInterface, TransactionBuildDetails, QuantityLike, BlockTag, RPCOptions, ABILike } from "@asanrom/smart-contract-wrapper";
+import { Quantity, SmartContractEventWrapper, SmartContractEvent, Address, MethodCallingOptions, BytesLike, AddressLike, MethodTransactionOptions, TransactionResult, QuantityLike, SmartContractInterface, TransactionBuildDetails, BlockTag, RPCOptions, ABILike } from "@asanrom/smart-contract-wrapper";
 
 /**
  * Contract wrapper: ExampleContract
- * This is an example smart contract
+ * Example smart contract for a blockchain-backed dataspace registry
  */
 export class ExampleContractWrapper {
     /**
@@ -84,6 +84,19 @@ export class ExampleContractWrapper {
     }
 
     /**
+     * Calls View method: contrattoExists(bytes32,string)
+     * Method: contrattoExists(bytes32,string)
+     * @param nodeId nodeId
+     * @param contractNegotiationId contractNegotiationId
+     * @param options The options for sending the request
+     * @returns The result for calling the method
+     */
+    public async contrattoExists(nodeId: BytesLike, contractNegotiationId: string, options?: MethodCallingOptions): Promise<boolean> {
+        const __r: any = await this._contractInterface.callViewMethod("contrattoExists", [nodeId, contractNegotiationId], options || {});
+        return __r[0];
+    }
+
+    /**
      * Calls View method: dataofferExists(bytes32,string)
      * Method: dataofferExists(bytes32,string)
      * @param nodeId nodeId
@@ -112,6 +125,26 @@ export class ExampleContractWrapper {
             registrar: __r[2],
             timestamp: __r[3],
             title: __r[4],
+        };
+    }
+
+    /**
+     * Calls View method: getContratto(bytes32,string)
+     * Method: getContratto(bytes32,string)
+     * @param nodeId nodeId
+     * @param contractNegotiationId contractNegotiationId
+     * @param options The options for sending the request
+     * @returns The result for calling the method
+     */
+    public async getContratto(nodeId: BytesLike, contractNegotiationId: string, options?: MethodCallingOptions): Promise<{id: string, nId: string, counterpartyId: string, timestamp: Quantity, createdAt: Quantity, state: string}> {
+        const __r: any = await this._contractInterface.callViewMethod("getContratto", [nodeId, contractNegotiationId], options || {});
+        return {
+            id: __r[0],
+            nId: __r[1],
+            counterpartyId: __r[2],
+            timestamp: __r[3],
+            createdAt: __r[4],
+            state: __r[5],
         };
     }
 
@@ -268,14 +301,14 @@ export class ExampleContractWrapper {
      * Method: modifyDataoffer(bytes32,string,string,string,string)
      * @param nodeId nodeId
      * @param offerId offerId
-     * @param newofferaccessPolicyId newofferaccessPolicyId
-     * @param newoffercontractPolicyId newoffercontractPolicyId
-     * @param newofferassetSelector newofferassetSelector
+     * @param newAccessPolicyId newAccessPolicyId
+     * @param newContractPolicyId newContractPolicyId
+     * @param newAssetSelector newAssetSelector
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async modifyDataoffer(nodeId: BytesLike, offerId: string, newofferaccessPolicyId: string, newoffercontractPolicyId: string, newofferassetSelector: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
-        const __r = await this._contractInterface.callMutableMethod("modifyDataoffer", [nodeId, offerId, newofferaccessPolicyId, newoffercontractPolicyId, newofferassetSelector], options);
+    public async modifyDataoffer(nodeId: BytesLike, offerId: string, newAccessPolicyId: string, newContractPolicyId: string, newAssetSelector: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("modifyDataoffer", [nodeId, offerId, newAccessPolicyId, newContractPolicyId, newAssetSelector], options);
     
         if (__r.receipt.status > BigInt(0)) {
             const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
@@ -290,13 +323,13 @@ export class ExampleContractWrapper {
      * Method: modifyDataoffer(bytes32,string,string,string,string)
      * @param nodeId nodeId
      * @param offerId offerId
-     * @param newofferaccessPolicyId newofferaccessPolicyId
-     * @param newoffercontractPolicyId newoffercontractPolicyId
-     * @param newofferassetSelector newofferassetSelector
+     * @param newAccessPolicyId newAccessPolicyId
+     * @param newContractPolicyId newContractPolicyId
+     * @param newAssetSelector newAssetSelector
      * @returns The details for building the transaction
      */
-    public modifyDataoffer$txBuildDetails(nodeId: BytesLike, offerId: string, newofferaccessPolicyId: string, newoffercontractPolicyId: string, newofferassetSelector: string): TransactionBuildDetails {
-        return this._contractInterface.encodeMutableMethod("modifyDataoffer", [nodeId, offerId, newofferaccessPolicyId, newoffercontractPolicyId, newofferassetSelector]);
+    public modifyDataoffer$txBuildDetails(nodeId: BytesLike, offerId: string, newAccessPolicyId: string, newContractPolicyId: string, newAssetSelector: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("modifyDataoffer", [nodeId, offerId, newAccessPolicyId, newContractPolicyId, newAssetSelector]);
     }
 
     /**
@@ -390,18 +423,54 @@ export class ExampleContractWrapper {
     }
 
     /**
+     * Calls Transaction method: registerContratto(bytes32,string,string,uint256,string)
+     * Method: registerContratto(bytes32,string,string,uint256,string)
+     * @param nodeId nodeId
+     * @param contractNegotiationId contractNegotiationId
+     * @param counterpartyId counterpartyId
+     * @param createdAt createdAt
+     * @param state state
+     * @param options The options for sending the transaction
+     * @returns The transaction result
+     */
+    public async registerContratto(nodeId: BytesLike, contractNegotiationId: string, counterpartyId: string, createdAt: QuantityLike, state: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("registerContratto", [nodeId, contractNegotiationId, counterpartyId, createdAt, state], options);
+    
+        if (__r.receipt.status > BigInt(0)) {
+            const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
+            return { receipt: __r.receipt, result: new ExampleContractEventCollection(decodedEvents) };
+        } else {
+            throw new Error("Transaction reverted");
+        }
+    }
+    
+    /**
+     * Gets details for building a transaction calling the method: registerContratto(bytes32,string,string,uint256,string)
+     * Method: registerContratto(bytes32,string,string,uint256,string)
+     * @param nodeId nodeId
+     * @param contractNegotiationId contractNegotiationId
+     * @param counterpartyId counterpartyId
+     * @param createdAt createdAt
+     * @param state state
+     * @returns The details for building the transaction
+     */
+    public registerContratto$txBuildDetails(nodeId: BytesLike, contractNegotiationId: string, counterpartyId: string, createdAt: QuantityLike, state: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("registerContratto", [nodeId, contractNegotiationId, counterpartyId, createdAt, state]);
+    }
+
+    /**
      * Calls Transaction method: registerDataoffer(bytes32,string,string,string,string)
      * Method: registerDataoffer(bytes32,string,string,string,string)
      * @param nodeId nodeId
      * @param offerId offerId
-     * @param offeraccessPolicyId offeraccessPolicyId
-     * @param offercontractPolicyId offercontractPolicyId
-     * @param offerassetSelector offerassetSelector
+     * @param offerAccessPolicyId offerAccessPolicyId
+     * @param offerContractPolicyId offerContractPolicyId
+     * @param offerAssetSelector offerAssetSelector
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async registerDataoffer(nodeId: BytesLike, offerId: string, offeraccessPolicyId: string, offercontractPolicyId: string, offerassetSelector: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
-        const __r = await this._contractInterface.callMutableMethod("registerDataoffer", [nodeId, offerId, offeraccessPolicyId, offercontractPolicyId, offerassetSelector], options);
+    public async registerDataoffer(nodeId: BytesLike, offerId: string, offerAccessPolicyId: string, offerContractPolicyId: string, offerAssetSelector: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("registerDataoffer", [nodeId, offerId, offerAccessPolicyId, offerContractPolicyId, offerAssetSelector], options);
     
         if (__r.receipt.status > BigInt(0)) {
             const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
@@ -416,13 +485,13 @@ export class ExampleContractWrapper {
      * Method: registerDataoffer(bytes32,string,string,string,string)
      * @param nodeId nodeId
      * @param offerId offerId
-     * @param offeraccessPolicyId offeraccessPolicyId
-     * @param offercontractPolicyId offercontractPolicyId
-     * @param offerassetSelector offerassetSelector
+     * @param offerAccessPolicyId offerAccessPolicyId
+     * @param offerContractPolicyId offerContractPolicyId
+     * @param offerAssetSelector offerAssetSelector
      * @returns The details for building the transaction
      */
-    public registerDataoffer$txBuildDetails(nodeId: BytesLike, offerId: string, offeraccessPolicyId: string, offercontractPolicyId: string, offerassetSelector: string): TransactionBuildDetails {
-        return this._contractInterface.encodeMutableMethod("registerDataoffer", [nodeId, offerId, offeraccessPolicyId, offercontractPolicyId, offerassetSelector]);
+    public registerDataoffer$txBuildDetails(nodeId: BytesLike, offerId: string, offerAccessPolicyId: string, offerContractPolicyId: string, offerAssetSelector: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("registerDataoffer", [nodeId, offerId, offerAccessPolicyId, offerContractPolicyId, offerAssetSelector]);
     }
 
     /**
@@ -484,6 +553,38 @@ export class ExampleContractWrapper {
     }
 
     /**
+     * Calls Transaction method: updateContrattoState(bytes32,string,string)
+     * Method: updateContrattoState(bytes32,string,string)
+     * @param nodeId nodeId
+     * @param contractNegotiationId contractNegotiationId
+     * @param newState newState
+     * @param options The options for sending the transaction
+     * @returns The transaction result
+     */
+    public async updateContrattoState(nodeId: BytesLike, contractNegotiationId: string, newState: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("updateContrattoState", [nodeId, contractNegotiationId, newState], options);
+    
+        if (__r.receipt.status > BigInt(0)) {
+            const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
+            return { receipt: __r.receipt, result: new ExampleContractEventCollection(decodedEvents) };
+        } else {
+            throw new Error("Transaction reverted");
+        }
+    }
+    
+    /**
+     * Gets details for building a transaction calling the method: updateContrattoState(bytes32,string,string)
+     * Method: updateContrattoState(bytes32,string,string)
+     * @param nodeId nodeId
+     * @param contractNegotiationId contractNegotiationId
+     * @param newState newState
+     * @returns The details for building the transaction
+     */
+    public updateContrattoState$txBuildDetails(nodeId: BytesLike, contractNegotiationId: string, newState: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("updateContrattoState", [nodeId, contractNegotiationId, newState]);
+    }
+
+    /**
      * Calls Transaction method: upgradeToAndCall(address,bytes)
      * Method: upgradeToAndCall(address,bytes)
      * @param newImplementation newImplementation
@@ -528,7 +629,7 @@ export class ExampleContractWrapper {
 /**
  * Possible event types for contract: ExampleContract
  */
-export type ExampleContractEventType = "AssetModified" | "AssetRegistered" | "DataTransferApproved" | "DataTransferCompleted" | "DataTransferRejected" | "DataTransferRequested" | "DataofferModified" | "DataofferRegistered" | "Initialized" | "Paused" | "PolicyModified" | "PolicyRegistered" | "Unpaused" | "Upgraded";
+export type ExampleContractEventType = "AssetModified" | "AssetRegistered" | "ContrattoRegistered" | "ContrattoStateUpdated" | "DataTransferApproved" | "DataTransferCompleted" | "DataTransferRejected" | "DataTransferRequested" | "DataofferModified" | "DataofferRegistered" | "Initialized" | "Paused" | "PolicyModified" | "PolicyRegistered" | "Unpaused" | "Upgraded";
 
 /**
  * Collection of events for contract: ExampleContract
@@ -606,6 +707,44 @@ export class ExampleContractEventCollection {
                 assetId: __r[2],
                 timestamp: __r[3],
                 title: __r[4],
+            },
+        };
+    }
+
+    /**
+     * Get an event of type ContrattoRegistered(address,bytes32,string,string,uint256,string) from the collection
+     * @param index Event index in the collection (from 0 to length - 1)
+     * @returns The event object
+     */
+    public getContrattoRegisteredEvent(index: number): SmartContractEventWrapper<ContrattoRegisteredEvent> {
+        const __r: any = this.events[index].parameters;
+        return {
+            event: this.events[index],
+            data: {
+                registrar: __r[0],
+                nodeId: __r[1],
+                contractNegotiationId: __r[2],
+                counterpartyId: __r[3],
+                createdAt: __r[4],
+                state: __r[5],
+            },
+        };
+    }
+
+    /**
+     * Get an event of type ContrattoStateUpdated(bytes32,string,uint256,string) from the collection
+     * @param index Event index in the collection (from 0 to length - 1)
+     * @returns The event object
+     */
+    public getContrattoStateUpdatedEvent(index: number): SmartContractEventWrapper<ContrattoStateUpdatedEvent> {
+        const __r: any = this.events[index].parameters;
+        return {
+            event: this.events[index],
+            data: {
+                nodeId: __r[0],
+                contractNegotiationId: __r[1],
+                timestamp: __r[2],
+                newState: __r[3],
             },
         };
     }
@@ -691,9 +830,9 @@ export class ExampleContractEventCollection {
                 nodeId: __r[0],
                 offerId: __r[1],
                 timestamp: __r[2],
-                newaccessPolicyId: __r[3],
-                newcontractPolicyId: __r[4],
-                newassetSelector: __r[5],
+                newAccessPolicyId: __r[3],
+                newContractPolicyId: __r[4],
+                newAssetSelector: __r[5],
             },
         };
     }
@@ -846,6 +985,36 @@ export interface AssetRegisteredEvent {
 }
 
 /**
+ * Event: ContrattoRegistered(address,bytes32,string,string,uint256,string)
+ */
+export interface ContrattoRegisteredEvent {
+    registrar: Address,
+
+    nodeId: string,
+
+    contractNegotiationId: string,
+
+    counterpartyId: string,
+
+    createdAt: Quantity,
+
+    state: string,
+}
+
+/**
+ * Event: ContrattoStateUpdated(bytes32,string,uint256,string)
+ */
+export interface ContrattoStateUpdatedEvent {
+    nodeId: string,
+
+    contractNegotiationId: string,
+
+    timestamp: Quantity,
+
+    newState: string,
+}
+
+/**
  * Event: DataTransferApproved(string,address,uint256)
  */
 export interface DataTransferApprovedEvent {
@@ -899,11 +1068,11 @@ export interface DataofferModifiedEvent {
 
     timestamp: Quantity,
 
-    newaccessPolicyId: string,
+    newAccessPolicyId: string,
 
-    newcontractPolicyId: string,
+    newContractPolicyId: string,
 
-    newassetSelector: string,
+    newAssetSelector: string,
 }
 
 /**
@@ -1120,6 +1289,80 @@ const CONTRACT_ABI: ABILike = [
         "anonymous": false,
         "inputs": [
             {
+                "indexed": true,
+                "internalType": "address",
+                "name": "registrar",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "contractNegotiationId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "counterpartyId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "createdAt",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "state",
+                "type": "string"
+            }
+        ],
+        "name": "ContrattoRegistered",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "contractNegotiationId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "newState",
+                "type": "string"
+            }
+        ],
+        "name": "ContrattoStateUpdated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
                 "indexed": false,
                 "internalType": "string",
                 "name": "transferId",
@@ -1240,19 +1483,19 @@ const CONTRACT_ABI: ABILike = [
             {
                 "indexed": false,
                 "internalType": "string",
-                "name": "newaccessPolicyId",
+                "name": "newAccessPolicyId",
                 "type": "string"
             },
             {
                 "indexed": false,
                 "internalType": "string",
-                "name": "newcontractPolicyId",
+                "name": "newContractPolicyId",
                 "type": "string"
             },
             {
                 "indexed": false,
                 "internalType": "string",
-                "name": "newassetSelector",
+                "name": "newAssetSelector",
                 "type": "string"
             }
         ],
@@ -1474,6 +1717,30 @@ const CONTRACT_ABI: ABILike = [
             },
             {
                 "internalType": "string",
+                "name": "contractNegotiationId",
+                "type": "string"
+            }
+        ],
+        "name": "contrattoExists",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
                 "name": "offerId",
                 "type": "string"
             }
@@ -1527,6 +1794,55 @@ const CONTRACT_ABI: ABILike = [
             {
                 "internalType": "string",
                 "name": "title",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
+                "name": "contractNegotiationId",
+                "type": "string"
+            }
+        ],
+        "name": "getContratto",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "id",
+                "type": "string"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "nId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
+                "name": "counterpartyId",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "createdAt",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "state",
                 "type": "string"
             }
         ],
@@ -1699,17 +2015,17 @@ const CONTRACT_ABI: ABILike = [
             },
             {
                 "internalType": "string",
-                "name": "newofferaccessPolicyId",
+                "name": "newAccessPolicyId",
                 "type": "string"
             },
             {
                 "internalType": "string",
-                "name": "newoffercontractPolicyId",
+                "name": "newContractPolicyId",
                 "type": "string"
             },
             {
                 "internalType": "string",
-                "name": "newofferassetSelector",
+                "name": "newAssetSelector",
                 "type": "string"
             }
         ],
@@ -1830,22 +2146,55 @@ const CONTRACT_ABI: ABILike = [
             },
             {
                 "internalType": "string",
+                "name": "contractNegotiationId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "counterpartyId",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "createdAt",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "state",
+                "type": "string"
+            }
+        ],
+        "name": "registerContratto",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
                 "name": "offerId",
                 "type": "string"
             },
             {
                 "internalType": "string",
-                "name": "offeraccessPolicyId",
+                "name": "offerAccessPolicyId",
                 "type": "string"
             },
             {
                 "internalType": "string",
-                "name": "offercontractPolicyId",
+                "name": "offerContractPolicyId",
                 "type": "string"
             },
             {
                 "internalType": "string",
-                "name": "offerassetSelector",
+                "name": "offerAssetSelector",
                 "type": "string"
             }
         ],
@@ -1880,6 +2229,29 @@ const CONTRACT_ABI: ABILike = [
     {
         "inputs": [],
         "name": "unpause",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
+                "name": "contractNegotiationId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "newState",
+                "type": "string"
+            }
+        ],
+        "name": "updateContrattoState",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

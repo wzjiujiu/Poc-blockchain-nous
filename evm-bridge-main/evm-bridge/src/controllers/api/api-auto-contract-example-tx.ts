@@ -47,9 +47,11 @@ export class ExampleContractApiTxController extends Controller {
         application.post(prefix + "/contracts/example/tx/modify-policy", ensureObjectBody(this.txModifyPolicy.bind(this)));
         application.post(prefix + "/contracts/example/tx/pause", ensureObjectBody(this.txPause.bind(this)));
         application.post(prefix + "/contracts/example/tx/register-asset", ensureObjectBody(this.txRegisterAsset.bind(this)));
+        application.post(prefix + "/contracts/example/tx/register-contratto", ensureObjectBody(this.txRegisterContratto.bind(this)));
         application.post(prefix + "/contracts/example/tx/register-dataoffer", ensureObjectBody(this.txRegisterDataoffer.bind(this)));
         application.post(prefix + "/contracts/example/tx/register-policy", ensureObjectBody(this.txRegisterPolicy.bind(this)));
         application.post(prefix + "/contracts/example/tx/unpause", ensureObjectBody(this.txUnpause.bind(this)));
+        application.post(prefix + "/contracts/example/tx/update-contratto-state", ensureObjectBody(this.txUpdateContrattoState.bind(this)));
         application.post(prefix + "/contracts/example/tx/upgrade-to-and-call", ensureObjectBody(this.txUpgradeToAndCall.bind(this)));
     }
 
@@ -142,9 +144,9 @@ export class ExampleContractApiTxController extends Controller {
      * @typedef TxParamsExampleModifyDataoffer
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} offerId.required - offerId
-     * @property {string} newofferaccessPolicyId.required - newofferaccessPolicyId
-     * @property {string} newoffercontractPolicyId.required - newoffercontractPolicyId
-     * @property {string} newofferassetSelector.required - newofferassetSelector
+     * @property {string} newAccessPolicyId.required - newAccessPolicyId
+     * @property {string} newContractPolicyId.required - newContractPolicyId
+     * @property {string} newAssetSelector.required - newAssetSelector
      */
 
     /**
@@ -168,7 +170,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txModifyDataoffer(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "newofferaccessPolicyId", "type": "string" }, { "internalType": "string", "name": "newoffercontractPolicyId", "type": "string" }, { "internalType": "string", "name": "newofferassetSelector", "type": "string" }], "name": "modifyDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "newAccessPolicyId", "type": "string" }, { "internalType": "string", "name": "newContractPolicyId", "type": "string" }, { "internalType": "string", "name": "newAssetSelector", "type": "string" }], "name": "modifyDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 
@@ -305,12 +307,57 @@ export class ExampleContractApiTxController extends Controller {
         await handleTransactionSending(request, response, txBuildData, wrapper.address);
     }
     /**
+     * @typedef TxParamsExampleRegisterContratto
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} contractNegotiationId.required - contractNegotiationId
+     * @property {string} counterpartyId.required - counterpartyId
+     * @property {string} createdAt.required - createdAt - eg: 0
+     * @property {string} state.required - state
+     */
+
+    /**
+     * @typedef TxRequestExampleRegisterContratto
+     * @property {TxParamsExampleRegisterContratto.model} parameters.required - Transaction parameters
+     * @property {TxSigningOptions.model} txSign.required - Transaction signing options
+     */
+
+    /**
+     * Sends transaction for method: registerContratto
+     * Smart contract: Example (ExampleContract)
+     * Method signature: registerContratto(bytes32,string,string,uint256,string)
+     * Binding: TxRegisterContratto
+     * 
+     * @route POST /contracts/example/tx/register-contratto
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {TxRequestExampleRegisterContratto.model} request.body.required - Request body
+     * @returns {TxResponse.model} 200 - Transaction result
+     * @returns {TxBadRequest.model} 400 - Bad request
+     * @returns {TxSigningForbiddenResponse.model} 403 - Access denied
+     * @security BearerAuthorization
+     */
+    public async txRegisterContratto(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "contractNegotiationId", "type": "string" }, { "internalType": "string", "name": "counterpartyId", "type": "string" }, { "internalType": "uint256", "name": "createdAt", "type": "uint256" }, { "internalType": "string", "name": "state", "type": "string" }], "name": "registerContratto", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+
+        const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        const txBuildData = wrapper.registerContratto$txBuildDetails.call(wrapper, ...txParams);
+
+        await handleTransactionSending(request, response, txBuildData, wrapper.address);
+    }
+    /**
      * @typedef TxParamsExampleRegisterDataoffer
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} offerId.required - offerId
-     * @property {string} offeraccessPolicyId.required - offeraccessPolicyId
-     * @property {string} offercontractPolicyId.required - offercontractPolicyId
-     * @property {string} offerassetSelector.required - offerassetSelector
+     * @property {string} offerAccessPolicyId.required - offerAccessPolicyId
+     * @property {string} offerContractPolicyId.required - offerContractPolicyId
+     * @property {string} offerAssetSelector.required - offerAssetSelector
      */
 
     /**
@@ -334,7 +381,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txRegisterDataoffer(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "offeraccessPolicyId", "type": "string" }, { "internalType": "string", "name": "offercontractPolicyId", "type": "string" }, { "internalType": "string", "name": "offerassetSelector", "type": "string" }], "name": "registerDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "offerId", "type": "string" }, { "internalType": "string", "name": "offerAccessPolicyId", "type": "string" }, { "internalType": "string", "name": "offerContractPolicyId", "type": "string" }, { "internalType": "string", "name": "offerAssetSelector", "type": "string" }], "name": "registerDataoffer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 
@@ -424,6 +471,49 @@ export class ExampleContractApiTxController extends Controller {
         const wrapper = SmartContractsConfig.getInstance().example;
 
         const txBuildData = wrapper.unpause$txBuildDetails.call(wrapper, ...txParams);
+
+        await handleTransactionSending(request, response, txBuildData, wrapper.address);
+    }
+    /**
+     * @typedef TxParamsExampleUpdateContrattoState
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} contractNegotiationId.required - contractNegotiationId
+     * @property {string} newState.required - newState
+     */
+
+    /**
+     * @typedef TxRequestExampleUpdateContrattoState
+     * @property {TxParamsExampleUpdateContrattoState.model} parameters.required - Transaction parameters
+     * @property {TxSigningOptions.model} txSign.required - Transaction signing options
+     */
+
+    /**
+     * Sends transaction for method: updateContrattoState
+     * Smart contract: Example (ExampleContract)
+     * Method signature: updateContrattoState(bytes32,string,string)
+     * Binding: TxUpdateContrattoState
+     * 
+     * @route POST /contracts/example/tx/update-contratto-state
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {TxRequestExampleUpdateContrattoState.model} request.body.required - Request body
+     * @returns {TxResponse.model} 200 - Transaction result
+     * @returns {TxBadRequest.model} 400 - Bad request
+     * @returns {TxSigningForbiddenResponse.model} 403 - Access denied
+     * @security BearerAuthorization
+     */
+    public async txUpdateContrattoState(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "contractNegotiationId", "type": "string" }, { "internalType": "string", "name": "newState", "type": "string" }], "name": "updateContrattoState", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+
+        const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        const txBuildData = wrapper.updateContrattoState$txBuildDetails.call(wrapper, ...txParams);
 
         await handleTransactionSending(request, response, txBuildData, wrapper.address);
     }

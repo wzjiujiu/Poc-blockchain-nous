@@ -17,6 +17,14 @@
             "field": "id"
         },
         {
+            "collection": "event_example_contratto_registered",
+            "field": "id"
+        },
+        {
+            "collection": "event_example_contratto_state_updated",
+            "field": "id"
+        },
+        {
             "collection": "event_example_data_transfer_approved",
             "field": "id"
         },
@@ -204,6 +212,108 @@
         },
         {
             "collection": "event_example_asset_registered",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pNodeId",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_contratto_registered",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_contratto_registered",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_contratto_registered",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_contratto_registered",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pRegistrar",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_contratto_registered",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pNodeId",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_contratto_state_updated",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_contratto_state_updated",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_contratto_state_updated",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_contratto_state_updated",
             "unique": false,
             "fields": [
                 {

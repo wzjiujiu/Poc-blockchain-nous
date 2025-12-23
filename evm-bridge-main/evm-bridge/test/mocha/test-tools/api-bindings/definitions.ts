@@ -1599,19 +1599,19 @@ export interface TxParamsExampleModifyDataoffer {
     offerId: string;
 
     /**
-     * newofferaccessPolicyId
+     * newAccessPolicyId
      */
-    newofferaccessPolicyId: string;
+    newAccessPolicyId: string;
 
     /**
-     * newoffercontractPolicyId
+     * newContractPolicyId
      */
-    newoffercontractPolicyId: string;
+    newContractPolicyId: string;
 
     /**
-     * newofferassetSelector
+     * newAssetSelector
      */
-    newofferassetSelector: string;
+    newAssetSelector: string;
 }
 
 export interface TxRequestExampleModifyDataoffer {
@@ -1670,6 +1670,39 @@ export interface TxRequestExampleRegisterAsset {
     txSign: TxSigningOptions;
 }
 
+export interface TxParamsExampleRegisterContratto {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * contractNegotiationId
+     */
+    contractNegotiationId: string;
+
+    /**
+     * counterpartyId
+     */
+    counterpartyId: string;
+
+    /**
+     * createdAt 
+     */
+    createdAt: string;
+
+    /**
+     * state
+     */
+    state: string;
+}
+
+export interface TxRequestExampleRegisterContratto {
+    parameters: TxParamsExampleRegisterContratto;
+
+    txSign: TxSigningOptions;
+}
+
 export interface TxParamsExampleRegisterDataoffer {
     /**
      * nodeId 
@@ -1682,19 +1715,19 @@ export interface TxParamsExampleRegisterDataoffer {
     offerId: string;
 
     /**
-     * offeraccessPolicyId
+     * offerAccessPolicyId
      */
-    offeraccessPolicyId: string;
+    offerAccessPolicyId: string;
 
     /**
-     * offercontractPolicyId
+     * offerContractPolicyId
      */
-    offercontractPolicyId: string;
+    offerContractPolicyId: string;
 
     /**
-     * offerassetSelector
+     * offerAssetSelector
      */
-    offerassetSelector: string;
+    offerAssetSelector: string;
 }
 
 export interface TxRequestExampleRegisterDataoffer {
@@ -1727,6 +1760,29 @@ export interface TxRequestExampleRegisterPolicy {
 }
 
 export interface TxRequestExampleUnpause {
+    txSign: TxSigningOptions;
+}
+
+export interface TxParamsExampleUpdateContrattoState {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * contractNegotiationId
+     */
+    contractNegotiationId: string;
+
+    /**
+     * newState
+     */
+    newState: string;
+}
+
+export interface TxRequestExampleUpdateContrattoState {
+    parameters: TxParamsExampleUpdateContrattoState;
+
     txSign: TxSigningOptions;
 }
 
@@ -1866,6 +1922,136 @@ export interface EventItemExampleAssetRegistered {
 
 export interface EventListExampleAssetRegistered {
     events: EventItemExampleAssetRegistered[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
+export interface EventParamsExampleContrattoRegistered {
+    /**
+     * registrar 
+     */
+    registrar: string;
+
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * contractNegotiationId
+     */
+    contractNegotiationId: string;
+
+    /**
+     * counterpartyId
+     */
+    counterpartyId: string;
+
+    /**
+     * createdAt 
+     */
+    createdAt: string;
+
+    /**
+     * state
+     */
+    state: string;
+}
+
+export interface EventItemExampleContrattoRegistered {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExampleContrattoRegistered;
+}
+
+export interface EventListExampleContrattoRegistered {
+    events: EventItemExampleContrattoRegistered[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
+export interface EventParamsExampleContrattoStateUpdated {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * contractNegotiationId
+     */
+    contractNegotiationId: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+
+    /**
+     * newState
+     */
+    newState: string;
+}
+
+export interface EventItemExampleContrattoStateUpdated {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExampleContrattoStateUpdated;
+}
+
+export interface EventListExampleContrattoStateUpdated {
+    events: EventItemExampleContrattoStateUpdated[];
 
     /**
      * Continuation token 
@@ -2110,19 +2296,19 @@ export interface EventParamsExampleDataofferModified {
     timestamp: string;
 
     /**
-     * newaccessPolicyId
+     * newAccessPolicyId
      */
-    newaccessPolicyId: string;
+    newAccessPolicyId: string;
 
     /**
-     * newcontractPolicyId
+     * newContractPolicyId
      */
-    newcontractPolicyId: string;
+    newContractPolicyId: string;
 
     /**
-     * newassetSelector
+     * newAssetSelector
      */
-    newassetSelector: string;
+    newAssetSelector: string;
 }
 
 export interface EventItemExampleDataofferModified {
@@ -2569,6 +2755,25 @@ export interface CallResponseExampleAssetExists {
     _0: boolean;
 }
 
+export interface CallRequestExampleContrattoExists {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * contractNegotiationId
+     */
+    contractNegotiationId: string;
+}
+
+export interface CallResponseExampleContrattoExists {
+    /**
+     * _0
+     */
+    _0: boolean;
+}
+
 export interface CallRequestExampleDataofferExists {
     /**
      * nodeId 
@@ -2625,6 +2830,50 @@ export interface CallResponseExampleGetAsset {
      * title
      */
     title: string;
+}
+
+export interface CallRequestExampleGetContratto {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * contractNegotiationId
+     */
+    contractNegotiationId: string;
+}
+
+export interface CallResponseExampleGetContratto {
+    /**
+     * id
+     */
+    id: string;
+
+    /**
+     * nId 
+     */
+    nId: string;
+
+    /**
+     * counterpartyId
+     */
+    counterpartyId: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+
+    /**
+     * createdAt 
+     */
+    createdAt: string;
+
+    /**
+     * state
+     */
+    state: string;
 }
 
 export interface CallRequestExampleGetDataoffer {

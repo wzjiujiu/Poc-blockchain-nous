@@ -30,6 +30,8 @@ import { SmartContractsConfig } from "../../config/config-smart-contracts";
 import { SmartContractEventSynchronizer } from "./event-synchronizer";
 import { EventExampleAssetModified } from "../../models/event-sync/example/asset-modified";
 import { EventExampleAssetRegistered } from "../../models/event-sync/example/asset-registered";
+import { EventExampleContrattoRegistered } from "../../models/event-sync/example/contratto-registered";
+import { EventExampleContrattoStateUpdated } from "../../models/event-sync/example/contratto-state-updated";
 import { EventExampleDataTransferApproved } from "../../models/event-sync/example/data-transfer-approved";
 import { EventExampleDataTransferCompleted } from "../../models/event-sync/example/data-transfer-completed";
 import { EventExampleDataTransferRejected } from "../../models/event-sync/example/data-transfer-rejected";
@@ -126,6 +128,76 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 pAssetId,
                                 pTimestamp,
                                 pTitle,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
+                case "ContrattoRegistered":
+                    {
+                        const ev = events.getContrattoRegisteredEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pRegistrar = normalizeAddress(ev.data.registrar);
+                        const pNodeId = normalizeBytes32(ev.data.nodeId);
+                        const pContractNegotiationId = ev.data.contractNegotiationId;
+                        const pCounterpartyId = ev.data.counterpartyId;
+                        const pCreatedAt = normalizeDatabaseUint256(ev.data.createdAt);
+                        const pState = ev.data.state;
+                        const exists = await EventExampleContrattoRegistered.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExampleContrattoRegistered({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pRegistrar,
+                                pNodeId,
+                                pContractNegotiationId,
+                                pCounterpartyId,
+                                pCreatedAt,
+                                pState,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
+                case "ContrattoStateUpdated":
+                    {
+                        const ev = events.getContrattoStateUpdatedEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pNodeId = normalizeBytes32(ev.data.nodeId);
+                        const pContractNegotiationId = ev.data.contractNegotiationId;
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const pNewState = ev.data.newState;
+                        const exists = await EventExampleContrattoStateUpdated.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExampleContrattoStateUpdated({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pNodeId,
+                                pContractNegotiationId,
+                                pTimestamp,
+                                pNewState,
                             });
 
                             await newEvent.insert();
@@ -270,9 +342,9 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                         const pNodeId = normalizeBytes32(ev.data.nodeId);
                         const pOfferId = ev.data.offerId;
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
-                        const pNewaccessPolicyId = ev.data.newaccessPolicyId;
-                        const pNewcontractPolicyId = ev.data.newcontractPolicyId;
-                        const pNewassetSelector = ev.data.newassetSelector;
+                        const pNewAccessPolicyId = ev.data.newAccessPolicyId;
+                        const pNewContractPolicyId = ev.data.newContractPolicyId;
+                        const pNewAssetSelector = ev.data.newAssetSelector;
                         const exists = await EventExampleDataofferModified.exists(id);
                         if (!exists) {
                             const newEvent = new EventExampleDataofferModified({
@@ -284,9 +356,9 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 pNodeId,
                                 pOfferId,
                                 pTimestamp,
-                                pNewaccessPolicyId,
-                                pNewcontractPolicyId,
-                                pNewassetSelector,
+                                pNewAccessPolicyId,
+                                pNewContractPolicyId,
+                                pNewAssetSelector,
                             });
 
                             await newEvent.insert();
@@ -514,6 +586,8 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
     async reset(): Promise<void> {
         await EventExampleAssetModified.reset();
         await EventExampleAssetRegistered.reset();
+        await EventExampleContrattoRegistered.reset();
+        await EventExampleContrattoStateUpdated.reset();
         await EventExampleDataTransferApproved.reset();
         await EventExampleDataTransferCompleted.reset();
         await EventExampleDataTransferRejected.reset();

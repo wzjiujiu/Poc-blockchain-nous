@@ -23,6 +23,7 @@ const MAX_LOGS = 100;
 const Asset='http://localhost:11000/api/management/v3/assets';
 const Policy='http://localhost:11000/api/management/v3/policydefinitions';
 const DataOffer='http://localhost:11000/api/management/v3/contractdefinitions';
+const Contratto="http://localhost:11000/api/management/wrapper/ui/pages/catalog-page/contract-negotiations"
 
 // Override console.log per inviare log anche via socket e salvarli
 const originalConsoleLog = console.log.bind(console);
@@ -108,7 +109,7 @@ const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const provider = new ethers.JsonRpcProvider("http://localhost:8545");
 const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 
-const CONTRACT_ADDRESS = "0xd0fc4e931b6d67bcecc65c2afec2faa278d0d769";
+const CONTRACT_ADDRESS = "0xd9e5e9acdb6ef1afa4e23e4645c71b882cd63e4d";
 
 const CONTRACT_ABI = [
 
@@ -568,6 +569,18 @@ app.post("/event", async (req, res) => {
     console.error("❌ Errore durante la modifica DataOffer (consumer):", err);
   }
   }
+  else if(rawPort==Contratto&& method=='POST'){
+   const contractNegotiationId = cleanedData.response?.contractNegotiationId;
+   if (!contractNegotiationId) {
+     throw new Error("contractNegotiationId non trovato");
+    }
+
+    console.log("📄 contractNegotiationId:", contractNegotiationId);
+
+
+  }
+
+
 
   /* ======================= EMIT EVENT ======================= */
   io.emit("event", {

@@ -43,8 +43,10 @@ export class ExampleContractApiCallController extends Controller {
     public registerAPI(prefix: string, application: Express.Express) {
         application.post(prefix + "/contracts/example/call/upgrade-interface-version", ensureObjectBody(this.callUPGRADE_INTERFACE_VERSION.bind(this)));
         application.post(prefix + "/contracts/example/call/asset-exists", ensureObjectBody(this.callAssetExists.bind(this)));
+        application.post(prefix + "/contracts/example/call/contratto-exists", ensureObjectBody(this.callContrattoExists.bind(this)));
         application.post(prefix + "/contracts/example/call/dataoffer-exists", ensureObjectBody(this.callDataofferExists.bind(this)));
         application.post(prefix + "/contracts/example/call/get-asset", ensureObjectBody(this.callGetAsset.bind(this)));
+        application.post(prefix + "/contracts/example/call/get-contratto", ensureObjectBody(this.callGetContratto.bind(this)));
         application.post(prefix + "/contracts/example/call/get-dataoffer", ensureObjectBody(this.callGetDataoffer.bind(this)));
         application.post(prefix + "/contracts/example/call/get-initialized-version", ensureObjectBody(this.callGetInitializedVersion.bind(this)));
         application.post(prefix + "/contracts/example/call/get-policy", ensureObjectBody(this.callGetPolicy.bind(this)));
@@ -136,6 +138,56 @@ export class ExampleContractApiCallController extends Controller {
         let result: any;
         try {
             const callResult = await wrapper.assetExists.call(wrapper, ...callParams);
+
+            result = serializeOutputABIParams([callResult], methodAbi);
+        } catch (ex) {
+            Monitor.debugException(ex)
+            sendApiError(request, response, NOT_FOUND, "CALL_ERROR", ex.message);
+            return;
+        }
+
+        sendApiResult(request, response, result);
+    }
+    /**
+     * @typedef CallRequestExampleContrattoExists
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} contractNegotiationId.required - contractNegotiationId
+     */
+
+    /**
+     * @typedef CallResponseExampleContrattoExists
+     * @property {boolean} _0.required - _0
+     */
+
+    /**
+     * Calls the view method: contrattoExists
+     * Smart contract: Example (ExampleContract)
+     * Method signature: contrattoExists(bytes32,string)
+     * Binding: CallContrattoExists
+     * 
+     * @route POST /contracts/example/call/contratto-exists
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {CallRequestExampleContrattoExists.model} request.body.required - Request body
+     * @returns {CallResponseExampleContrattoExists.model} 200 - OK
+     * @returns {void} 400 - Invalid parameters
+     * @returns {void} 404 - Error calling the method
+     * @security BearerAuthorization
+     */
+    public async callContrattoExists(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "contractNegotiationId", "type": "string" }], "name": "contrattoExists", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" };
+
+        const [callParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        let result: any;
+        try {
+            const callResult = await wrapper.contrattoExists.call(wrapper, ...callParams);
 
             result = serializeOutputABIParams([callResult], methodAbi);
         } catch (ex) {
@@ -247,6 +299,68 @@ export class ExampleContractApiCallController extends Controller {
                 callResult.registrar,
                 callResult.timestamp,
                 callResult.title,
+            ], methodAbi);
+        } catch (ex) {
+            Monitor.debugException(ex)
+            sendApiError(request, response, NOT_FOUND, "CALL_ERROR", ex.message);
+            return;
+        }
+
+        sendApiResult(request, response, result);
+    }
+    /**
+     * @typedef CallRequestExampleGetContratto
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} contractNegotiationId.required - contractNegotiationId
+     */
+
+    /**
+     * @typedef CallResponseExampleGetContratto
+     * @property {string} id.required - id
+     * @property {string} nId.required - nId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} counterpartyId.required - counterpartyId
+     * @property {string} timestamp.required - timestamp - eg: 0
+     * @property {string} createdAt.required - createdAt - eg: 0
+     * @property {string} state.required - state
+     */
+
+    /**
+     * Calls the view method: getContratto
+     * Smart contract: Example (ExampleContract)
+     * Method signature: getContratto(bytes32,string)
+     * Binding: CallGetContratto
+     * 
+     * @route POST /contracts/example/call/get-contratto
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {CallRequestExampleGetContratto.model} request.body.required - Request body
+     * @returns {CallResponseExampleGetContratto.model} 200 - OK
+     * @returns {void} 400 - Invalid parameters
+     * @returns {void} 404 - Error calling the method
+     * @security BearerAuthorization
+     */
+    public async callGetContratto(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "contractNegotiationId", "type": "string" }], "name": "getContratto", "outputs": [{ "internalType": "string", "name": "id", "type": "string" }, { "internalType": "bytes32", "name": "nId", "type": "bytes32" }, { "internalType": "string", "name": "counterpartyId", "type": "string" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "uint256", "name": "createdAt", "type": "uint256" }, { "internalType": "string", "name": "state", "type": "string" }], "stateMutability": "view", "type": "function" };
+
+        const [callParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        let result: any;
+        try {
+            const callResult = await wrapper.getContratto.call(wrapper, ...callParams);
+
+            result = serializeOutputABIParams([
+                callResult.id,
+                callResult.nId,
+                callResult.counterpartyId,
+                callResult.timestamp,
+                callResult.createdAt,
+                callResult.state,
             ], methodAbi);
         } catch (ex) {
             Monitor.debugException(ex)

@@ -21,7 +21,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// EventExampleDataofferModified - Model class to store events of type 'DataofferModified' for contract Example
+// EventExampleContrattoStateUpdated - Model class to store events of type 'ContrattoStateUpdated' for contract Example
 // WARNING: THIS FILE IS AUTO-GENERATED. DO NOT ADD ANY CHANGES OR THEY MAY BE LOST THE NEXT TIME YOU GENERATE THE CODE
 
 "use strict";
@@ -29,17 +29,17 @@
 import { DataModel, enforceType, TypedRow, DataSource, DataFinder, DataFilter, OrderBy, SelectOptions } from "tsbean-orm";
 
 const DATA_SOURCE = DataSource.DEFAULT;
-const TABLE = "event_example_dataoffer_modified";
+const TABLE = "event_example_contratto_state_updated";
 const PRIMARY_KEY = "id";
 
 /**
  * Model class for event storage
  * Contract name: ExampleContract
  * Contract name (instance): Example
- * Event name: DataofferModified
+ * Event name: ContrattoStateUpdated
  */
-export class EventExampleDataofferModified extends DataModel {
-    public static finder = new DataFinder<EventExampleDataofferModified, string>(DATA_SOURCE, TABLE, PRIMARY_KEY, (data: TypedRow<EventExampleDataofferModified>) => { return new EventExampleDataofferModified(data) });
+export class EventExampleContrattoStateUpdated extends DataModel {
+    public static finder = new DataFinder<EventExampleContrattoStateUpdated, string>(DATA_SOURCE, TABLE, PRIMARY_KEY, (data: TypedRow<EventExampleContrattoStateUpdated>) => { return new EventExampleContrattoStateUpdated(data) });
 
     /**
      * Finds events (paginated)
@@ -48,14 +48,14 @@ export class EventExampleDataofferModified extends DataModel {
      * @param continuationToken The continuation token
      * @returns The results and the next continuation token
      */
-    public static async findPaginated(filters: DataFilter<EventExampleDataofferModified>[], limit: number, continuationToken?: string): Promise<[list: EventExampleDataofferModified[], nextContinuationToken: string | null]> {
+    public static async findPaginated(filters: DataFilter<EventExampleContrattoStateUpdated>[], limit: number, continuationToken?: string): Promise<[list: EventExampleContrattoStateUpdated[], nextContinuationToken: string | null]> {
         const finalFilters = filters.slice();
 
         if (continuationToken) {
             finalFilters.push(DataFilter.greaterThan("id", continuationToken));
         }
 
-        let finalFilter: DataFilter<EventExampleDataofferModified>;
+        let finalFilter: DataFilter<EventExampleContrattoStateUpdated>;
 
         if (finalFilters.length === 1) {
             finalFilter = finalFilters[0];
@@ -65,7 +65,7 @@ export class EventExampleDataofferModified extends DataModel {
             finalFilter = DataFilter.any();
         }
 
-        const itemList = await EventExampleDataofferModified.finder.find(finalFilter, OrderBy.desc("id"), SelectOptions.configure().setMaxRows(limit));
+        const itemList = await EventExampleContrattoStateUpdated.finder.find(finalFilter, OrderBy.desc("id"), SelectOptions.configure().setMaxRows(limit));
 
         let nextContinuationToken: string | null = null;
 
@@ -80,7 +80,7 @@ export class EventExampleDataofferModified extends DataModel {
      * Resets the collection
      */
     public static async reset() {
-        await EventExampleDataofferModified.finder.delete(DataFilter.any());
+        await EventExampleContrattoStateUpdated.finder.delete(DataFilter.any());
     }
 
     /**
@@ -89,7 +89,7 @@ export class EventExampleDataofferModified extends DataModel {
      * @returns True only of the event exists
      */
     public static async exists(id: string): Promise<boolean> {
-        const count = await EventExampleDataofferModified.finder.count(DataFilter.equals("id", id));
+        const count = await EventExampleContrattoStateUpdated.finder.count(DataFilter.equals("id", id));
         return count > 0;
     }
 
@@ -116,21 +116,15 @@ export class EventExampleDataofferModified extends DataModel {
     public pNodeId: string;
 
     /* db-type: TEXT */
-    public pOfferId: string;
+    public pContractNegotiationId: string;
 
     /* db-type: VARCHAR 255 */
     public pTimestamp: string;
 
     /* db-type: TEXT */
-    public pNewAccessPolicyId: string;
+    public pNewState: string;
 
-    /* db-type: TEXT */
-    public pNewContractPolicyId: string;
-
-    /* db-type: TEXT */
-    public pNewAssetSelector: string;
-
-    constructor(data: TypedRow<EventExampleDataofferModified>) {
+    constructor(data: TypedRow<EventExampleContrattoStateUpdated>) {
         super(DATA_SOURCE, TABLE, PRIMARY_KEY);
 
         this.id = enforceType(data.id, "string") || '';
@@ -139,11 +133,9 @@ export class EventExampleDataofferModified extends DataModel {
         this.tx = enforceType(data.tx, "string") || '';
         this.timestamp = enforceType(data.timestamp, "int") || 0;
         this.pNodeId = enforceType(data.pNodeId, "string") || '';
-        this.pOfferId = enforceType(data.pOfferId, "string") || '';
+        this.pContractNegotiationId = enforceType(data.pContractNegotiationId, "string") || '';
         this.pTimestamp = enforceType(data.pTimestamp, "string") || '';
-        this.pNewAccessPolicyId = enforceType(data.pNewAccessPolicyId, "string") || '';
-        this.pNewContractPolicyId = enforceType(data.pNewContractPolicyId, "string") || '';
-        this.pNewAssetSelector = enforceType(data.pNewAssetSelector, "string") || '';
+        this.pNewState = enforceType(data.pNewState, "string") || '';
 
         this.init();
     }
@@ -152,11 +144,9 @@ export class EventExampleDataofferModified extends DataModel {
     public getParametersArray(): (string | boolean)[] {
         return [
             this.pNodeId,
-            this.pOfferId,
+            this.pContractNegotiationId,
             this.pTimestamp,
-            this.pNewAccessPolicyId,
-            this.pNewContractPolicyId,
-            this.pNewAssetSelector,
+            this.pNewState,
         ];
     }
 }

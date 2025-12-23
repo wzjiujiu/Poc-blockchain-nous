@@ -185,7 +185,7 @@ RoleManager - Smart contract to manage the roles of the participants
 
 ## ExampleContract
 
-This is an example smart contract
+Example smart contract for a blockchain-backed dataspace registry
 
 ### Events
 

@@ -33,6 +33,8 @@ import { parsePaginationParameters } from "../../utils/pagination";
 import { DataFilter } from "tsbean-orm";
 import { EventExampleAssetModified } from "../../models/event-sync/example/asset-modified";
 import { EventExampleAssetRegistered } from "../../models/event-sync/example/asset-registered";
+import { EventExampleContrattoRegistered } from "../../models/event-sync/example/contratto-registered";
+import { EventExampleContrattoStateUpdated } from "../../models/event-sync/example/contratto-state-updated";
 import { EventExampleDataTransferApproved } from "../../models/event-sync/example/data-transfer-approved";
 import { EventExampleDataTransferCompleted } from "../../models/event-sync/example/data-transfer-completed";
 import { EventExampleDataTransferRejected } from "../../models/event-sync/example/data-transfer-rejected";
@@ -57,6 +59,8 @@ export class ExampleContractApiEventsController extends Controller {
     public registerAPI(prefix: string, application: Express.Express) {
         application.get(prefix + "/contracts/example/events/asset-modified", noCache(this.getEventsAssetModified.bind(this)));
         application.get(prefix + "/contracts/example/events/asset-registered", noCache(this.getEventsAssetRegistered.bind(this)));
+        application.get(prefix + "/contracts/example/events/contratto-registered", noCache(this.getEventsContrattoRegistered.bind(this)));
+        application.get(prefix + "/contracts/example/events/contratto-state-updated", noCache(this.getEventsContrattoStateUpdated.bind(this)));
         application.get(prefix + "/contracts/example/events/data-transfer-approved", noCache(this.getEventsDataTransferApproved.bind(this)));
         application.get(prefix + "/contracts/example/events/data-transfer-completed", noCache(this.getEventsDataTransferCompleted.bind(this)));
         application.get(prefix + "/contracts/example/events/data-transfer-rejected", noCache(this.getEventsDataTransferRejected.bind(this)));
@@ -190,6 +194,141 @@ export class ExampleContractApiEventsController extends Controller {
         }
 
         const [events, nextContinuationToken] = await EventExampleAssetRegistered.findPaginated(filters, limit, continuationToken);
+
+        sendApiResult(request, response, {
+            events: events.map(e => {
+                return {
+                    id: e.id,
+                    block: e.block,
+                    timestamp: e.timestamp,
+                    eventIndex: e.eventIndex,
+                    tx: e.tx,
+                    parameters: serializeEventABIParams(e.getParametersArray(), eventAbi),
+                };
+            }),
+            continuationToken: nextContinuationToken,
+        });
+    }
+    /**
+     * @typedef EventParamsExampleContrattoRegistered
+     * @property {string} registrar.required - registrar - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} contractNegotiationId.required - contractNegotiationId
+     * @property {string} counterpartyId.required - counterpartyId
+     * @property {string} createdAt.required - createdAt - eg: 0
+     * @property {string} state.required - state
+     */
+
+    /**
+     * @typedef EventItemExampleContrattoRegistered
+     * @property {string} id.required - Event ID - eg: xxxx-yyyy-zzzz
+     * @property {number} block.required - Block number - eg: 1
+     * @property {number} eventIndex.required - Event index in the block - eg: 0
+     * @property {string} tx.required - Transaction hash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} timestamp.required - Event timestamp (Unix seconds) - eg: 0
+     * @property {EventParamsExampleContrattoRegistered.model} parameters.required - Event parameters
+     */
+
+    /**
+     * @typedef EventListExampleContrattoRegistered
+     * @property {Array.<EventItemExampleContrattoRegistered>} events.required - List of events
+     * @property {string} continuationToken - Continuation token - eg: xxxx-yyyy-zzzz
+     */
+
+    /**
+     * Get a list of events of type ContrattoRegistered
+     * Smart contract: Example (ExampleContract)
+     * Event signature: ContrattoRegistered(address,bytes32,string,string,uint256,string)
+     * Binding: GetEventsContrattoRegistered
+     * @route GET /contracts/example/events/contratto-registered
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {string} continuationToken.query - Continuation token
+     * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
+     * @param {string} filter_eq_pRegistrar.query - Filter event with a value for the parameter 'registrar' equal than the one specified.
+     * @param {string} filter_eq_pNodeId.query - Filter event with a value for the parameter 'nodeId' equal than the one specified.
+     * @returns {EventListExampleContrattoRegistered.model} 200 - Event list
+     * @security BearerAuthorization
+     */
+    public async getEventsContrattoRegistered(request: Express.Request, response: Express.Response) {
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "registrar", "type": "address" }, { "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "contractNegotiationId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "counterpartyId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "createdAt", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "state", "type": "string" }], "name": "ContrattoRegistered", "type": "event" };
+
+        const [limit, continuationToken] = parsePaginationParameters(request);
+
+        const filters: DataFilter<EventExampleContrattoRegistered>[] = [];
+
+        if (request.query.filter_eq_pRegistrar !== undefined && request.query.filter_eq_pRegistrar !== null) {
+            filters.push(DataFilter.equals("pRegistrar", normalizeAddress(request.query.filter_eq_pRegistrar + "")));
+        }
+
+        if (request.query.filter_eq_pNodeId !== undefined && request.query.filter_eq_pNodeId !== null) {
+            filters.push(DataFilter.equals("pNodeId", normalizeBytes32(request.query.filter_eq_pNodeId + "")));
+        }
+
+        const [events, nextContinuationToken] = await EventExampleContrattoRegistered.findPaginated(filters, limit, continuationToken);
+
+        sendApiResult(request, response, {
+            events: events.map(e => {
+                return {
+                    id: e.id,
+                    block: e.block,
+                    timestamp: e.timestamp,
+                    eventIndex: e.eventIndex,
+                    tx: e.tx,
+                    parameters: serializeEventABIParams(e.getParametersArray(), eventAbi),
+                };
+            }),
+            continuationToken: nextContinuationToken,
+        });
+    }
+    /**
+     * @typedef EventParamsExampleContrattoStateUpdated
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} contractNegotiationId.required - contractNegotiationId
+     * @property {string} timestamp.required - timestamp - eg: 0
+     * @property {string} newState.required - newState
+     */
+
+    /**
+     * @typedef EventItemExampleContrattoStateUpdated
+     * @property {string} id.required - Event ID - eg: xxxx-yyyy-zzzz
+     * @property {number} block.required - Block number - eg: 1
+     * @property {number} eventIndex.required - Event index in the block - eg: 0
+     * @property {string} tx.required - Transaction hash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} timestamp.required - Event timestamp (Unix seconds) - eg: 0
+     * @property {EventParamsExampleContrattoStateUpdated.model} parameters.required - Event parameters
+     */
+
+    /**
+     * @typedef EventListExampleContrattoStateUpdated
+     * @property {Array.<EventItemExampleContrattoStateUpdated>} events.required - List of events
+     * @property {string} continuationToken - Continuation token - eg: xxxx-yyyy-zzzz
+     */
+
+    /**
+     * Get a list of events of type ContrattoStateUpdated
+     * Smart contract: Example (ExampleContract)
+     * Event signature: ContrattoStateUpdated(bytes32,string,uint256,string)
+     * Binding: GetEventsContrattoStateUpdated
+     * @route GET /contracts/example/events/contratto-state-updated
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {string} continuationToken.query - Continuation token
+     * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
+     * @param {string} filter_eq_pNodeId.query - Filter event with a value for the parameter 'nodeId' equal than the one specified.
+     * @returns {EventListExampleContrattoStateUpdated.model} 200 - Event list
+     * @security BearerAuthorization
+     */
+    public async getEventsContrattoStateUpdated(request: Express.Request, response: Express.Response) {
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "contractNegotiationId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newState", "type": "string" }], "name": "ContrattoStateUpdated", "type": "event" };
+
+        const [limit, continuationToken] = parsePaginationParameters(request);
+
+        const filters: DataFilter<EventExampleContrattoStateUpdated>[] = [];
+
+        if (request.query.filter_eq_pNodeId !== undefined && request.query.filter_eq_pNodeId !== null) {
+            filters.push(DataFilter.equals("pNodeId", normalizeBytes32(request.query.filter_eq_pNodeId + "")));
+        }
+
+        const [events, nextContinuationToken] = await EventExampleContrattoStateUpdated.findPaginated(filters, limit, continuationToken);
 
         sendApiResult(request, response, {
             events: events.map(e => {
@@ -452,9 +591,9 @@ export class ExampleContractApiEventsController extends Controller {
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} offerId.required - offerId
      * @property {string} timestamp.required - timestamp - eg: 0
-     * @property {string} newaccessPolicyId.required - newaccessPolicyId
-     * @property {string} newcontractPolicyId.required - newcontractPolicyId
-     * @property {string} newassetSelector.required - newassetSelector
+     * @property {string} newAccessPolicyId.required - newAccessPolicyId
+     * @property {string} newContractPolicyId.required - newContractPolicyId
+     * @property {string} newAssetSelector.required - newAssetSelector
      */
 
     /**
@@ -487,7 +626,7 @@ export class ExampleContractApiEventsController extends Controller {
      * @security BearerAuthorization
      */
     public async getEventsDataofferModified(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "offerId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newaccessPolicyId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "newcontractPolicyId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "newassetSelector", "type": "string" }], "name": "DataofferModified", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "offerId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newAccessPolicyId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "newContractPolicyId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "newAssetSelector", "type": "string" }], "name": "DataofferModified", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 

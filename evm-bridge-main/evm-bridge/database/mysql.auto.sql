@@ -49,6 +49,43 @@ CREATE INDEX `ix_event_example_asset_registered_s_3` ON `event_example_asset_reg
 CREATE INDEX `ix_event_example_asset_registered_s_4` ON `event_example_asset_registered`(`p_registrar`, `id` DESC);
 CREATE INDEX `ix_event_example_asset_registered_s_5` ON `event_example_asset_registered`(`p_node_id`, `id` DESC);
 
+CREATE TABLE `event_example_contratto_registered` (
+    `id` VARCHAR(255) PRIMARY KEY,
+    `block` BIGINT,
+    `event_index` BIGINT,
+    `tx` VARCHAR(255),
+    `timestamp` BIGINT,
+    `p_registrar` VARCHAR(255),
+    `p_node_id` VARCHAR(255),
+    `p_contract_negotiation_id` TEXT,
+    `p_counterparty_id` TEXT,
+    `p_created_at` VARCHAR(255),
+    `p_state` TEXT
+);
+
+CREATE INDEX `ix_event_example_contratto_registered_s_1` ON `event_example_contratto_registered`(`id` DESC);
+CREATE INDEX `ix_event_example_contratto_registered_s_2` ON `event_example_contratto_registered`(`block`);
+CREATE INDEX `ix_event_example_contratto_registered_s_3` ON `event_example_contratto_registered`(`tx`);
+CREATE INDEX `ix_event_example_contratto_registered_s_4` ON `event_example_contratto_registered`(`p_registrar`, `id` DESC);
+CREATE INDEX `ix_event_example_contratto_registered_s_5` ON `event_example_contratto_registered`(`p_node_id`, `id` DESC);
+
+CREATE TABLE `event_example_contratto_state_updated` (
+    `id` VARCHAR(255) PRIMARY KEY,
+    `block` BIGINT,
+    `event_index` BIGINT,
+    `tx` VARCHAR(255),
+    `timestamp` BIGINT,
+    `p_node_id` VARCHAR(255),
+    `p_contract_negotiation_id` TEXT,
+    `p_timestamp` VARCHAR(255),
+    `p_new_state` TEXT
+);
+
+CREATE INDEX `ix_event_example_contratto_state_updated_s_1` ON `event_example_contratto_state_updated`(`id` DESC);
+CREATE INDEX `ix_event_example_contratto_state_updated_s_2` ON `event_example_contratto_state_updated`(`block`);
+CREATE INDEX `ix_event_example_contratto_state_updated_s_3` ON `event_example_contratto_state_updated`(`tx`);
+CREATE INDEX `ix_event_example_contratto_state_updated_s_4` ON `event_example_contratto_state_updated`(`p_node_id`, `id` DESC);
+
 CREATE TABLE `event_example_data_transfer_approved` (
     `id` VARCHAR(255) PRIMARY KEY,
     `block` BIGINT,
@@ -120,9 +157,9 @@ CREATE TABLE `event_example_dataoffer_modified` (
     `p_node_id` VARCHAR(255),
     `p_offer_id` TEXT,
     `p_timestamp` VARCHAR(255),
-    `p_newaccess_policy_id` TEXT,
-    `p_newcontract_policy_id` TEXT,
-    `p_newasset_selector` TEXT
+    `p_new_access_policy_id` TEXT,
+    `p_new_contract_policy_id` TEXT,
+    `p_new_asset_selector` TEXT
 );
 
 CREATE INDEX `ix_event_example_dataoffer_modified_s_1` ON `event_example_dataoffer_modified`(`id` DESC);
