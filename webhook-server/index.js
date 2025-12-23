@@ -496,6 +496,78 @@ app.post("/event", async (req, res) => {
 
 
   }
+  else if(rawPort==DataOffer&& method=='PUT')
+  {
+      try {
+    /* ======================= ID ======================= */
+    const dataofferId =
+      cleanedData.request?.body?.['@id'] ||
+      rawPort.split("/").pop();
+
+    if (!dataofferId) {
+      throw new Error("DataOffer ID non trovato");
+    }
+
+    const newDataofferId = dataofferId.toString();
+
+    /* ======================= CONTENUTO ======================= */
+    const [
+      newAccessPolicyId,
+      newContractPolicyId,
+      newAssetSelector
+    ] = extractContractDefinitionInfo(cleanedData);
+
+    console.log("📄 Nuovi valori DataOffer:");
+    console.log("accessPolicyId:", newAccessPolicyId);
+    console.log("contractPolicyId:", newContractPolicyId);
+    console.log("assetSelector:", newAssetSelector);
+
+    /* ======================= CHECK ESISTENZA ======================= */
+    const existing = await contract.getDataoffer(
+      NODE_ID_CONSUMER,
+      newDataofferId
+    );
+
+    console.log("📄 DataOffer trovato:", existing);
+
+    /* ======================= GAS ======================= */
+    const estimatedGas = await contract.modifyDataoffer.estimateGas(
+      NODE_ID_CONSUMER,
+      newDataofferId,
+      newAccessPolicyId,
+      newContractPolicyId,
+      newAssetSelector
+    );
+
+    console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+    /* ======================= TX ======================= */
+    const tx = await contract.modifyDataoffer(
+      NODE_ID_CONSUMER,
+      newDataofferId,
+      newAccessPolicyId,
+      newContractPolicyId,
+      newAssetSelector,
+      { gasLimit: estimatedGas + 50_000n }
+    );
+
+    console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+    const receipt = await tx.wait();
+    console.log(`✅ DataOffer "${newDataofferId}" modificato nel blocco ${receipt.blockNumber}`);
+
+    /* ======================= VERIFY ======================= */
+    const updated = await contract.getDataoffer(
+      NODE_ID_CONSUMER,
+      newDataofferId
+    );
+
+    console.log("📄 DataOffer aggiornato:", updated);
+
+  } catch (err) {
+    console.error("❌ Errore durante la modifica DataOffer (consumer):", err);
+  }
+  }
 
   /* ======================= EMIT EVENT ======================= */
   io.emit("event", {
@@ -694,6 +766,78 @@ app.post("/event", async (req, res) => {
       console.error("❌ Errore durante la registrazione Dataoffer (producer):", err);
     }
   }
+  else if(rawPort==DataOffer&& method=='PUT')
+  {
+      try {
+    /* ======================= ID ======================= */
+    const dataofferId =
+      cleanedData.request?.body?.['@id'] ||
+      rawPort.split("/").pop();
+
+    if (!dataofferId) {
+      throw new Error("DataOffer ID non trovato");
+    }
+
+    const newDataofferId = dataofferId.toString();
+
+    /* ======================= CONTENUTO ======================= */
+    const [
+      newAccessPolicyId,
+      newContractPolicyId,
+      newAssetSelector
+    ] = extractContractDefinitionInfo(cleanedData);
+
+    console.log("📄 Nuovi valori DataOffer:");
+    console.log("accessPolicyId:", newAccessPolicyId);
+    console.log("contractPolicyId:", newContractPolicyId);
+    console.log("assetSelector:", newAssetSelector);
+
+    /* ======================= CHECK ESISTENZA ======================= */
+    const existing = await contract.getDataoffer(
+      NODE_ID_PRODUCER,
+      newDataofferId
+    );
+
+    console.log("📄 DataOffer trovato:", existing);
+
+    /* ======================= GAS ======================= */
+    const estimatedGas = await contract.modifyDataoffer.estimateGas(
+      NODE_ID_PRODUCER,
+      newDataofferId,
+      newAccessPolicyId,
+      newContractPolicyId,
+      newAssetSelector
+    );
+
+    console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+    /* ======================= TX ======================= */
+    const tx = await contract.modifyDataoffer(
+      NODE_ID_PRODUCER,
+      newDataofferId,
+      newAccessPolicyId,
+      newContractPolicyId,
+      newAssetSelector,
+      { gasLimit: estimatedGas + 50_000n }
+    );
+
+    console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+    const receipt = await tx.wait();
+    console.log(`✅ DataOffer "${newDataofferId}" modificato nel blocco ${receipt.blockNumber}`);
+
+    /* ======================= VERIFY ======================= */
+    const updated = await contract.getDataoffer(
+      NODE_ID_PRODUCER,
+      newDataofferId
+    );
+
+    console.log("📄 DataOffer aggiornato:", updated);
+
+  } catch (err) {
+    console.error("❌ Errore durante la modifica DataOffer (consumer):", err);
+  }
+  }
 
   /* ======================= EMIT EVENT ======================= */
   io.emit("event", {
@@ -705,6 +849,7 @@ app.post("/event", async (req, res) => {
 
   return res.json(response);
 }
+
 
     //
     // 4. PORTA NON RICONOSCIUTA
