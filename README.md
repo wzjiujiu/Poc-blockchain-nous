@@ -207,7 +207,7 @@ After starting local demo throught Docker you can see at [localhost 11000](http:
 
 | ACTION | COMPONENTS |
 |---------|-------------|
-| **ADD** | ASSET,POLICY,DATA OFFER |
+| **ADD** | ASSET,POLICY,DATA OFFER,DATA CONTRACT |
 | **MODIFY** | ASSET,POLICY,DATA OFFER |
 | **DELETE** |  |
 
@@ -225,6 +225,7 @@ THE REST API Disponible to test are :
 | **EDIT POLICY (TEMPLATE) POST** |{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/policydefinitions/{POLICY ID}  |
 | **CREATE CONTRACT DEFINITION POST** | {{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/contractdefinitions |
 | **EDIT CONTRACT DEFINITION PUT** | {{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/contractdefinitions |
+| **START NEGOTIATION POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/wrapper/ui/pages/catalog-page/contract-negotiations |
 
 
 
