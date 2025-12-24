@@ -5,6 +5,8 @@ const http = require("http");
 const { Server } = require("socket.io");
 const { ethers } = require("ethers"); // ethers.js v6
 require("dotenv").config();
+const axios = require("axios");
+
 
 const app = express();
 const PORT = 3000;
@@ -226,6 +228,37 @@ function extractContractDefinitionInfo(cleanedData) {
   }
 
   return [accessPolicyId, contractPolicyId, assetSelector];
+}
+
+async function waitForAgreementState(contractNegotiationId, {
+  baseUrl,
+  apiKey,
+  targetState = "AGREED",
+  intervalMs = 2000,
+  maxRetries = 15
+}) {
+  const url = `${baseUrl}/api/management/wrapper/ui/pages/catalog-page/contract-negotiations/${contractNegotiationId}`;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    console.log(`🔁 Polling negotiation (${attempt}/${maxRetries})`);
+
+    const resp = await axios.get(url, {
+      headers: { "X-Api-Key": apiKey }
+    });
+
+    const state = resp.data?.state?.simplifiedState;
+
+    console.log("📌 Current simplifiedState:", state);
+
+    if (state === targetState) {
+      console.log("✅ Target state reached:", targetState);
+      return resp.data;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, intervalMs));
+  }
+
+  throw new Error(`Timeout: stato ${targetState} non raggiunto`);
 }
 
 // --- Webhook endpoint ---
@@ -569,16 +602,52 @@ app.post("/event", async (req, res) => {
     console.error("❌ Errore durante la modifica DataOffer (consumer):", err);
   }
   }
-  else if(rawPort==Contratto&& method=='POST'){
-   const contractNegotiationId = cleanedData.response?.contractNegotiationId;
-   if (!contractNegotiationId) {
-     throw new Error("contractNegotiationId non trovato");
+  else if (rawPort == Contratto && method === "POST") {
+
+  try {
+    /* ======================= ESTRAZIONE ID ======================= */
+
+    const contractNegotiationId =
+      cleanedData.response?.contractNegotiationId;
+
+    if (!contractNegotiationId) {
+      throw new Error("contractNegotiationId non trovato");
     }
 
     console.log("📄 contractNegotiationId:", contractNegotiationId);
 
+    /* ======================= COSTRUZIONE URL ======================= */
 
+    const negotiation = await waitForAgreementState(contractNegotiationId, {
+     baseUrl: "http://localhost:11000",
+     apiKey: "SomeOtherApiKey",
+     targetState: "AGREED",
+     intervalMs: 2000,
+     maxRetries: 20
+    });
+
+    console.log("🎉 Negotiation AGREED:");
+    console.dir(negotiation, { depth: null, colors: true });
+
+    const contractAgreementId = negotiation?.contractAgreementId;
+
+    if (!contractAgreementId) {
+      throw new Error("contractAgreementId non presente nonostante stato AGREED");
+    }
+
+    console.log("📄 contractAgreementId:", contractAgreementId);
+
+
+
+  } catch (err) {
+    console.error("❌ Errore gestione Contratto POST:", err);
+
+    return res.status(500).json({
+      error: err.message
+    });
   }
+}
+
 
 
 
