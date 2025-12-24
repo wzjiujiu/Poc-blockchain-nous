@@ -132,9 +132,15 @@ const CONTRACT_ABI = [
 
   // ───────────── Data Offer ─────────────
   "function registerDataoffer(bytes32 nodeId, string offerId, string accessPolicyId, string contractPolicyId, string assetSelector) external",
-  "function modifyDataoffer(bytes32 nodeId, string offerId, string newaccessPolicyId, string newcontractPolicyId, string newassetSelector) external",
+  "function modifyDataoffer(bytes32 nodeId, string offerId, string newAccessPolicyId, string newContractPolicyId, string newAssetSelector) external",
   "function getDataoffer(bytes32 nodeId, string offerId) external view returns (string id, bytes32 nId, address registrar, uint256 timestamp, string accessPolicyId, string contractPolicyId, string assetSelector)",
   "function dataofferExists(bytes32 nodeId, string offerId) external view returns (bool)",
+
+  // ───────────── Contratto ─────────────
+  "function registerContratto(bytes32 nodeId, string contractNegotiationId, string counterpartyId, uint256 createdAt, string state) external",
+  "function updateContrattoState(bytes32 nodeId, string contractNegotiationId, string newState) external",
+  "function getContratto(bytes32 nodeId, string contractNegotiationId) external view returns (string id, bytes32 nId, string counterpartyId, uint256 timestamp, uint256 createdAt, string state)",
+  "function contrattoExists(bytes32 nodeId, string contractNegotiationId) external view returns (bool)",
 
   // ───────────── Events ─────────────
   "event AssetRegistered(address indexed registrar, bytes32 indexed nodeId, string assetId, uint256 timestamp, string title)",
@@ -144,7 +150,10 @@ const CONTRACT_ABI = [
   "event PolicyModified(bytes32 indexed nodeId, string policyId, uint256 timestamp, string newTitle)",
 
   "event DataofferRegistered(address indexed registrar, bytes32 indexed nodeId, string offerId, uint256 timestamp, string accessPolicyId, string contractPolicyId, string assetSelector)",
-  "event DataofferModified(bytes32 indexed nodeId, string offerId, uint256 timestamp, string newaccessPolicyId, string newcontractPolicyId, string newassetSelector)"
+  "event DataofferModified(bytes32 indexed nodeId, string offerId, uint256 timestamp, string newAccessPolicyId, string newContractPolicyId, string newAssetSelector)",
+
+  "event ContrattoRegistered(address indexed registrar, bytes32 indexed nodeId, string contractNegotiationId, string counterpartyId, uint256 createdAt, string state)",
+  "event ContrattoStateUpdated(bytes32 indexed nodeId, string contractNegotiationId, uint256 timestamp, string newState)"
 ];
 
 
@@ -538,6 +547,9 @@ app.post("/event", async (req, res) => {
       cleanedData.request?.body?.['@id'] ||
       rawPort.split("/").pop();
 
+
+
+
     if (!dataofferId) {
       throw new Error("DataOffer ID non trovato");
     }
@@ -610,6 +622,11 @@ app.post("/event", async (req, res) => {
     const contractNegotiationId =
       cleanedData.response?.contractNegotiationId;
 
+    const counterPartyId =
+      cleanedData.request?.body?.counterPartyId ||
+      cleanedData.request?.body?.counterPartyParticipantId ||
+      "unknown";
+
     if (!contractNegotiationId) {
       throw new Error("contractNegotiationId non trovato");
     }
@@ -636,6 +653,46 @@ app.post("/event", async (req, res) => {
     }
 
     console.log("📄 contractAgreementId:", contractAgreementId);
+
+    const state = negotiation.state;
+
+    // Campi di stato separati (più comodo)
+    const stateName = negotiation.state.name;                 // "FINALIZED"
+    const stateCode = negotiation.state.code;                 // 1200
+    const simplifiedState = negotiation.state.simplifiedState; // "AGREED"
+    const createdAt = Date.parse(negotiation.createdAt);
+    console.log(createdAt);
+
+    const estimatedGas = await contract.registerContratto.estimateGas(
+      NODE_ID_CONSUMER,
+      contractAgreementId,
+      counterPartyId,
+      createdAt,
+      stateName
+    );
+
+    console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+    const tx = await contract.registerContratto(
+      NODE_ID_CONSUMER,
+      contractAgreementId,
+      counterPartyId,
+      createdAt,
+      stateName,
+      { gasLimit: estimatedGas + 50_000n }
+    );
+
+    console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+    const receipt = await tx.wait();
+    console.log(`✅ Contratto registrato on-chain nel blocco ${receipt.blockNumber}`);
+
+    const stored = await contract.getContratto(
+      NODE_ID_CONSUMER,
+      contractAgreementId
+    );
+
+    console.log("📄 Contratto on-chain:", stored);
 
 
 
