@@ -46,64 +46,8 @@ console.log = (...args) => {
   originalConsoleLog(text);
   io.emit("log", entry);
 };
+const { parseNestedJSON, cleanKeys ,escapeHtml,renderAsList} = require("./utils/parser.js");
 
-// --- Funzioni per parsing e formattazione ---
-function parseNestedJSON(obj) {
-  if (typeof obj === "string") {
-    try {
-      return parseNestedJSON(JSON.parse(obj));
-    } catch {
-      return obj; // non è JSON valido
-    }
-  } else if (Array.isArray(obj)) {
-    return obj.map(parseNestedJSON);
-  } else if (obj && typeof obj === "object") {
-    const parsed = {};
-    for (const [key, value] of Object.entries(obj)) {
-      parsed[key] = parseNestedJSON(value);
-    }
-    return parsed;
-  }
-  return obj;
-}
-
-function cleanKeys(obj) {
-  if (Array.isArray(obj)) {
-    return obj.map(cleanKeys);
-  } else if (obj && typeof obj === "object") {
-    const cleaned = {};
-    for (const [key, value] of Object.entries(obj)) {
-      const cleanKey = key.replace(/.*[\/#]/, ""); // rimuove prefissi URL
-      cleaned[cleanKey] = cleanKeys(value);
-    }
-    return cleaned;
-  }
-  return obj;
-}
-
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-
-function renderAsList(obj) {
-  if (typeof obj !== "object" || obj === null) return `<span>${obj}</span>`;
-  
-  let html = "<ul style='list-style:none;padding-left:0;margin:0'>";
-  
-  for (const [key, val] of Object.entries(obj)) {
-    if (typeof val === "object" && val !== null) {
-      html += `<li><b>${key}:</b> ${renderAsList(val)}</li>`;
-    } else {
-      html += `<li><b>${key}:</b> <span>${val}</span></li>`;
-    }
-  }
-
-  html += "</ul>";
-  return html;
-}
 
 // --- Ethereum setup ---
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
@@ -114,48 +58,7 @@ const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 
 const CONTRACT_ADDRESS = "0xd9e5e9acdb6ef1afa4e23e4645c71b882cd63e4d";
 
-const CONTRACT_ABI = [
-
-  // ───────────── Initialization ─────────────
-  "function initialize(address roleManagerAddress, address upgradeControlAddress) external",
-
-  // ───────────── Asset ─────────────
-  "function registerAsset(bytes32 nodeId, string assetId, string assetTitle) external",
-  "function modifyAsset(bytes32 nodeId, string assetId, string newTitle) external",
-  "function getAsset(bytes32 nodeId, string assetId) external view returns (string id, bytes32 nId, address registrar, uint256 timestamp, string title)",
-  "function assetExists(bytes32 nodeId, string assetId) external view returns (bool)",
-
-  // ───────────── Policy ─────────────
-  "function registerPolicy(bytes32 nodeId, string policyId, string policyTitle) external",
-  "function modifyPolicy(bytes32 nodeId, string policyId, string newTitle) external",
-  "function getPolicy(bytes32 nodeId, string policyId) external view returns (string id, bytes32 nId, address registrar, uint256 timestamp, string title)",
-  "function policyExists(bytes32 nodeId, string policyId) external view returns (bool)",
-
-  // ───────────── Data Offer ─────────────
-  "function registerDataoffer(bytes32 nodeId, string offerId, string accessPolicyId, string contractPolicyId, string assetSelector) external",
-  "function modifyDataoffer(bytes32 nodeId, string offerId, string newAccessPolicyId, string newContractPolicyId, string newAssetSelector) external",
-  "function getDataoffer(bytes32 nodeId, string offerId) external view returns (string id, bytes32 nId, address registrar, uint256 timestamp, string accessPolicyId, string contractPolicyId, string assetSelector)",
-  "function dataofferExists(bytes32 nodeId, string offerId) external view returns (bool)",
-
-  // ───────────── Contratto ─────────────
-  "function registerContratto(bytes32 nodeId, string contractNegotiationId, string counterpartyId, uint256 createdAt, string state) external",
-  "function updateContrattoState(bytes32 nodeId, string contractNegotiationId, string newState) external",
-  "function getContratto(bytes32 nodeId, string contractNegotiationId) external view returns (string id, bytes32 nId, string counterpartyId, uint256 timestamp, uint256 createdAt, string state)",
-  "function contrattoExists(bytes32 nodeId, string contractNegotiationId) external view returns (bool)",
-
-  // ───────────── Events ─────────────
-  "event AssetRegistered(address indexed registrar, bytes32 indexed nodeId, string assetId, uint256 timestamp, string title)",
-  "event AssetModified(bytes32 indexed nodeId, string assetId, uint256 timestamp, string newTitle)",
-
-  "event PolicyRegistered(address indexed registrar, bytes32 indexed nodeId, string policyId, uint256 timestamp, string title)",
-  "event PolicyModified(bytes32 indexed nodeId, string policyId, uint256 timestamp, string newTitle)",
-
-  "event DataofferRegistered(address indexed registrar, bytes32 indexed nodeId, string offerId, uint256 timestamp, string accessPolicyId, string contractPolicyId, string assetSelector)",
-  "event DataofferModified(bytes32 indexed nodeId, string offerId, uint256 timestamp, string newAccessPolicyId, string newContractPolicyId, string newAssetSelector)",
-
-  "event ContrattoRegistered(address indexed registrar, bytes32 indexed nodeId, string contractNegotiationId, string counterpartyId, uint256 createdAt, string state)",
-  "event ContrattoStateUpdated(bytes32 indexed nodeId, string contractNegotiationId, uint256 timestamp, string newState)"
-];
+const CONTRACT_ABI = require("./abi/ExampleContract");
 
 
 const NODE_ID_CONSUMER = ethers.keccak256(
@@ -190,55 +93,7 @@ app.get("/", (req, res) => {
   res.sendFile(require("path").join(__dirname, "public", "index.html"));
 });
 
-function extractPolicyInfo(cleanedData) {
-  const body = cleanedData.request?.body || {};
-
-  const id = body["@id"] || body.id || null;
-
-  const constraints =
-    body.policy?.permission?.[0]?.constraint || [];
-
-  const timeConstraints = constraints
-    .filter(c => c.leftOperand === "POLICY_EVALUATION_TIME")
-    .map(c => c.rightOperand);
-
-  const time1 = timeConstraints[0] || null;
-  const time2 = timeConstraints[1] || null;
-
-  return { id, time1, time2 };
-}
-
-function extractContractDefinitionInfo(cleanedData) {
-  const body = cleanedData?.request?.body;
-
-  if (!body) {
-    throw new Error("Request body mancante");
-  }
-
-  // 1️⃣ accessPolicyId
-  const accessPolicyId = body.accessPolicyId
-    ? body.accessPolicyId.toString()
-    : null;
-
-  // 2️⃣ contractPolicyId
-  const contractPolicyId = body.contractPolicyId
-    ? body.contractPolicyId.toString()
-    : null;
-
-  // 3️⃣ assetSelector (ASSET + operator + operandRight)
-  let assetSelector = null;
-
-  if (Array.isArray(body.assetsSelector) && body.assetsSelector.length > 0) {
-    const criterion = body.assetsSelector[0];
-
-    const operator = criterion.operator?.toString() || "";
-    const operandRight = criterion.operandRight?.toString() || "";
-
-    assetSelector = `ASSET${operator}${operandRight}`;
-  }
-
-  return [accessPolicyId, contractPolicyId, assetSelector];
-}
+const { extractPolicyInfo, extractContractDefinitionInfo } = require("./utils/extractors.js");
 
 async function waitForAgreementState(contractNegotiationId, {
   baseUrl,
