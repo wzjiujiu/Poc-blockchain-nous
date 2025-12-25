@@ -208,7 +208,7 @@ After starting local demo throught Docker you can see at [localhost 11000](http:
 | ACTION | COMPONENTS |
 |---------|-------------|
 | **ADD** | ASSET,POLICY,DATA OFFER,DATA CONTRACT |
-| **MODIFY** | ASSET,POLICY,DATA OFFER |
+| **MODIFY** | ASSET,POLICY,DATA OFFER,DATA CONTRACT |
 | **DELETE** |  |
 
 After Loading POSTMAN API COLLECTION WE CAN SEE following screen 
@@ -226,6 +226,7 @@ THE REST API Disponible to test are :
 | **CREATE CONTRACT DEFINITION POST** | {{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/contractdefinitions |
 | **EDIT CONTRACT DEFINITION PUT** | {{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/contractdefinitions |
 | **START NEGOTIATION POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/wrapper/ui/pages/catalog-page/contract-negotiations |
+| **TERMINATE NEGOTIATION POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/wrapper/ui/pages/content-agreement-page/CONTRACT AGREEMENT ID/terminate |
 
 
 
