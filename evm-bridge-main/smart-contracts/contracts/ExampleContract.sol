@@ -169,7 +169,9 @@ contract ExampleContract is BaseContract {
         string transferId,
         string assetId,
         address indexed consumer,
-        uint256 timestamp
+        uint256 timestamp,
+        TransferStatus status
+
     );
 
     event DataTransferCompleted(
@@ -561,29 +563,39 @@ contract ExampleContract is BaseContract {
         string memory transferId,
         bytes32 nodeId,
         string memory contractAgreementId,
+        string memory statusout,
         string memory assetId
     )
         external
     {
         require(bytes(transferId).length > 0, "ID non valido");
-        require(transfers[transferId].timestamp == 0, "Transfer gia' esistente");
+    require(transfers[transferId].timestamp == 0, "Transfer gia' esistente");
 
-        transfers[transferId] = DataTransfer({
-            id: transferId,
-            nodeId: nodeId,
-            contractagreetmentid: contractAgreementId,
-            assetId: assetId,
-            dataHash: 0x0,
-            status: TransferStatus.Started,
-            timestamp: block.timestamp
-        });
+    // Imposta lo status in base al parametro statusout
+    TransferStatus status;
+    if (keccak256(bytes(statusout)) == keccak256(bytes("ONGOING"))) {
+        status = TransferStatus.Started;
+    } else {
+        status = TransferStatus.Terminated;
+    }
 
-        emit DataTransferRequested(
-            transferId,
-            assetId,
-            msg.sender,
-            block.timestamp
-        );
+    transfers[transferId] = DataTransfer({
+        id: transferId,
+        nodeId: nodeId,
+        contractagreetmentid: contractAgreementId,
+        assetId: assetId,
+        dataHash: 0x0,
+        status: status,
+        timestamp: block.timestamp
+    });
+
+    emit DataTransferRequested(
+        transferId,
+        assetId,
+        msg.sender,
+        block.timestamp,
+            status
+    );
     }
 
 

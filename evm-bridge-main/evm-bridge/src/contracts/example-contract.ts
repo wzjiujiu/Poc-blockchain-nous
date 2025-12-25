@@ -589,17 +589,18 @@ export class ExampleContractWrapper {
     }
 
     /**
-     * Calls Transaction method: requestDataTransfer(string,bytes32,string,string)
-     * Method: requestDataTransfer(string,bytes32,string,string)
+     * Calls Transaction method: requestDataTransfer(string,bytes32,string,string,string)
+     * Method: requestDataTransfer(string,bytes32,string,string,string)
      * @param transferId transferId
      * @param nodeId nodeId
      * @param contractAgreementId contractAgreementId
+     * @param statusout statusout
      * @param assetId assetId
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async requestDataTransfer(transferId: string, nodeId: BytesLike, contractAgreementId: string, assetId: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
-        const __r = await this._contractInterface.callMutableMethod("requestDataTransfer", [transferId, nodeId, contractAgreementId, assetId], options);
+    public async requestDataTransfer(transferId: string, nodeId: BytesLike, contractAgreementId: string, statusout: string, assetId: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("requestDataTransfer", [transferId, nodeId, contractAgreementId, statusout, assetId], options);
     
         if (__r.receipt.status > BigInt(0)) {
             const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
@@ -610,16 +611,17 @@ export class ExampleContractWrapper {
     }
     
     /**
-     * Gets details for building a transaction calling the method: requestDataTransfer(string,bytes32,string,string)
-     * Method: requestDataTransfer(string,bytes32,string,string)
+     * Gets details for building a transaction calling the method: requestDataTransfer(string,bytes32,string,string,string)
+     * Method: requestDataTransfer(string,bytes32,string,string,string)
      * @param transferId transferId
      * @param nodeId nodeId
      * @param contractAgreementId contractAgreementId
+     * @param statusout statusout
      * @param assetId assetId
      * @returns The details for building the transaction
      */
-    public requestDataTransfer$txBuildDetails(transferId: string, nodeId: BytesLike, contractAgreementId: string, assetId: string): TransactionBuildDetails {
-        return this._contractInterface.encodeMutableMethod("requestDataTransfer", [transferId, nodeId, contractAgreementId, assetId]);
+    public requestDataTransfer$txBuildDetails(transferId: string, nodeId: BytesLike, contractAgreementId: string, statusout: string, assetId: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("requestDataTransfer", [transferId, nodeId, contractAgreementId, statusout, assetId]);
     }
 
     /**
@@ -863,7 +865,7 @@ export class ExampleContractEventCollection {
     }
 
     /**
-     * Get an event of type DataTransferRequested(string,string,address,uint256) from the collection
+     * Get an event of type DataTransferRequested(string,string,address,uint256,uint8) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
      */
@@ -876,6 +878,7 @@ export class ExampleContractEventCollection {
                 assetId: __r[1],
                 consumer: __r[2],
                 timestamp: __r[3],
+                status: __r[4],
             },
         };
     }
@@ -1089,7 +1092,7 @@ export interface DataTransferCompletedEvent {
 }
 
 /**
- * Event: DataTransferRequested(string,string,address,uint256)
+ * Event: DataTransferRequested(string,string,address,uint256,uint8)
  */
 export interface DataTransferRequestedEvent {
     transferId: string,
@@ -1099,6 +1102,8 @@ export interface DataTransferRequestedEvent {
     consumer: Address,
 
     timestamp: Quantity,
+
+    status: Quantity,
 }
 
 /**
@@ -1453,6 +1458,12 @@ const CONTRACT_ABI: ABILike = [
                 "internalType": "uint256",
                 "name": "timestamp",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "enum ExampleContract.TransferStatus",
+                "name": "status",
+                "type": "uint8"
             }
         ],
         "name": "DataTransferRequested",
@@ -2307,6 +2318,11 @@ const CONTRACT_ABI: ABILike = [
             {
                 "internalType": "string",
                 "name": "contractAgreementId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "statusout",
                 "type": "string"
             },
             {

@@ -248,6 +248,7 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                         const pAssetId = ev.data.assetId;
                         const pConsumer = normalizeAddress(ev.data.consumer);
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const pStatus = normalizeDatabaseUint256(ev.data.status);
                         const exists = await EventExampleDataTransferRequested.exists(id);
                         if (!exists) {
                             const newEvent = new EventExampleDataTransferRequested({
@@ -260,6 +261,7 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 pAssetId,
                                 pConsumer,
                                 pTimestamp,
+                                pStatus,
                             });
 
                             await newEvent.insert();

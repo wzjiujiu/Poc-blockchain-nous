@@ -404,6 +404,7 @@ export class ExampleContractApiEventsController extends Controller {
      * @property {string} assetId.required - assetId
      * @property {string} consumer.required - consumer - eg: 0x0000000000000000000000000000000000000000
      * @property {string} timestamp.required - timestamp - eg: 0
+     * @property {string} status.required - status - eg: 0
      */
 
     /**
@@ -425,7 +426,7 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type DataTransferRequested
      * Smart contract: Example (ExampleContract)
-     * Event signature: DataTransferRequested(string,string,address,uint256)
+     * Event signature: DataTransferRequested(string,string,address,uint256,uint8)
      * Binding: GetEventsDataTransferRequested
      * @route GET /contracts/example/events/data-transfer-requested
      * @group example - API for smart contract: Example (ExampleContract)
@@ -436,7 +437,7 @@ export class ExampleContractApiEventsController extends Controller {
      * @security BearerAuthorization
      */
     public async getEventsDataTransferRequested(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "transferId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": true, "internalType": "address", "name": "consumer", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "name": "DataTransferRequested", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "transferId", "type": "string" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": true, "internalType": "address", "name": "consumer", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "enum ExampleContract.TransferStatus", "name": "status", "type": "uint8" }], "name": "DataTransferRequested", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 

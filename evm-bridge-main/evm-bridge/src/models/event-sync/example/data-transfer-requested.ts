@@ -124,6 +124,9 @@ export class EventExampleDataTransferRequested extends DataModel {
     /* db-type: VARCHAR 255 */
     public pTimestamp: string;
 
+    /* db-type: VARCHAR 255 */
+    public pStatus: string;
+
     constructor(data: TypedRow<EventExampleDataTransferRequested>) {
         super(DATA_SOURCE, TABLE, PRIMARY_KEY);
 
@@ -136,6 +139,7 @@ export class EventExampleDataTransferRequested extends DataModel {
         this.pAssetId = enforceType(data.pAssetId, "string") || '';
         this.pConsumer = enforceType(data.pConsumer, "string") || '';
         this.pTimestamp = enforceType(data.pTimestamp, "string") || '';
+        this.pStatus = enforceType(data.pStatus, "string") || '';
 
         this.init();
     }
@@ -147,6 +151,7 @@ export class EventExampleDataTransferRequested extends DataModel {
             this.pAssetId,
             this.pConsumer,
             this.pTimestamp,
+            this.pStatus,
         ];
     }
 }

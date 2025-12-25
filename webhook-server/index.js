@@ -28,6 +28,7 @@ const DataOffer='http://localhost:11000/api/management/v3/contractdefinitions';
 const Contratto="http://localhost:11000/api/management/wrapper/ui/pages/catalog-page/contract-negotiations"
 const TERMINATE_CONTRATTO_PREFIX ="http://localhost:11000/api/management/wrapper/ui/pages/content-agreement-page/";
 const Transfer="http://localhost:11000/api/management/v3/transferprocesses";
+const Transfer_PREFIX="http://localhost:11000/api/management/v3/transferprocesses/";
 
 // Override console.log per inviare log anche via socket e salvarli
 const originalConsoleLog = console.log.bind(console);
@@ -57,7 +58,7 @@ const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const provider = new ethers.JsonRpcProvider("http://localhost:8545");
 const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 
-const CONTRACT_ADDRESS = "0x16266254eec8c3733543950fc0fd33196ae3af74";
+const CONTRACT_ADDRESS = "0x0bcc0aa6bb316af0e04e90f1c869362805caa873";
 
 const CONTRACT_ABI = require("./abi/ExampleContract");
 
@@ -641,6 +642,7 @@ else if (method === "POST" && rawPort.startsWith(TERMINATE_CONTRATTO_PREFIX) && 
 }
 else if (rawPort === Transfer && method === "POST") {
     try {
+        const assetid=cleanedData.request.body.assetId;
         const contractId = cleanedData.request.body.contractId;
         console.log("📄 Contract ID estratto:", contractId);
 
@@ -694,32 +696,96 @@ else if (rawPort === Transfer && method === "POST") {
 
         // 3️⃣ Trigger smart contract solo se non TERMINATED
         if (terminationStatus === "TERMINATED") {
-            console.log("⚠️ Contract already terminated, skipping smart contract trigger.");
+            const estimatedGas = await contract.requestDataTransfer.estimateGas(
+              transferid,
+              NODE_ID_CONSUMER,
+              contractId,
+              terminationStatus,
+              assetid
+              );
+
+            const tx = await contract.requestDataTransfer(
+              transferid,
+              NODE_ID_CONSUMER,
+              contractId,
+              terminationStatus,
+              assetid,
+             { gasLimit: estimatedGas + 50_000n }
+         );
+
+         console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+         const receipt = await tx.wait();
+         console.log(`✅ Data Transfer registrato nel blocco ${receipt.blockNumber}`);
         } else {
-            console.log("🚀 Triggering smart contract registration...");
+            const estimatedGas = await contract.requestDataTransfer.estimateGas(
+              transferid,
+              NODE_ID_CONSUMER,
+              contractId,
+              terminationStatus,
+              assetid
+              );
 
-            const smartContractUrl = `http://localhost:11000/api/management/v3/smartcontract/register`;
+            const tx = await contract.requestDataTransfer(
+              transferid,
+              NODE_ID_CONSUMER,
+              contractId,
+              terminationStatus,
+              assetid,
+             { gasLimit: estimatedGas + 50_000n }
+         );
 
-            const smartContractBody = {
-                contractId: match.contractAgreementId,
-                transferId: transferid,
-                // aggiungi altri campi necessari per la registrazione
-            };
+         console.log(`⏳ Transazione inviata: ${tx.hash}`);
 
-            const smartContractResp = await axios.post(smartContractUrl, smartContractBody, {
-                headers: {
-                    "X-Api-Key": "SomeOtherApiKey",
-                    "Content-Type": "application/json"
-                }
-            });
+         const receipt = await tx.wait();
+         console.log(`✅ Data Transfer registrato nel blocco ${receipt.blockNumber}`);
 
-            console.log("✅ Smart contract registration response:", smartContractResp.data);
+
         }
 
     } catch (err) {
         console.error("❌ Errore durante il processo di contract/transfer:", err.response?.data || err.message);
     }
+   }
+   else if (method === "POST" && rawPort.startsWith(Transfer_PREFIX) && rawPort.endsWith("/terminate"))
+  {
+  try {
+    /* ======================= ESTRAZIONE CONTRACT AGREEMENT ID ======================= */
 
+    const parts = rawPort.split("/");
+    const transferId = parts[parts.length - 2];
+    console.log(transferId);
+
+    if (!transferId) {
+      throw new Error("transferId non trovato nella URL");
+    }
+
+
+    /* ======================= UPDATE ON-CHAIN ======================= */
+
+    const estimatedGas = await contract.completeDataTransfer.estimateGas(
+      transferId,
+      ethers.encodeBytes32String("123")
+    );
+
+    const tx = await contract.completeDataTransfer(
+      transferId,
+      ethers.encodeBytes32String("123"),
+      { gasLimit: estimatedGas + 50_000n }
+    );
+
+    console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+    const receipt = await tx.wait();
+    console.log(`✅ trasferimento TERMINATED nel blocco ${receipt.blockNumber}`);
+
+
+  } catch (err) {
+    console.error("❌ Errore terminate contratto:", err);
+    return res.status(500).json({ error: err.message });
+  }
+
+  }
 
 
 
@@ -1029,9 +1095,6 @@ else if (rawPort === Transfer && method === "POST") {
     });
   }
 });
-
-
-
 
 // --- Socket.IO connection ---
 io.on("connection", (socket) => {

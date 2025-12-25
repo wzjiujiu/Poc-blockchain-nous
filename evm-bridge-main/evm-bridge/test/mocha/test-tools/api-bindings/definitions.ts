@@ -1794,6 +1794,11 @@ export interface TxParamsExampleRequestDataTransfer {
     contractAgreementId: string;
 
     /**
+     * statusout
+     */
+    statusout: string;
+
+    /**
      * assetId
      */
     assetId: string;
@@ -2180,6 +2185,11 @@ export interface EventParamsExampleDataTransferRequested {
      * timestamp 
      */
     timestamp: string;
+
+    /**
+     * status 
+     */
+    status: string;
 }
 
 export interface EventItemExampleDataTransferRequested {

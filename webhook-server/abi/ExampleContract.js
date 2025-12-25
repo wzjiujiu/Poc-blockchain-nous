@@ -28,7 +28,7 @@ module.exports = [
   "function contrattoExists(bytes32 nodeId, string contractNegotiationId) external view returns (bool)",
 
   // ───────────── Data Transfer ─────────────
-  "function requestDataTransfer(string transferId, bytes32 nodeId, string contractAgreementId, string assetId) external",
+  "function requestDataTransfer(string transferId, bytes32 nodeId, string contractAgreementId, string statusout,string assetId) external",
   "function completeDataTransfer(string transferId, bytes32 dataHash) external",
   "function getTransfer(string transferId) external view returns (string id, bytes32 nodeId, string contractAgreementId, string assetId, bytes32 dataHash, uint8 status, uint256 timestamp)",
   "function transferExists(string transferId) external view returns (bool)",
@@ -42,6 +42,6 @@ module.exports = [
   "event DataofferModified(bytes32 indexed nodeId, string offerId, uint256 timestamp, string newAccessPolicyId, string newContractPolicyId, string newAssetSelector)",
   "event ContrattoRegistered(address indexed registrar, bytes32 indexed nodeId, string contractNegotiationId, string counterpartyId, uint256 createdAt, string state)",
   "event ContrattoStateUpdated(bytes32 indexed nodeId, string contractNegotiationId, uint256 timestamp, string newState)",
-  "event DataTransferRequested(string transferId, string assetId, address indexed consumer, uint256 timestamp)",
+  "event DataTransferRequested(string transferId, string assetId, address indexed consumer, uint256 timestamp,TransferStatus status)",
   "event DataTransferCompleted(string transferId, bytes32 dataHash, uint256 timestamp)"
 ];

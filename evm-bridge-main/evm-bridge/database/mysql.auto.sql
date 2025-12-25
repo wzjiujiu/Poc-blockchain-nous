@@ -110,7 +110,8 @@ CREATE TABLE `event_example_data_transfer_requested` (
     `p_transfer_id` TEXT,
     `p_asset_id` TEXT,
     `p_consumer` VARCHAR(255),
-    `p_timestamp` VARCHAR(255)
+    `p_timestamp` VARCHAR(255),
+    `p_status` VARCHAR(255)
 );
 
 CREATE INDEX `ix_event_example_data_transfer_requested_s_1` ON `event_example_data_transfer_requested`(`id` DESC);

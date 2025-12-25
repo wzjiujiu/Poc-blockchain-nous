@@ -488,6 +488,7 @@ export class ExampleContractApiTxController extends Controller {
      * @property {string} transferId.required - transferId
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} contractAgreementId.required - contractAgreementId
+     * @property {string} statusout.required - statusout
      * @property {string} assetId.required - assetId
      */
 
@@ -500,7 +501,7 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: requestDataTransfer
      * Smart contract: Example (ExampleContract)
-     * Method signature: requestDataTransfer(string,bytes32,string,string)
+     * Method signature: requestDataTransfer(string,bytes32,string,string,string)
      * Binding: TxRequestDataTransfer
      * 
      * @route POST /contracts/example/tx/request-data-transfer
@@ -512,7 +513,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txRequestDataTransfer(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "string", "name": "transferId", "type": "string" }, { "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "contractAgreementId", "type": "string" }, { "internalType": "string", "name": "assetId", "type": "string" }], "name": "requestDataTransfer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "transferId", "type": "string" }, { "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "contractAgreementId", "type": "string" }, { "internalType": "string", "name": "statusout", "type": "string" }, { "internalType": "string", "name": "assetId", "type": "string" }], "name": "requestDataTransfer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 

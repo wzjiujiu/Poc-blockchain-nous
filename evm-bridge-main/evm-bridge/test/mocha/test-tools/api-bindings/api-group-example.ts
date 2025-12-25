@@ -376,7 +376,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/request-data-transfer
      * Sends transaction for method: requestDataTransfer
      * Smart contract: Example (ExampleContract)
-     * Method signature: requestDataTransfer(string,bytes32,string,string)
+     * Method signature: requestDataTransfer(string,bytes32,string,string,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -620,7 +620,7 @@ export class ApiExample {
      * Path: /contracts/example/events/data-transfer-requested
      * Get a list of events of type DataTransferRequested
      * Smart contract: Example (ExampleContract)
-     * Event signature: DataTransferRequested(string,string,address,uint256)
+     * Event signature: DataTransferRequested(string,string,address,uint256,uint8)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
