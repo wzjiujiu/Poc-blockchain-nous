@@ -26,8 +26,7 @@ const Asset='http://localhost:11000/api/management/v3/assets';
 const Policy='http://localhost:11000/api/management/v3/policydefinitions';
 const DataOffer='http://localhost:11000/api/management/v3/contractdefinitions';
 const Contratto="http://localhost:11000/api/management/wrapper/ui/pages/catalog-page/contract-negotiations"
-const TERMINATE_CONTRATTO_PREFIX =
-  "http://localhost:11000/api/management/wrapper/ui/pages/content-agreement-page/";
+const TERMINATE_CONTRATTO_PREFIX ="http://localhost:11000/api/management/wrapper/ui/pages/content-agreement-page/";
 
 // Override console.log per inviare log anche via socket e salvarli
 const originalConsoleLog = console.log.bind(console);
@@ -742,11 +741,40 @@ else if (method === "POST" && rawPort.startsWith(TERMINATE_CONTRATTO_PREFIX) && 
     const receipt = await tx.wait();
     console.log(`✅ Contratto TERMINATED nel blocco ${receipt.blockNumber}`);
 
-    return res.json({
-      status: "ok",
-      contractAgreementId,
-      state: "TERMINATED"
-    });
+    const transferUrl =
+      `http://localhost:11000/api/management/v3/transferprocesses/request`;
+
+    console.log("🌐 POST:", transferUrl);
+
+    const querySpec = {
+  "@type": "https://w3id.org/edc/v0.0.1/ns/QuerySpec",
+  "https://w3id.org/edc/v0.0.1/ns/offset": 0,
+  "https://w3id.org/edc/v0.0.1/ns/limit": 1000
+};
+
+const transferResp = await axios.post(
+  transferUrl,
+  querySpec, // ✅ BODY
+  {
+    headers: {
+      "X-Api-Key": "SomeOtherApiKey",
+      "Content-Type": "application/json"
+    }
+  }
+);
+
+console.log("📦 Transfer Processes Response:");
+console.dir(transferResp.data, { depth: null, colors: true });
+
+const transfers = transferResp.data;
+
+const matchingTransfers = transfers.filter(
+  t => t.contractId === contractAgreementId
+);
+
+const transferIds = matchingTransfers.map(t => t['@id']);
+
+
 
   } catch (err) {
     console.error("❌ Errore terminate contratto:", err);
