@@ -14,10 +14,8 @@ contract ExampleContract is BaseContract {
        ===================================================== */
 
     enum TransferStatus {
-        Requested,
-        Approved,
-        Completed,
-        Rejected
+        Started,
+        Terminated
     }
 
     /* =====================================================
@@ -63,10 +61,9 @@ contract ExampleContract is BaseContract {
 
     struct DataTransfer {
         string id;
-        bytes32 providerNodeId;
-        bytes32 consumerNodeId;
+        bytes32 nodeId;
+        string contractagreetmentid;
         string assetId;
-        string offerId;
         bytes32 dataHash;
         TransferStatus status;
         uint256 timestamp;
@@ -175,20 +172,9 @@ contract ExampleContract is BaseContract {
         uint256 timestamp
     );
 
-    event DataTransferApproved(
-        string transferId,
-        address indexed provider,
-        uint256 timestamp
-    );
-
     event DataTransferCompleted(
         string transferId,
         bytes32 dataHash,
-        uint256 timestamp
-    );
-
-    event DataTransferRejected(
-        string transferId,
         uint256 timestamp
     );
 
@@ -567,5 +553,100 @@ contract ExampleContract is BaseContract {
          return contratti[nodeId][contractNegotiationId].timestamp != 0;
      }
 
+    /* =====================================================
+                        DATA TRANSFER
+   ===================================================== */
+
+    function requestDataTransfer(
+        string memory transferId,
+        bytes32 nodeId,
+        string memory contractAgreementId,
+        string memory assetId
+    )
+        external
+    {
+        require(bytes(transferId).length > 0, "ID non valido");
+        require(transfers[transferId].timestamp == 0, "Transfer gia' esistente");
+
+        transfers[transferId] = DataTransfer({
+            id: transferId,
+            nodeId: nodeId,
+            contractagreetmentid: contractAgreementId,
+            assetId: assetId,
+            dataHash: 0x0,
+            status: TransferStatus.Started,
+            timestamp: block.timestamp
+        });
+
+        emit DataTransferRequested(
+            transferId,
+            assetId,
+            msg.sender,
+            block.timestamp
+        );
+    }
+
+
+    function completeDataTransfer(
+        string memory transferId,
+        bytes32 dataHash
+    )
+        external
+    {
+        DataTransfer storage t = transfers[transferId];
+        require(t.timestamp != 0, "Transfer non trovato");
+        require(t.status == TransferStatus.Started, "Transfer non in stato STARTED");
+
+        t.dataHash = dataHash;
+        t.status = TransferStatus.Terminated;
+        t.timestamp = block.timestamp;
+
+        emit DataTransferCompleted(
+            transferId,
+            dataHash,
+            block.timestamp
+        );
+    }
+
+
+    function getTransfer(
+        string memory transferId
+    )
+        external
+        view
+        returns (
+            string memory id,
+            bytes32 nodeId,
+            string memory contractAgreementId,
+            string memory assetId,
+            bytes32 dataHash,
+            TransferStatus status,
+            uint256 timestamp
+        )
+    {
+        DataTransfer memory t = transfers[transferId];
+        require(t.timestamp != 0, "Transfer non trovato");
+
+        return (
+            t.id,
+            t.nodeId,
+            t.contractagreetmentid,
+            t.assetId,
+            t.dataHash,
+            t.status,
+            t.timestamp
+        );
+    }
+
+
+    function transferExists(
+        string memory transferId
+    )
+        external
+        view
+        returns (bool)
+    {
+        return transfers[transferId].timestamp != 0;
+    }
 
 }

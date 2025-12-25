@@ -575,6 +575,39 @@ else if (method === "POST" && rawPort.startsWith(TERMINATE_CONTRATTO_PREFIX) && 
 
     console.log("🛑 Terminate contratto");
     console.log("📄 contractAgreementId:", contractAgreementId);
+    const transferUrl =
+      `http://localhost:11000/api/management/v3/transferprocesses/request`;
+
+    console.log("🌐 POST:", transferUrl);
+
+    const querySpec = {
+    "@type": "https://w3id.org/edc/v0.0.1/ns/QuerySpec",
+     "https://w3id.org/edc/v0.0.1/ns/offset": 0,
+     "https://w3id.org/edc/v0.0.1/ns/limit": 1000
+    };
+    const transferResp = await axios.post(
+    transferUrl,
+     querySpec, // ✅ BODY
+    {
+     headers: {
+       "X-Api-Key": "SomeOtherApiKey",
+       "Content-Type": "application/json"
+        }
+    }
+   );
+
+   console.log("📦 Transfer Processes Response:");
+   console.dir(transferResp.data, { depth: null, colors: true });
+
+   const transfers = transferResp.data;
+
+   const matchingTransfers = transfers.filter(
+     t => t.contractId === contractAgreementId &&
+    t.state === "STARTED"
+   );
+
+  const transferIds = matchingTransfers.map(t => t['@id']);
+  console.log(transferIds)
 
     /* ======================= UPDATE ON-CHAIN ======================= */
 
@@ -596,38 +629,6 @@ else if (method === "POST" && rawPort.startsWith(TERMINATE_CONTRATTO_PREFIX) && 
     const receipt = await tx.wait();
     console.log(`✅ Contratto TERMINATED nel blocco ${receipt.blockNumber}`);
 
-    const transferUrl =
-      `http://localhost:11000/api/management/v3/transferprocesses/request`;
-
-    console.log("🌐 POST:", transferUrl);
-
-    const querySpec = {
-  "@type": "https://w3id.org/edc/v0.0.1/ns/QuerySpec",
-  "https://w3id.org/edc/v0.0.1/ns/offset": 0,
-  "https://w3id.org/edc/v0.0.1/ns/limit": 1000
-};
-
-const transferResp = await axios.post(
-  transferUrl,
-  querySpec, // ✅ BODY
-  {
-    headers: {
-      "X-Api-Key": "SomeOtherApiKey",
-      "Content-Type": "application/json"
-    }
-  }
-);
-
-console.log("📦 Transfer Processes Response:");
-console.dir(transferResp.data, { depth: null, colors: true });
-
-const transfers = transferResp.data;
-
-const matchingTransfers = transfers.filter(
-  t => t.contractId === contractAgreementId
-);
-
-const transferIds = matchingTransfers.map(t => t['@id']);
 
 
 
