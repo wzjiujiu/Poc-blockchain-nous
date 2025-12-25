@@ -41,6 +41,7 @@ import { handleTransactionSending } from "../../utils/tx-sending";
  */
 export class ExampleContractApiTxController extends Controller {
     public registerAPI(prefix: string, application: Express.Express) {
+        application.post(prefix + "/contracts/example/tx/complete-data-transfer", ensureObjectBody(this.txCompleteDataTransfer.bind(this)));
         application.post(prefix + "/contracts/example/tx/initialize", ensureObjectBody(this.txInitialize.bind(this)));
         application.post(prefix + "/contracts/example/tx/modify-asset", ensureObjectBody(this.txModifyAsset.bind(this)));
         application.post(prefix + "/contracts/example/tx/modify-dataoffer", ensureObjectBody(this.txModifyDataoffer.bind(this)));
@@ -50,11 +51,54 @@ export class ExampleContractApiTxController extends Controller {
         application.post(prefix + "/contracts/example/tx/register-contratto", ensureObjectBody(this.txRegisterContratto.bind(this)));
         application.post(prefix + "/contracts/example/tx/register-dataoffer", ensureObjectBody(this.txRegisterDataoffer.bind(this)));
         application.post(prefix + "/contracts/example/tx/register-policy", ensureObjectBody(this.txRegisterPolicy.bind(this)));
+        application.post(prefix + "/contracts/example/tx/request-data-transfer", ensureObjectBody(this.txRequestDataTransfer.bind(this)));
         application.post(prefix + "/contracts/example/tx/unpause", ensureObjectBody(this.txUnpause.bind(this)));
         application.post(prefix + "/contracts/example/tx/update-contratto-state", ensureObjectBody(this.txUpdateContrattoState.bind(this)));
         application.post(prefix + "/contracts/example/tx/upgrade-to-and-call", ensureObjectBody(this.txUpgradeToAndCall.bind(this)));
     }
 
+    /**
+     * @typedef TxParamsExampleCompleteDataTransfer
+     * @property {string} transferId.required - transferId
+     * @property {string} dataHash.required - dataHash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     */
+
+    /**
+     * @typedef TxRequestExampleCompleteDataTransfer
+     * @property {TxParamsExampleCompleteDataTransfer.model} parameters.required - Transaction parameters
+     * @property {TxSigningOptions.model} txSign.required - Transaction signing options
+     */
+
+    /**
+     * Sends transaction for method: completeDataTransfer
+     * Smart contract: Example (ExampleContract)
+     * Method signature: completeDataTransfer(string,bytes32)
+     * Binding: TxCompleteDataTransfer
+     * 
+     * @route POST /contracts/example/tx/complete-data-transfer
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {TxRequestExampleCompleteDataTransfer.model} request.body.required - Request body
+     * @returns {TxResponse.model} 200 - Transaction result
+     * @returns {TxBadRequest.model} 400 - Bad request
+     * @returns {TxSigningForbiddenResponse.model} 403 - Access denied
+     * @security BearerAuthorization
+     */
+    public async txCompleteDataTransfer(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "transferId", "type": "string" }, { "internalType": "bytes32", "name": "dataHash", "type": "bytes32" }], "name": "completeDataTransfer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+
+        const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        const txBuildData = wrapper.completeDataTransfer$txBuildDetails.call(wrapper, ...txParams);
+
+        await handleTransactionSending(request, response, txBuildData, wrapper.address);
+    }
     /**
      * @typedef TxParamsExampleInitialize
      * @property {string} roleManagerAddress.required - roleManagerAddress - eg: 0x0000000000000000000000000000000000000000
@@ -436,6 +480,50 @@ export class ExampleContractApiTxController extends Controller {
         const wrapper = SmartContractsConfig.getInstance().example;
 
         const txBuildData = wrapper.registerPolicy$txBuildDetails.call(wrapper, ...txParams);
+
+        await handleTransactionSending(request, response, txBuildData, wrapper.address);
+    }
+    /**
+     * @typedef TxParamsExampleRequestDataTransfer
+     * @property {string} transferId.required - transferId
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} contractAgreementId.required - contractAgreementId
+     * @property {string} assetId.required - assetId
+     */
+
+    /**
+     * @typedef TxRequestExampleRequestDataTransfer
+     * @property {TxParamsExampleRequestDataTransfer.model} parameters.required - Transaction parameters
+     * @property {TxSigningOptions.model} txSign.required - Transaction signing options
+     */
+
+    /**
+     * Sends transaction for method: requestDataTransfer
+     * Smart contract: Example (ExampleContract)
+     * Method signature: requestDataTransfer(string,bytes32,string,string)
+     * Binding: TxRequestDataTransfer
+     * 
+     * @route POST /contracts/example/tx/request-data-transfer
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {TxRequestExampleRequestDataTransfer.model} request.body.required - Request body
+     * @returns {TxResponse.model} 200 - Transaction result
+     * @returns {TxBadRequest.model} 400 - Bad request
+     * @returns {TxSigningForbiddenResponse.model} 403 - Access denied
+     * @security BearerAuthorization
+     */
+    public async txRequestDataTransfer(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "transferId", "type": "string" }, { "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "contractAgreementId", "type": "string" }, { "internalType": "string", "name": "assetId", "type": "string" }], "name": "requestDataTransfer", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+
+        const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        const txBuildData = wrapper.requestDataTransfer$txBuildDetails.call(wrapper, ...txParams);
 
         await handleTransactionSending(request, response, txBuildData, wrapper.address);
     }

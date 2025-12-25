@@ -86,22 +86,6 @@ CREATE INDEX "ix_event_example_contratto_state_updated_s_2" ON "event_example_co
 CREATE INDEX "ix_event_example_contratto_state_updated_s_3" ON "event_example_contratto_state_updated"("tx");
 CREATE INDEX "ix_event_example_contratto_state_updated_s_4" ON "event_example_contratto_state_updated"("p_node_id", "id" DESC);
 
-CREATE TABLE "event_example_data_transfer_approved" (
-    "id" VARCHAR(255) PRIMARY KEY,
-    "block" BIGINT,
-    "event_index" BIGINT,
-    "tx" VARCHAR(255),
-    "timestamp" BIGINT,
-    "p_transfer_id" TEXT,
-    "p_provider" VARCHAR(255),
-    "p_timestamp" VARCHAR(255)
-);
-
-CREATE INDEX "ix_event_example_data_transfer_approved_s_1" ON "event_example_data_transfer_approved"("id" DESC);
-CREATE INDEX "ix_event_example_data_transfer_approved_s_2" ON "event_example_data_transfer_approved"("block");
-CREATE INDEX "ix_event_example_data_transfer_approved_s_3" ON "event_example_data_transfer_approved"("tx");
-CREATE INDEX "ix_event_example_data_transfer_approved_s_4" ON "event_example_data_transfer_approved"("p_provider", "id" DESC);
-
 CREATE TABLE "event_example_data_transfer_completed" (
     "id" VARCHAR(255) PRIMARY KEY,
     "block" BIGINT,
@@ -116,20 +100,6 @@ CREATE TABLE "event_example_data_transfer_completed" (
 CREATE INDEX "ix_event_example_data_transfer_completed_s_1" ON "event_example_data_transfer_completed"("id" DESC);
 CREATE INDEX "ix_event_example_data_transfer_completed_s_2" ON "event_example_data_transfer_completed"("block");
 CREATE INDEX "ix_event_example_data_transfer_completed_s_3" ON "event_example_data_transfer_completed"("tx");
-
-CREATE TABLE "event_example_data_transfer_rejected" (
-    "id" VARCHAR(255) PRIMARY KEY,
-    "block" BIGINT,
-    "event_index" BIGINT,
-    "tx" VARCHAR(255),
-    "timestamp" BIGINT,
-    "p_transfer_id" TEXT,
-    "p_timestamp" VARCHAR(255)
-);
-
-CREATE INDEX "ix_event_example_data_transfer_rejected_s_1" ON "event_example_data_transfer_rejected"("id" DESC);
-CREATE INDEX "ix_event_example_data_transfer_rejected_s_2" ON "event_example_data_transfer_rejected"("block");
-CREATE INDEX "ix_event_example_data_transfer_rejected_s_3" ON "event_example_data_transfer_rejected"("tx");
 
 CREATE TABLE "event_example_data_transfer_requested" (
     "id" VARCHAR(255) PRIMARY KEY,

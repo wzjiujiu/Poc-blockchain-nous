@@ -1546,6 +1546,24 @@ export interface CallResponseRoleManagerProxiableUUID {
     _0: string;
 }
 
+export interface TxParamsExampleCompleteDataTransfer {
+    /**
+     * transferId
+     */
+    transferId: string;
+
+    /**
+     * dataHash 
+     */
+    dataHash: string;
+}
+
+export interface TxRequestExampleCompleteDataTransfer {
+    parameters: TxParamsExampleCompleteDataTransfer;
+
+    txSign: TxSigningOptions;
+}
+
 export interface TxParamsExampleInitialize {
     /**
      * roleManagerAddress 
@@ -1755,6 +1773,34 @@ export interface TxParamsExampleRegisterPolicy {
 
 export interface TxRequestExampleRegisterPolicy {
     parameters: TxParamsExampleRegisterPolicy;
+
+    txSign: TxSigningOptions;
+}
+
+export interface TxParamsExampleRequestDataTransfer {
+    /**
+     * transferId
+     */
+    transferId: string;
+
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * contractAgreementId
+     */
+    contractAgreementId: string;
+
+    /**
+     * assetId
+     */
+    assetId: string;
+}
+
+export interface TxRequestExampleRequestDataTransfer {
+    parameters: TxParamsExampleRequestDataTransfer;
 
     txSign: TxSigningOptions;
 }
@@ -2059,61 +2105,6 @@ export interface EventListExampleContrattoStateUpdated {
     continuationToken?: string;
 }
 
-export interface EventParamsExampleDataTransferApproved {
-    /**
-     * transferId
-     */
-    transferId: string;
-
-    /**
-     * provider 
-     */
-    provider: string;
-
-    /**
-     * timestamp 
-     */
-    timestamp: string;
-}
-
-export interface EventItemExampleDataTransferApproved {
-    /**
-     * Event ID 
-     */
-    id: string;
-
-    /**
-     * Block number 
-     */
-    block: number;
-
-    /**
-     * Event index in the block 
-     */
-    eventIndex: number;
-
-    /**
-     * Transaction hash 
-     */
-    tx: string;
-
-    /**
-     * Event timestamp (Unix seconds) 
-     */
-    timestamp: string;
-
-    parameters: EventParamsExampleDataTransferApproved;
-}
-
-export interface EventListExampleDataTransferApproved {
-    events: EventItemExampleDataTransferApproved[];
-
-    /**
-     * Continuation token 
-     */
-    continuationToken?: string;
-}
-
 export interface EventParamsExampleDataTransferCompleted {
     /**
      * transferId
@@ -2162,56 +2153,6 @@ export interface EventItemExampleDataTransferCompleted {
 
 export interface EventListExampleDataTransferCompleted {
     events: EventItemExampleDataTransferCompleted[];
-
-    /**
-     * Continuation token 
-     */
-    continuationToken?: string;
-}
-
-export interface EventParamsExampleDataTransferRejected {
-    /**
-     * transferId
-     */
-    transferId: string;
-
-    /**
-     * timestamp 
-     */
-    timestamp: string;
-}
-
-export interface EventItemExampleDataTransferRejected {
-    /**
-     * Event ID 
-     */
-    id: string;
-
-    /**
-     * Block number 
-     */
-    block: number;
-
-    /**
-     * Event index in the block 
-     */
-    eventIndex: number;
-
-    /**
-     * Transaction hash 
-     */
-    tx: string;
-
-    /**
-     * Event timestamp (Unix seconds) 
-     */
-    timestamp: string;
-
-    parameters: EventParamsExampleDataTransferRejected;
-}
-
-export interface EventListExampleDataTransferRejected {
-    events: EventItemExampleDataTransferRejected[];
 
     /**
      * Continuation token 
@@ -2971,6 +2912,50 @@ export interface CallResponseExampleGetPolicy {
     title: string;
 }
 
+export interface CallRequestExampleGetTransfer {
+    /**
+     * transferId
+     */
+    transferId: string;
+}
+
+export interface CallResponseExampleGetTransfer {
+    /**
+     * id
+     */
+    id: string;
+
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * contractAgreementId
+     */
+    contractAgreementId: string;
+
+    /**
+     * assetId
+     */
+    assetId: string;
+
+    /**
+     * dataHash 
+     */
+    dataHash: string;
+
+    /**
+     * status 
+     */
+    status: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+}
+
 export interface CallResponseExamplePaused {
     /**
      * bool True if paused, false otherwise
@@ -3002,5 +2987,19 @@ export interface CallResponseExampleProxiableUUID {
      * _0 
      */
     _0: string;
+}
+
+export interface CallRequestExampleTransferExists {
+    /**
+     * transferId
+     */
+    transferId: string;
+}
+
+export interface CallResponseExampleTransferExists {
+    /**
+     * _0
+     */
+    _0: boolean;
 }
 

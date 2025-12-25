@@ -27,16 +27,21 @@ module.exports = [
   "function getContratto(bytes32 nodeId, string contractNegotiationId) external view returns (string id, bytes32 nId, string counterpartyId, uint256 timestamp, uint256 createdAt, string state)",
   "function contrattoExists(bytes32 nodeId, string contractNegotiationId) external view returns (bool)",
 
+  // ───────────── Data Transfer ─────────────
+  "function requestDataTransfer(string transferId, bytes32 nodeId, string contractAgreementId, string assetId) external",
+  "function completeDataTransfer(string transferId, bytes32 dataHash) external",
+  "function getTransfer(string transferId) external view returns (string id, bytes32 nodeId, string contractAgreementId, string assetId, bytes32 dataHash, uint8 status, uint256 timestamp)",
+  "function transferExists(string transferId) external view returns (bool)",
+
   // ───────────── Events ─────────────
   "event AssetRegistered(address indexed registrar, bytes32 indexed nodeId, string assetId, uint256 timestamp, string title)",
   "event AssetModified(bytes32 indexed nodeId, string assetId, uint256 timestamp, string newTitle)",
-
   "event PolicyRegistered(address indexed registrar, bytes32 indexed nodeId, string policyId, uint256 timestamp, string title)",
   "event PolicyModified(bytes32 indexed nodeId, string policyId, uint256 timestamp, string newTitle)",
-
   "event DataofferRegistered(address indexed registrar, bytes32 indexed nodeId, string offerId, uint256 timestamp, string accessPolicyId, string contractPolicyId, string assetSelector)",
   "event DataofferModified(bytes32 indexed nodeId, string offerId, uint256 timestamp, string newAccessPolicyId, string newContractPolicyId, string newAssetSelector)",
-
   "event ContrattoRegistered(address indexed registrar, bytes32 indexed nodeId, string contractNegotiationId, string counterpartyId, uint256 createdAt, string state)",
-  "event ContrattoStateUpdated(bytes32 indexed nodeId, string contractNegotiationId, uint256 timestamp, string newState)"
+  "event ContrattoStateUpdated(bytes32 indexed nodeId, string contractNegotiationId, uint256 timestamp, string newState)",
+  "event DataTransferRequested(string transferId, string assetId, address indexed consumer, uint256 timestamp)",
+  "event DataTransferCompleted(string transferId, bytes32 dataHash, uint256 timestamp)"
 ];

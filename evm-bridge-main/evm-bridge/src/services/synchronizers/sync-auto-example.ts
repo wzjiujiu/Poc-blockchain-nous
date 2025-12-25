@@ -32,9 +32,7 @@ import { EventExampleAssetModified } from "../../models/event-sync/example/asset
 import { EventExampleAssetRegistered } from "../../models/event-sync/example/asset-registered";
 import { EventExampleContrattoRegistered } from "../../models/event-sync/example/contratto-registered";
 import { EventExampleContrattoStateUpdated } from "../../models/event-sync/example/contratto-state-updated";
-import { EventExampleDataTransferApproved } from "../../models/event-sync/example/data-transfer-approved";
 import { EventExampleDataTransferCompleted } from "../../models/event-sync/example/data-transfer-completed";
-import { EventExampleDataTransferRejected } from "../../models/event-sync/example/data-transfer-rejected";
 import { EventExampleDataTransferRequested } from "../../models/event-sync/example/data-transfer-requested";
 import { EventExampleDataofferModified } from "../../models/event-sync/example/dataoffer-modified";
 import { EventExampleDataofferRegistered } from "../../models/event-sync/example/dataoffer-registered";
@@ -204,37 +202,6 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                         }
                     }
                     break;
-                case "DataTransferApproved":
-                    {
-                        const ev = events.getDataTransferApprovedEvent(i);
-
-                        const block = Number(ev.event.log.blockNumber);
-                        const timestamp = await this.getBlockTimestamp(block);
-                        const eventIndex = Number(ev.event.log.logIndex);
-                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
-
-                        const id = createEventUID(block, eventIndex, tx);
-
-                        const pTransferId = ev.data.transferId;
-                        const pProvider = normalizeAddress(ev.data.provider);
-                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
-                        const exists = await EventExampleDataTransferApproved.exists(id);
-                        if (!exists) {
-                            const newEvent = new EventExampleDataTransferApproved({
-                                id,
-                                block,
-                                timestamp,
-                                eventIndex,
-                                tx,
-                                pTransferId,
-                                pProvider,
-                                pTimestamp,
-                            });
-
-                            await newEvent.insert();
-                        }
-                    }
-                    break;
                 case "DataTransferCompleted":
                     {
                         const ev = events.getDataTransferCompletedEvent(i);
@@ -259,35 +226,6 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 tx,
                                 pTransferId,
                                 pDataHash,
-                                pTimestamp,
-                            });
-
-                            await newEvent.insert();
-                        }
-                    }
-                    break;
-                case "DataTransferRejected":
-                    {
-                        const ev = events.getDataTransferRejectedEvent(i);
-
-                        const block = Number(ev.event.log.blockNumber);
-                        const timestamp = await this.getBlockTimestamp(block);
-                        const eventIndex = Number(ev.event.log.logIndex);
-                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
-
-                        const id = createEventUID(block, eventIndex, tx);
-
-                        const pTransferId = ev.data.transferId;
-                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
-                        const exists = await EventExampleDataTransferRejected.exists(id);
-                        if (!exists) {
-                            const newEvent = new EventExampleDataTransferRejected({
-                                id,
-                                block,
-                                timestamp,
-                                eventIndex,
-                                tx,
-                                pTransferId,
                                 pTimestamp,
                             });
 
@@ -588,9 +526,7 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
         await EventExampleAssetRegistered.reset();
         await EventExampleContrattoRegistered.reset();
         await EventExampleContrattoStateUpdated.reset();
-        await EventExampleDataTransferApproved.reset();
         await EventExampleDataTransferCompleted.reset();
-        await EventExampleDataTransferRejected.reset();
         await EventExampleDataTransferRequested.reset();
         await EventExampleDataofferModified.reset();
         await EventExampleDataofferRegistered.reset();

@@ -35,9 +35,7 @@ import { EventExampleAssetModified } from "../../models/event-sync/example/asset
 import { EventExampleAssetRegistered } from "../../models/event-sync/example/asset-registered";
 import { EventExampleContrattoRegistered } from "../../models/event-sync/example/contratto-registered";
 import { EventExampleContrattoStateUpdated } from "../../models/event-sync/example/contratto-state-updated";
-import { EventExampleDataTransferApproved } from "../../models/event-sync/example/data-transfer-approved";
 import { EventExampleDataTransferCompleted } from "../../models/event-sync/example/data-transfer-completed";
-import { EventExampleDataTransferRejected } from "../../models/event-sync/example/data-transfer-rejected";
 import { EventExampleDataTransferRequested } from "../../models/event-sync/example/data-transfer-requested";
 import { EventExampleDataofferModified } from "../../models/event-sync/example/dataoffer-modified";
 import { EventExampleDataofferRegistered } from "../../models/event-sync/example/dataoffer-registered";
@@ -61,9 +59,7 @@ export class ExampleContractApiEventsController extends Controller {
         application.get(prefix + "/contracts/example/events/asset-registered", noCache(this.getEventsAssetRegistered.bind(this)));
         application.get(prefix + "/contracts/example/events/contratto-registered", noCache(this.getEventsContrattoRegistered.bind(this)));
         application.get(prefix + "/contracts/example/events/contratto-state-updated", noCache(this.getEventsContrattoStateUpdated.bind(this)));
-        application.get(prefix + "/contracts/example/events/data-transfer-approved", noCache(this.getEventsDataTransferApproved.bind(this)));
         application.get(prefix + "/contracts/example/events/data-transfer-completed", noCache(this.getEventsDataTransferCompleted.bind(this)));
-        application.get(prefix + "/contracts/example/events/data-transfer-rejected", noCache(this.getEventsDataTransferRejected.bind(this)));
         application.get(prefix + "/contracts/example/events/data-transfer-requested", noCache(this.getEventsDataTransferRequested.bind(this)));
         application.get(prefix + "/contracts/example/events/dataoffer-modified", noCache(this.getEventsDataofferModified.bind(this)));
         application.get(prefix + "/contracts/example/events/dataoffer-registered", noCache(this.getEventsDataofferRegistered.bind(this)));
@@ -345,69 +341,6 @@ export class ExampleContractApiEventsController extends Controller {
         });
     }
     /**
-     * @typedef EventParamsExampleDataTransferApproved
-     * @property {string} transferId.required - transferId
-     * @property {string} provider.required - provider - eg: 0x0000000000000000000000000000000000000000
-     * @property {string} timestamp.required - timestamp - eg: 0
-     */
-
-    /**
-     * @typedef EventItemExampleDataTransferApproved
-     * @property {string} id.required - Event ID - eg: xxxx-yyyy-zzzz
-     * @property {number} block.required - Block number - eg: 1
-     * @property {number} eventIndex.required - Event index in the block - eg: 0
-     * @property {string} tx.required - Transaction hash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} timestamp.required - Event timestamp (Unix seconds) - eg: 0
-     * @property {EventParamsExampleDataTransferApproved.model} parameters.required - Event parameters
-     */
-
-    /**
-     * @typedef EventListExampleDataTransferApproved
-     * @property {Array.<EventItemExampleDataTransferApproved>} events.required - List of events
-     * @property {string} continuationToken - Continuation token - eg: xxxx-yyyy-zzzz
-     */
-
-    /**
-     * Get a list of events of type DataTransferApproved
-     * Smart contract: Example (ExampleContract)
-     * Event signature: DataTransferApproved(string,address,uint256)
-     * Binding: GetEventsDataTransferApproved
-     * @route GET /contracts/example/events/data-transfer-approved
-     * @group example - API for smart contract: Example (ExampleContract)
-     * @param {string} continuationToken.query - Continuation token
-     * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
-     * @param {string} filter_eq_pProvider.query - Filter event with a value for the parameter 'provider' equal than the one specified.
-     * @returns {EventListExampleDataTransferApproved.model} 200 - Event list
-     * @security BearerAuthorization
-     */
-    public async getEventsDataTransferApproved(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "transferId", "type": "string" }, { "indexed": true, "internalType": "address", "name": "provider", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "name": "DataTransferApproved", "type": "event" };
-
-        const [limit, continuationToken] = parsePaginationParameters(request);
-
-        const filters: DataFilter<EventExampleDataTransferApproved>[] = [];
-
-        if (request.query.filter_eq_pProvider !== undefined && request.query.filter_eq_pProvider !== null) {
-            filters.push(DataFilter.equals("pProvider", normalizeAddress(request.query.filter_eq_pProvider + "")));
-        }
-
-        const [events, nextContinuationToken] = await EventExampleDataTransferApproved.findPaginated(filters, limit, continuationToken);
-
-        sendApiResult(request, response, {
-            events: events.map(e => {
-                return {
-                    id: e.id,
-                    block: e.block,
-                    timestamp: e.timestamp,
-                    eventIndex: e.eventIndex,
-                    tx: e.tx,
-                    parameters: serializeEventABIParams(e.getParametersArray(), eventAbi),
-                };
-            }),
-            continuationToken: nextContinuationToken,
-        });
-    }
-    /**
      * @typedef EventParamsExampleDataTransferCompleted
      * @property {string} transferId.required - transferId
      * @property {string} dataHash.required - dataHash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
@@ -450,63 +383,6 @@ export class ExampleContractApiEventsController extends Controller {
         const filters: DataFilter<EventExampleDataTransferCompleted>[] = [];
 
         const [events, nextContinuationToken] = await EventExampleDataTransferCompleted.findPaginated(filters, limit, continuationToken);
-
-        sendApiResult(request, response, {
-            events: events.map(e => {
-                return {
-                    id: e.id,
-                    block: e.block,
-                    timestamp: e.timestamp,
-                    eventIndex: e.eventIndex,
-                    tx: e.tx,
-                    parameters: serializeEventABIParams(e.getParametersArray(), eventAbi),
-                };
-            }),
-            continuationToken: nextContinuationToken,
-        });
-    }
-    /**
-     * @typedef EventParamsExampleDataTransferRejected
-     * @property {string} transferId.required - transferId
-     * @property {string} timestamp.required - timestamp - eg: 0
-     */
-
-    /**
-     * @typedef EventItemExampleDataTransferRejected
-     * @property {string} id.required - Event ID - eg: xxxx-yyyy-zzzz
-     * @property {number} block.required - Block number - eg: 1
-     * @property {number} eventIndex.required - Event index in the block - eg: 0
-     * @property {string} tx.required - Transaction hash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} timestamp.required - Event timestamp (Unix seconds) - eg: 0
-     * @property {EventParamsExampleDataTransferRejected.model} parameters.required - Event parameters
-     */
-
-    /**
-     * @typedef EventListExampleDataTransferRejected
-     * @property {Array.<EventItemExampleDataTransferRejected>} events.required - List of events
-     * @property {string} continuationToken - Continuation token - eg: xxxx-yyyy-zzzz
-     */
-
-    /**
-     * Get a list of events of type DataTransferRejected
-     * Smart contract: Example (ExampleContract)
-     * Event signature: DataTransferRejected(string,uint256)
-     * Binding: GetEventsDataTransferRejected
-     * @route GET /contracts/example/events/data-transfer-rejected
-     * @group example - API for smart contract: Example (ExampleContract)
-     * @param {string} continuationToken.query - Continuation token
-     * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
-     * @returns {EventListExampleDataTransferRejected.model} 200 - Event list
-     * @security BearerAuthorization
-     */
-    public async getEventsDataTransferRejected(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "transferId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "name": "DataTransferRejected", "type": "event" };
-
-        const [limit, continuationToken] = parsePaginationParameters(request);
-
-        const filters: DataFilter<EventExampleDataTransferRejected>[] = [];
-
-        const [events, nextContinuationToken] = await EventExampleDataTransferRejected.findPaginated(filters, limit, continuationToken);
 
         sendApiResult(request, response, {
             events: events.map(e => {

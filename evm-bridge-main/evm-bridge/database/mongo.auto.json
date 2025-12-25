@@ -25,15 +25,7 @@
             "field": "id"
         },
         {
-            "collection": "event_example_data_transfer_approved",
-            "field": "id"
-        },
-        {
             "collection": "event_example_data_transfer_completed",
-            "field": "id"
-        },
-        {
-            "collection": "event_example_data_transfer_rejected",
             "field": "id"
         },
         {
@@ -327,50 +319,6 @@
             ]
         },
         {
-            "collection": "event_example_data_transfer_approved",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "id",
-                    "dir": "DESC"
-                }
-            ]
-        },
-        {
-            "collection": "event_example_data_transfer_approved",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "block",
-                    "dir": ""
-                }
-            ]
-        },
-        {
-            "collection": "event_example_data_transfer_approved",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "tx",
-                    "dir": ""
-                }
-            ]
-        },
-        {
-            "collection": "event_example_data_transfer_approved",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "pProvider",
-                    "dir": ""
-                },
-                {
-                    "name": "id",
-                    "dir": "DESC"
-                }
-            ]
-        },
-        {
             "collection": "event_example_data_transfer_completed",
             "unique": false,
             "fields": [
@@ -392,36 +340,6 @@
         },
         {
             "collection": "event_example_data_transfer_completed",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "tx",
-                    "dir": ""
-                }
-            ]
-        },
-        {
-            "collection": "event_example_data_transfer_rejected",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "id",
-                    "dir": "DESC"
-                }
-            ]
-        },
-        {
-            "collection": "event_example_data_transfer_rejected",
-            "unique": false,
-            "fields": [
-                {
-                    "name": "block",
-                    "dir": ""
-                }
-            ]
-        },
-        {
-            "collection": "event_example_data_transfer_rejected",
             "unique": false,
             "fields": [
                 {

@@ -27,6 +27,7 @@ const Policy='http://localhost:11000/api/management/v3/policydefinitions';
 const DataOffer='http://localhost:11000/api/management/v3/contractdefinitions';
 const Contratto="http://localhost:11000/api/management/wrapper/ui/pages/catalog-page/contract-negotiations"
 const TERMINATE_CONTRATTO_PREFIX ="http://localhost:11000/api/management/wrapper/ui/pages/content-agreement-page/";
+const Transfer="http://localhost:11000/api/management/v3/transferprocesses";
 
 // Override console.log per inviare log anche via socket e salvarli
 const originalConsoleLog = console.log.bind(console);
@@ -56,7 +57,7 @@ const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const provider = new ethers.JsonRpcProvider("http://localhost:8545");
 const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 
-const CONTRACT_ADDRESS = "0xd9e5e9acdb6ef1afa4e23e4645c71b882cd63e4d";
+const CONTRACT_ADDRESS = "0x16266254eec8c3733543950fc0fd33196ae3af74";
 
 const CONTRACT_ABI = require("./abi/ExampleContract");
 
@@ -638,6 +639,86 @@ else if (method === "POST" && rawPort.startsWith(TERMINATE_CONTRATTO_PREFIX) && 
   }
 
 }
+else if (rawPort === Transfer && method === "POST") {
+    try {
+        const contractId = cleanedData.request.body.contractId;
+        console.log("📄 Contract ID estratto:", contractId);
+
+        const transferid = cleanedData.response['@id'];
+        console.log("📄 Transfer ID estratto:", transferid);
+
+        // 1️⃣ Recupero contract negotiations
+        const contractnegoUrl = `http://localhost:11000/api/management/v3/contractnegotiations/request`;
+        console.log("🌐 POST:", contractnegoUrl);
+
+        const querySpec = {
+            "@type": "https://w3id.org/edc/v0.0.1/ns/QuerySpec",
+            "https://w3id.org/edc/v0.0.1/ns/offset": 0,
+            "https://w3id.org/edc/v0.0.1/ns/limit": 1000
+        };
+
+        const contractnegoResp = await axios.post(contractnegoUrl, querySpec, {
+            headers: {
+                "X-Api-Key": "SomeOtherApiKey",
+                "Content-Type": "application/json"
+            }
+        });
+
+        const negotiations = contractnegoResp.data;
+
+        const match = negotiations.find(n => n.contractAgreementId === contractId);
+
+        if (!match) {
+            console.log("❌ Nessuna contract negotiation trovata per ContractAgreementId:", contractId);
+            return; // esce se non trova la negotiation
+        }
+
+        console.log("✅ Contract negotiation trovata:");
+        console.log("🆔 Negotiation ID:", match["@id"]);
+        console.log("📄 Contract Agreement ID:", match.contractAgreementId);
+        console.log("📌 Stato:", match.state);
+
+        // 2️⃣ Recupero dettagli contract agreement
+        const contractUrl = `http://localhost:11000/api/management/wrapper/ui/pages/contract-agreement-page/${match.contractAgreementId}`;
+        console.log("🌐 GET:", contractUrl);
+
+        const contractResp = await axios.get(contractUrl, {
+            headers: {
+                "X-Api-Key": "SomeOtherApiKey",
+                "Content-Type": "application/json"
+            }
+        });
+
+        const terminationStatus = contractResp.data.terminationStatus;
+        console.log("🛑 terminationStatus:", terminationStatus);
+
+        // 3️⃣ Trigger smart contract solo se non TERMINATED
+        if (terminationStatus === "TERMINATED") {
+            console.log("⚠️ Contract already terminated, skipping smart contract trigger.");
+        } else {
+            console.log("🚀 Triggering smart contract registration...");
+
+            const smartContractUrl = `http://localhost:11000/api/management/v3/smartcontract/register`;
+
+            const smartContractBody = {
+                contractId: match.contractAgreementId,
+                transferId: transferid,
+                // aggiungi altri campi necessari per la registrazione
+            };
+
+            const smartContractResp = await axios.post(smartContractUrl, smartContractBody, {
+                headers: {
+                    "X-Api-Key": "SomeOtherApiKey",
+                    "Content-Type": "application/json"
+                }
+            });
+
+            console.log("✅ Smart contract registration response:", smartContractResp.data);
+        }
+
+    } catch (err) {
+        console.error("❌ Errore durante il processo di contract/transfer:", err.response?.data || err.message);
+    }
 
 
 

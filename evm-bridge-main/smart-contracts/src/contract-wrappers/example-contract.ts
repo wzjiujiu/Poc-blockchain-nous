@@ -25,7 +25,7 @@
 
 "use strict";
 
-import { Quantity, SmartContractEventWrapper, SmartContractEvent, Address, MethodCallingOptions, BytesLike, AddressLike, MethodTransactionOptions, TransactionResult, QuantityLike, SmartContractInterface, TransactionBuildDetails, BlockTag, RPCOptions, ABILike } from "@asanrom/smart-contract-wrapper";
+import { Quantity, SmartContractEventWrapper, SmartContractEvent, Address, MethodCallingOptions, BytesLike, MethodTransactionOptions, TransactionResult, AddressLike, QuantityLike, SmartContractInterface, TransactionBuildDetails, BlockTag, RPCOptions, ABILike } from "@asanrom/smart-contract-wrapper";
 
 /**
  * Contract wrapper: ExampleContract
@@ -200,6 +200,26 @@ export class ExampleContractWrapper {
     }
 
     /**
+     * Calls View method: getTransfer(string)
+     * Method: getTransfer(string)
+     * @param transferId transferId
+     * @param options The options for sending the request
+     * @returns The result for calling the method
+     */
+    public async getTransfer(transferId: string, options?: MethodCallingOptions): Promise<{id: string, nodeId: string, contractAgreementId: string, assetId: string, dataHash: string, status: Quantity, timestamp: Quantity}> {
+        const __r: any = await this._contractInterface.callViewMethod("getTransfer", [transferId], options || {});
+        return {
+            id: __r[0],
+            nodeId: __r[1],
+            contractAgreementId: __r[2],
+            assetId: __r[3],
+            dataHash: __r[4],
+            status: __r[5],
+            timestamp: __r[6],
+        };
+    }
+
+    /**
      * Calls View method: paused()
      * Checks if the smart contract is paused
      * @param options The options for sending the request
@@ -232,6 +252,48 @@ export class ExampleContractWrapper {
     public async proxiableUUID(options?: MethodCallingOptions): Promise<string> {
         const __r: any = await this._contractInterface.callViewMethod("proxiableUUID", [], options || {});
         return __r[0];
+    }
+
+    /**
+     * Calls View method: transferExists(string)
+     * Method: transferExists(string)
+     * @param transferId transferId
+     * @param options The options for sending the request
+     * @returns The result for calling the method
+     */
+    public async transferExists(transferId: string, options?: MethodCallingOptions): Promise<boolean> {
+        const __r: any = await this._contractInterface.callViewMethod("transferExists", [transferId], options || {});
+        return __r[0];
+    }
+
+    /**
+     * Calls Transaction method: completeDataTransfer(string,bytes32)
+     * Method: completeDataTransfer(string,bytes32)
+     * @param transferId transferId
+     * @param dataHash dataHash
+     * @param options The options for sending the transaction
+     * @returns The transaction result
+     */
+    public async completeDataTransfer(transferId: string, dataHash: BytesLike, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("completeDataTransfer", [transferId, dataHash], options);
+    
+        if (__r.receipt.status > BigInt(0)) {
+            const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
+            return { receipt: __r.receipt, result: new ExampleContractEventCollection(decodedEvents) };
+        } else {
+            throw new Error("Transaction reverted");
+        }
+    }
+    
+    /**
+     * Gets details for building a transaction calling the method: completeDataTransfer(string,bytes32)
+     * Method: completeDataTransfer(string,bytes32)
+     * @param transferId transferId
+     * @param dataHash dataHash
+     * @returns The details for building the transaction
+     */
+    public completeDataTransfer$txBuildDetails(transferId: string, dataHash: BytesLike): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("completeDataTransfer", [transferId, dataHash]);
     }
 
     /**
@@ -527,6 +589,40 @@ export class ExampleContractWrapper {
     }
 
     /**
+     * Calls Transaction method: requestDataTransfer(string,bytes32,string,string)
+     * Method: requestDataTransfer(string,bytes32,string,string)
+     * @param transferId transferId
+     * @param nodeId nodeId
+     * @param contractAgreementId contractAgreementId
+     * @param assetId assetId
+     * @param options The options for sending the transaction
+     * @returns The transaction result
+     */
+    public async requestDataTransfer(transferId: string, nodeId: BytesLike, contractAgreementId: string, assetId: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+        const __r = await this._contractInterface.callMutableMethod("requestDataTransfer", [transferId, nodeId, contractAgreementId, assetId], options);
+    
+        if (__r.receipt.status > BigInt(0)) {
+            const decodedEvents = this._contractInterface.parseTransactionLogs(__r.receipt.logs);
+            return { receipt: __r.receipt, result: new ExampleContractEventCollection(decodedEvents) };
+        } else {
+            throw new Error("Transaction reverted");
+        }
+    }
+    
+    /**
+     * Gets details for building a transaction calling the method: requestDataTransfer(string,bytes32,string,string)
+     * Method: requestDataTransfer(string,bytes32,string,string)
+     * @param transferId transferId
+     * @param nodeId nodeId
+     * @param contractAgreementId contractAgreementId
+     * @param assetId assetId
+     * @returns The details for building the transaction
+     */
+    public requestDataTransfer$txBuildDetails(transferId: string, nodeId: BytesLike, contractAgreementId: string, assetId: string): TransactionBuildDetails {
+        return this._contractInterface.encodeMutableMethod("requestDataTransfer", [transferId, nodeId, contractAgreementId, assetId]);
+    }
+
+    /**
      * Calls Transaction method: unpause()
      * Unpauses the smart contract Requires ADMIN role
      * @param options The options for sending the transaction
@@ -629,7 +725,7 @@ export class ExampleContractWrapper {
 /**
  * Possible event types for contract: ExampleContract
  */
-export type ExampleContractEventType = "AssetModified" | "AssetRegistered" | "ContrattoRegistered" | "ContrattoStateUpdated" | "DataTransferApproved" | "DataTransferCompleted" | "DataTransferRejected" | "DataTransferRequested" | "DataofferModified" | "DataofferRegistered" | "Initialized" | "Paused" | "PolicyModified" | "PolicyRegistered" | "Unpaused" | "Upgraded";
+export type ExampleContractEventType = "AssetModified" | "AssetRegistered" | "ContrattoRegistered" | "ContrattoStateUpdated" | "DataTransferCompleted" | "DataTransferRequested" | "DataofferModified" | "DataofferRegistered" | "Initialized" | "Paused" | "PolicyModified" | "PolicyRegistered" | "Unpaused" | "Upgraded";
 
 /**
  * Collection of events for contract: ExampleContract
@@ -750,23 +846,6 @@ export class ExampleContractEventCollection {
     }
 
     /**
-     * Get an event of type DataTransferApproved(string,address,uint256) from the collection
-     * @param index Event index in the collection (from 0 to length - 1)
-     * @returns The event object
-     */
-    public getDataTransferApprovedEvent(index: number): SmartContractEventWrapper<DataTransferApprovedEvent> {
-        const __r: any = this.events[index].parameters;
-        return {
-            event: this.events[index],
-            data: {
-                transferId: __r[0],
-                provider: __r[1],
-                timestamp: __r[2],
-            },
-        };
-    }
-
-    /**
      * Get an event of type DataTransferCompleted(string,bytes32,uint256) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
@@ -779,22 +858,6 @@ export class ExampleContractEventCollection {
                 transferId: __r[0],
                 dataHash: __r[1],
                 timestamp: __r[2],
-            },
-        };
-    }
-
-    /**
-     * Get an event of type DataTransferRejected(string,uint256) from the collection
-     * @param index Event index in the collection (from 0 to length - 1)
-     * @returns The event object
-     */
-    public getDataTransferRejectedEvent(index: number): SmartContractEventWrapper<DataTransferRejectedEvent> {
-        const __r: any = this.events[index].parameters;
-        return {
-            event: this.events[index],
-            data: {
-                transferId: __r[0],
-                timestamp: __r[1],
             },
         };
     }
@@ -1015,32 +1078,12 @@ export interface ContrattoStateUpdatedEvent {
 }
 
 /**
- * Event: DataTransferApproved(string,address,uint256)
- */
-export interface DataTransferApprovedEvent {
-    transferId: string,
-
-    provider: Address,
-
-    timestamp: Quantity,
-}
-
-/**
  * Event: DataTransferCompleted(string,bytes32,uint256)
  */
 export interface DataTransferCompletedEvent {
     transferId: string,
 
     dataHash: string,
-
-    timestamp: Quantity,
-}
-
-/**
- * Event: DataTransferRejected(string,uint256)
- */
-export interface DataTransferRejectedEvent {
-    transferId: string,
 
     timestamp: Quantity,
 }
@@ -1369,31 +1412,6 @@ const CONTRACT_ABI: ABILike = [
                 "type": "string"
             },
             {
-                "indexed": true,
-                "internalType": "address",
-                "name": "provider",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "timestamp",
-                "type": "uint256"
-            }
-        ],
-        "name": "DataTransferApproved",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "transferId",
-                "type": "string"
-            },
-            {
                 "indexed": false,
                 "internalType": "bytes32",
                 "name": "dataHash",
@@ -1407,25 +1425,6 @@ const CONTRACT_ABI: ABILike = [
             }
         ],
         "name": "DataTransferCompleted",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "transferId",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "timestamp",
-                "type": "uint256"
-            }
-        ],
-        "name": "DataTransferRejected",
         "type": "event"
     },
     {
@@ -1711,6 +1710,24 @@ const CONTRACT_ABI: ABILike = [
     {
         "inputs": [
             {
+                "internalType": "string",
+                "name": "transferId",
+                "type": "string"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "dataHash",
+                "type": "bytes32"
+            }
+        ],
+        "name": "completeDataTransfer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "bytes32",
                 "name": "nodeId",
                 "type": "bytes32"
@@ -1955,6 +1972,55 @@ const CONTRACT_ABI: ABILike = [
                 "internalType": "string",
                 "name": "title",
                 "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "transferId",
+                "type": "string"
+            }
+        ],
+        "name": "getTransfer",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "id",
+                "type": "string"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
+                "name": "contractAgreementId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "assetId",
+                "type": "string"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "dataHash",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "enum ExampleContract.TransferStatus",
+                "name": "status",
+                "type": "uint8"
+            },
+            {
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -2224,6 +2290,53 @@ const CONTRACT_ABI: ABILike = [
         "name": "registerPolicy",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "transferId",
+                "type": "string"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
+                "name": "contractAgreementId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "assetId",
+                "type": "string"
+            }
+        ],
+        "name": "requestDataTransfer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "transferId",
+                "type": "string"
+            }
+        ],
+        "name": "transferExists",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {

@@ -50,9 +50,11 @@ export class ExampleContractApiCallController extends Controller {
         application.post(prefix + "/contracts/example/call/get-dataoffer", ensureObjectBody(this.callGetDataoffer.bind(this)));
         application.post(prefix + "/contracts/example/call/get-initialized-version", ensureObjectBody(this.callGetInitializedVersion.bind(this)));
         application.post(prefix + "/contracts/example/call/get-policy", ensureObjectBody(this.callGetPolicy.bind(this)));
+        application.post(prefix + "/contracts/example/call/get-transfer", ensureObjectBody(this.callGetTransfer.bind(this)));
         application.post(prefix + "/contracts/example/call/paused", ensureObjectBody(this.callPaused.bind(this)));
         application.post(prefix + "/contracts/example/call/policy-exists", ensureObjectBody(this.callPolicyExists.bind(this)));
         application.post(prefix + "/contracts/example/call/proxiable-uuid", ensureObjectBody(this.callProxiableUUID.bind(this)));
+        application.post(prefix + "/contracts/example/call/transfer-exists", ensureObjectBody(this.callTransferExists.bind(this)));
     }
 
     /**
@@ -538,6 +540,69 @@ export class ExampleContractApiCallController extends Controller {
         sendApiResult(request, response, result);
     }
     /**
+     * @typedef CallRequestExampleGetTransfer
+     * @property {string} transferId.required - transferId
+     */
+
+    /**
+     * @typedef CallResponseExampleGetTransfer
+     * @property {string} id.required - id
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} contractAgreementId.required - contractAgreementId
+     * @property {string} assetId.required - assetId
+     * @property {string} dataHash.required - dataHash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} status.required - status - eg: 0
+     * @property {string} timestamp.required - timestamp - eg: 0
+     */
+
+    /**
+     * Calls the view method: getTransfer
+     * Smart contract: Example (ExampleContract)
+     * Method signature: getTransfer(string)
+     * Binding: CallGetTransfer
+     * 
+     * @route POST /contracts/example/call/get-transfer
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {CallRequestExampleGetTransfer.model} request.body.required - Request body
+     * @returns {CallResponseExampleGetTransfer.model} 200 - OK
+     * @returns {void} 400 - Invalid parameters
+     * @returns {void} 404 - Error calling the method
+     * @security BearerAuthorization
+     */
+    public async callGetTransfer(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "transferId", "type": "string" }], "name": "getTransfer", "outputs": [{ "internalType": "string", "name": "id", "type": "string" }, { "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "contractAgreementId", "type": "string" }, { "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "bytes32", "name": "dataHash", "type": "bytes32" }, { "internalType": "enum ExampleContract.TransferStatus", "name": "status", "type": "uint8" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "stateMutability": "view", "type": "function" };
+
+        const [callParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        let result: any;
+        try {
+            const callResult = await wrapper.getTransfer.call(wrapper, ...callParams);
+
+            result = serializeOutputABIParams([
+                callResult.id,
+                callResult.nodeId,
+                callResult.contractAgreementId,
+                callResult.assetId,
+                callResult.dataHash,
+                callResult.status,
+                callResult.timestamp,
+            ], methodAbi);
+        } catch (ex) {
+            Monitor.debugException(ex)
+            sendApiError(request, response, NOT_FOUND, "CALL_ERROR", ex.message);
+            return;
+        }
+
+        sendApiResult(request, response, result);
+    }
+    /**
      * @typedef CallResponseExamplePaused
      * @property {boolean} _0.required - bool True if paused, false otherwise
      */
@@ -663,6 +728,55 @@ export class ExampleContractApiCallController extends Controller {
         let result: any;
         try {
             const callResult = await wrapper.proxiableUUID.call(wrapper, ...callParams);
+
+            result = serializeOutputABIParams([callResult], methodAbi);
+        } catch (ex) {
+            Monitor.debugException(ex)
+            sendApiError(request, response, NOT_FOUND, "CALL_ERROR", ex.message);
+            return;
+        }
+
+        sendApiResult(request, response, result);
+    }
+    /**
+     * @typedef CallRequestExampleTransferExists
+     * @property {string} transferId.required - transferId
+     */
+
+    /**
+     * @typedef CallResponseExampleTransferExists
+     * @property {boolean} _0.required - _0
+     */
+
+    /**
+     * Calls the view method: transferExists
+     * Smart contract: Example (ExampleContract)
+     * Method signature: transferExists(string)
+     * Binding: CallTransferExists
+     * 
+     * @route POST /contracts/example/call/transfer-exists
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {CallRequestExampleTransferExists.model} request.body.required - Request body
+     * @returns {CallResponseExampleTransferExists.model} 200 - OK
+     * @returns {void} 400 - Invalid parameters
+     * @returns {void} 404 - Error calling the method
+     * @security BearerAuthorization
+     */
+    public async callTransferExists(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "string", "name": "transferId", "type": "string" }], "name": "transferExists", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" };
+
+        const [callParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        let result: any;
+        try {
+            const callResult = await wrapper.transferExists.call(wrapper, ...callParams);
 
             result = serializeOutputABIParams([callResult], methodAbi);
         } catch (ex) {
