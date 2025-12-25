@@ -897,7 +897,7 @@ else if (rawPort === Transfer && method === "POST") {
       console.log(`⛽ Gas stimato: ${estimatedGas}`);
 
       const tx = await contract.registerPolicy(
-        CONSUMER,
+        NODE_ID_CONSUMER,
         newPolicyId,
         policyContent,
         { gasLimit: estimatedGas + 50_000n }
@@ -917,7 +917,7 @@ else if (rawPort === Transfer && method === "POST") {
   }
   /* ======================= POLICY PUT ======================= */
   else if(method === "PUT" && rawPort.startsWith(Policy)){
-    console.log("✏️ Modifica policy (producer)");
+    console.log("✏️ Modifica policy (CONSUMER)");
 
   try {
     const policyId = cleanedData.request?.body?.['@id']
@@ -940,14 +940,14 @@ else if (rawPort === Transfer && method === "POST") {
 
     // Verifica esistenza
     const existing = await contract.getPolicy(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       newPolicyId
     );
     console.log("📄 Policy trovata:", existing);
 
     // Gas estimation
     const estimatedGas = await contract.modifyPolicy.estimateGas(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       newPolicyId,
       newPolicyContent
     );
@@ -956,7 +956,7 @@ else if (rawPort === Transfer && method === "POST") {
 
     // Transazione
     const tx = await contract.modifyPolicy(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       newPolicyId,
       newPolicyContent,
       { gasLimit: estimatedGas + 50_000n }
@@ -969,13 +969,13 @@ else if (rawPort === Transfer && method === "POST") {
 
     // Verifica finale
     const updated = await contract.getPolicy(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       newPolicyId
     );
     console.log("📄 Policy modificata:", updated);
 
   } catch (err) {
-    console.error("❌ Errore durante la modifica Policy (producer):", err);
+    console.error("❌ Errore durante la modifica Policy (CONSUMER):", err);
   }
   }
   /* ======================= DATAOFFER POST ======================= */
@@ -995,7 +995,7 @@ else if (rawPort === Transfer && method === "POST") {
       console.log(`📤 Registrazione data offer ID: ${newDataofferid}`);
 
       const estimatedGas = await contract.registerDataoffer.estimateGas(
-        NODE_ID_PROVIDER,
+        NODE_ID_CONSUMER,
         newDataofferid,
         accessPolicyId,
         contractPolicyId,
@@ -1005,7 +1005,7 @@ else if (rawPort === Transfer && method === "POST") {
       console.log(`⛽ Gas stimato: ${estimatedGas}`);
 
       const tx = await contract.registerDataoffer(
-        NODE_ID_PROVIDER,
+        NODE_ID_CONSUMER,
         newDataofferid,
          accessPolicyId,
         contractPolicyId,
@@ -1018,11 +1018,11 @@ else if (rawPort === Transfer && method === "POST") {
 
       console.log(`✅ Dataoffer "${newDataofferid}" registrato nel blocco ${receipt.blockNumber}`);
 
-      const data = await contract.getDataoffer(NODE_ID_PROVIDER, newDataofferid);
+      const data = await contract.getDataoffer(NODE_ID_CONSUMER, newDataofferid);
       console.log("📄 Dataoffer registrato:", data);
 
     } catch (err) {
-      console.error("❌ Errore durante la registrazione Data offer (producer):", err);
+      console.error("❌ Errore durante la registrazione Data offer (CONSUMER):", err);
     }
 
 
@@ -1056,7 +1056,7 @@ else if (rawPort === Transfer && method === "POST") {
 
     /* ======================= CHECK ESISTENZA ======================= */
     const existing = await contract.getDataoffer(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       newDataofferId
     );
 
@@ -1064,7 +1064,7 @@ else if (rawPort === Transfer && method === "POST") {
 
     /* ======================= GAS ======================= */
     const estimatedGas = await contract.modifyDataoffer.estimateGas(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       newDataofferId,
       newAccessPolicyId,
       newContractPolicyId,
@@ -1075,7 +1075,7 @@ else if (rawPort === Transfer && method === "POST") {
 
     /* ======================= TX ======================= */
     const tx = await contract.modifyDataoffer(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       newDataofferId,
       newAccessPolicyId,
       newContractPolicyId,
@@ -1090,14 +1090,14 @@ else if (rawPort === Transfer && method === "POST") {
 
     /* ======================= VERIFY ======================= */
     const updated = await contract.getDataoffer(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       newDataofferId
     );
 
     console.log("📄 DataOffer aggiornato:", updated);
 
   } catch (err) {
-    console.error("❌ Errore durante la modifica DataOffer (producer):", err);
+    console.error("❌ Errore durante la modifica DataOffer (CONSUMER):", err);
   }
   }
   else if (rawPort == Contratto && method === "POST") {
@@ -1150,7 +1150,7 @@ else if (rawPort === Transfer && method === "POST") {
     console.log(createdAt);
 
     const estimatedGas = await contract.registerContratto.estimateGas(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       contractAgreementId,
       counterPartyId,
       createdAt,
@@ -1160,7 +1160,7 @@ else if (rawPort === Transfer && method === "POST") {
     console.log(`⛽ Gas stimato: ${estimatedGas}`);
 
     const tx = await contract.registerContratto(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       contractAgreementId,
       counterPartyId,
       createdAt,
@@ -1174,7 +1174,7 @@ else if (rawPort === Transfer && method === "POST") {
     console.log(`✅ Contratto registrato on-chain nel blocco ${receipt.blockNumber}`);
 
     const stored = await contract.getContratto(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       contractAgreementId
     );
 
@@ -1242,13 +1242,13 @@ else if (method === "POST" && rawPort.startsWith(TERMINATE_CONTRATTO_PREFIX) && 
     /* ======================= UPDATE ON-CHAIN ======================= */
 
     const estimatedGas = await contract.updateContrattoState.estimateGas(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       contractAgreementId,
       "TERMINATED"
     );
 
     const tx = await contract.updateContrattoState(
-      NODE_ID_PROVIDER,
+      NODE_ID_CONSUMER,
       contractAgreementId,
       "TERMINATED",
       { gasLimit: estimatedGas + 50_000n }
@@ -1326,7 +1326,7 @@ else if (rawPort === Transfer && method === "POST") {
         if (terminationStatus === "TERMINATED") {
             const estimatedGas = await contract.requestDataTransfer.estimateGas(
               transferid,
-              NODE_ID_PROVIDER,
+              NODE_ID_CONSUMER,
               contractId,
               terminationStatus,
               assetid
@@ -1334,7 +1334,7 @@ else if (rawPort === Transfer && method === "POST") {
 
             const tx = await contract.requestDataTransfer(
               transferid,
-              NODE_ID_PROVIDER,
+              NODE_ID_CONSUMER,
               contractId,
               terminationStatus,
               assetid,
@@ -1348,7 +1348,7 @@ else if (rawPort === Transfer && method === "POST") {
         } else {
             const estimatedGas = await contract.requestDataTransfer.estimateGas(
               transferid,
-              NODE_ID_PROVIDER,
+              NODE_ID_CONSUMER,
               contractId,
               terminationStatus,
               assetid
@@ -1356,7 +1356,7 @@ else if (rawPort === Transfer && method === "POST") {
 
             const tx = await contract.requestDataTransfer(
               transferid,
-              NODE_ID_PROVIDER,
+              NODE_ID_CONSUMER,
               contractId,
               terminationStatus,
               assetid,
