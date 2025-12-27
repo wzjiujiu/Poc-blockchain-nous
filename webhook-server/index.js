@@ -49,6 +49,11 @@ console.log = (...args) => {
   io.emit("log", entry);
 };
 const { parseNestedJSON, cleanKeys ,escapeHtml,renderAsList} = require("./utils/parser.js");
+const {registerAssetOnChain,
+modifyAssetOnChainFromWebhook,
+registerPolicyOnChainFromWebhook,
+modifyPolicyOnchainFromWebhook
+} =require("./config/services.js");
 
 
 // --- Ethereum setup ---
@@ -177,72 +182,13 @@ app.post("/event", async (req, res) => {
 
   /* ======================= ASSET POST ======================= */
   if (rawPort == Asset && method === "POST") {
-    try {
-      const newAssetId = assetId.toString();
-
-      console.log(`📤 Registrazione asset ID: ${newAssetId}`);
-
-      const estimatedGas = await contract.registerAsset.estimateGas(
-        NODE_ID_PROVIDER,
-        newAssetId,
-        assetTitle
-      );
-
-      console.log(`⛽ Gas stimato: ${estimatedGas}`);
-
-      const tx = await contract.registerAsset(
-        NODE_ID_PROVIDER,
-        newAssetId,
-        assetTitle,
-        { gasLimit: estimatedGas + 50_000n }
-      );
-
-      console.log(`⏳ Transazione inviata: ${tx.hash}`);
-      const receipt = await tx.wait();
-
-      console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
-
-      const data = await contract.getAsset(NODE_ID_PROVIDER, newAssetId);
-      console.log("📄 Asset registrato:", data);
-
-    } catch (err) {
-      console.error("❌ Errore durante la registrazione asset (provider):", err);
-    }
+    await registerAssetOnChain(
+    {nodeId: NODE_ID_PROVIDER,assetId,assetTitle, contract });
   }
 
   /* ======================= ASSET PUT ======================= */
   else if (rawPort == Asset && method === "PUT") {
-    try {
-      const newAssetId = cleanedData.request?.body?.properties?.id?.toString();
-      const newAssetTitle = cleanedData.request?.body?.properties?.title;
-
-      console.log(`📤 Modifica asset ID: ${newAssetId}`);
-
-      const data = await contract.getAsset(NODE_ID_PROVIDER, newAssetId);
-      console.log("📄 Asset trovato:", data);
-
-      const estimatedGas = await contract.modifyAsset.estimateGas(
-        NODE_ID_PROVIDER,
-        newAssetId,
-        newAssetTitle
-      );
-
-      const tx = await contract.modifyAsset(
-        NODE_ID_PROVIDER,
-        newAssetId,
-        newAssetTitle,
-        { gasLimit: estimatedGas + 50_000n }
-      );
-
-      const receipt = await tx.wait();
-      console.log(`✅ Asset "${newAssetId}" modificato nel blocco ${receipt.blockNumber}`);
-
-      const updated = await contract.getAsset(NODE_ID_PROVIDER, newAssetId);
-      console.log("📄 Asset modificato:", updated);
-
-    } catch (err) {
-      console.error("❌ Errore durante la modifica asset (PRODUCER):", err);
-    }
+    await modifyAssetOnChainFromWebhook(cleanedData, NODE_ID_PROVIDER,contract);
   }
 
   /* ======================= POLICY POST ======================= */
@@ -256,97 +202,12 @@ app.post("/event", async (req, res) => {
     if (time1 && time2) {
       policyContent = `${time1}&${time2}`;
     }
-
-    try {
-      const estimatedGas = await contract.registerPolicy.estimateGas(
-        NODE_ID_PROVIDER,
-        newPolicyId,
-        policyContent
-      );
-
-      console.log(`⛽ Gas stimato: ${estimatedGas}`);
-
-      const tx = await contract.registerPolicy(
-        NODE_ID_PROVIDER,
-        newPolicyId,
-        policyContent,
-        { gasLimit: estimatedGas + 50_000n }
-      );
-
-      console.log(`⏳ Transazione inviata: ${tx.hash}`);
-      const receipt = await tx.wait();
-
-      console.log(`✅ Policy "${newPolicyId}" registrata nel blocco ${receipt.blockNumber}`);
-
-      const data = await contract.getPolicy(NODE_ID_PROVIDER, newPolicyId);
-      console.log("📄 Policy registrata:", data);
-
-    } catch (err) {
-      console.error("❌ Errore durante la registrazione Policy (producer):", err);
-    }
+    await registerPolicyOnChainFromWebhook(NODE_ID_PROVIDER,newPolicyId,policyContent,contract);
   }
   /* ======================= POLICY PUT ======================= */
   else if(method === "PUT" && rawPort.startsWith(Policy)){
     console.log("✏️ Modifica policy (producer)");
-
-  try {
-    const policyId = cleanedData.request?.body?.['@id']
-      || cleanedData.request?.body?.id;
-
-    if (!policyId) {
-      throw new Error("Policy ID non trovato nella richiesta");
-    }
-
-    const newPolicyId = policyId.toString();
-
-    const { time1, time2 } = extractPolicyInfo(cleanedData);
-
-    let newPolicyContent = "";
-    if (time1 && time2) {
-      newPolicyContent = `${time1}&${time2}`;
-    }
-
-    console.log(`📤 Cerco policy ID: ${newPolicyId}`);
-
-    // Verifica esistenza
-    const existing = await contract.getPolicy(
-      NODE_ID_PROVIDER,
-      newPolicyId
-    );
-    console.log("📄 Policy trovata:", existing);
-
-    // Gas estimation
-    const estimatedGas = await contract.modifyPolicy.estimateGas(
-      NODE_ID_PROVIDER,
-      newPolicyId,
-      newPolicyContent
-    );
-
-    console.log(`⛽ Gas stimato: ${estimatedGas}`);
-
-    // Transazione
-    const tx = await contract.modifyPolicy(
-      NODE_ID_PROVIDER,
-      newPolicyId,
-      newPolicyContent,
-      { gasLimit: estimatedGas + 50_000n }
-    );
-
-    console.log(`⏳ Transazione inviata: ${tx.hash}`);
-
-    const receipt = await tx.wait();
-    console.log(`✅ Policy "${newPolicyId}" modificata nel blocco ${receipt.blockNumber}`);
-
-    // Verifica finale
-    const updated = await contract.getPolicy(
-      NODE_ID_PROVIDER,
-      newPolicyId
-    );
-    console.log("📄 Policy modificata:", updated);
-
-  } catch (err) {
-    console.error("❌ Errore durante la modifica Policy (producer):", err);
-  }
+    await modifyPolicyOnchainFromWebhook(cleanedData,NODE_ID_PROVIDER,contract);
   }
   /* ======================= DATAOFFER POST ======================= */
   else if(rawPort==DataOffer&& method=='POST')
@@ -807,72 +668,13 @@ else if (rawPort === Transfer && method === "POST") {
 
   /* ======================= ASSET POST ======================= */
   if (rawPort == Asset && method === "POST") {
-    try {
-      const newAssetId = assetId.toString();
-
-      console.log(`📤 Registrazione asset ID: ${newAssetId}`);
-
-      const estimatedGas = await contract.registerAsset.estimateGas(
-        NODE_ID_CONSUMER,
-        newAssetId,
-        assetTitle
-      );
-
-      console.log(`⛽ Gas stimato: ${estimatedGas}`);
-
-      const tx = await contract.registerAsset(
-        NODE_ID_CONSUMER,
-        newAssetId,
-        assetTitle,
-        { gasLimit: estimatedGas + 50_000n }
-      );
-
-      console.log(`⏳ Transazione inviata: ${tx.hash}`);
-      const receipt = await tx.wait();
-
-      console.log(`✅ Asset "${newAssetId}" registrato nel blocco ${receipt.blockNumber}`);
-
-      const data = await contract.getAsset(NODE_ID_CONSUMER, newAssetId);
-      console.log("📄 Asset registrato:", data);
-
-    } catch (err) {
-      console.error("❌ Errore durante la registrazione asset (CONSUMER):", err);
-    }
+    await registerAssetOnChain(
+    {nodeId: NODE_ID_CONSUMER,assetId,assetTitle, contract });
   }
 
   /* ======================= ASSET PUT ======================= */
   else if (rawPort == Asset && method === "PUT") {
-    try {
-      const newAssetId = cleanedData.request?.body?.properties?.id?.toString();
-      const newAssetTitle = cleanedData.request?.body?.properties?.title;
-
-      console.log(`📤 Modifica asset ID: ${newAssetId}`);
-
-      const data = await contract.getAsset(NODE_ID_CONSUMER, newAssetId);
-      console.log("📄 Asset trovato:", data);
-
-      const estimatedGas = await contract.modifyAsset.estimateGas(
-        NODE_ID_CONSUMER,
-        newAssetId,
-        newAssetTitle
-      );
-
-      const tx = await contract.modifyAsset(
-        NODE_ID_CONSUMER,
-        newAssetId,
-        newAssetTitle,
-        { gasLimit: estimatedGas + 50_000n }
-      );
-
-      const receipt = await tx.wait();
-      console.log(`✅ Asset "${newAssetId}" modificato nel blocco ${receipt.blockNumber}`);
-
-      const updated = await contract.getAsset(NODE_ID_CONSUMER, newAssetId);
-      console.log("📄 Asset modificato:", updated);
-
-    } catch (err) {
-      console.error("❌ Errore durante la modifica asset (CONSUMER):", err);
-    }
+    await modifyAssetOnChainFromWebhook(cleanedData,NODE_ID_CONSUMER,contract);
   }
 
   /* ======================= POLICY POST ======================= */
@@ -887,96 +689,12 @@ else if (rawPort === Transfer && method === "POST") {
       policyContent = `${time1}&${time2}`;
     }
 
-    try {
-      const estimatedGas = await contract.registerPolicy.estimateGas(
-        NODE_ID_CONSUMER,
-        newPolicyId,
-        policyContent
-      );
-
-      console.log(`⛽ Gas stimato: ${estimatedGas}`);
-
-      const tx = await contract.registerPolicy(
-        NODE_ID_CONSUMER,
-        newPolicyId,
-        policyContent,
-        { gasLimit: estimatedGas + 50_000n }
-      );
-
-      console.log(`⏳ Transazione inviata: ${tx.hash}`);
-      const receipt = await tx.wait();
-
-      console.log(`✅ Policy "${newPolicyId}" registrata nel blocco ${receipt.blockNumber}`);
-
-      const data = await contract.getPolicy(NODE_ID_CONSUMER, newPolicyId);
-      console.log("📄 Policy registrata:", data);
-
-    } catch (err) {
-      console.error("❌ Errore durante la registrazione Policy (CONSUMER):", err);
-    }
+   await registerPolicyOnChainFromWebhook(NODE_ID_CONSUMER,newPolicyId,policyContent,contract);
   }
   /* ======================= POLICY PUT ======================= */
   else if(method === "PUT" && rawPort.startsWith(Policy)){
     console.log("✏️ Modifica policy (CONSUMER)");
-
-  try {
-    const policyId = cleanedData.request?.body?.['@id']
-      || cleanedData.request?.body?.id;
-
-    if (!policyId) {
-      throw new Error("Policy ID non trovato nella richiesta");
-    }
-
-    const newPolicyId = policyId.toString();
-
-    const { time1, time2 } = extractPolicyInfo(cleanedData);
-
-    let newPolicyContent = "";
-    if (time1 && time2) {
-      newPolicyContent = `${time1}&${time2}`;
-    }
-
-    console.log(`📤 Cerco policy ID: ${newPolicyId}`);
-
-    // Verifica esistenza
-    const existing = await contract.getPolicy(
-      NODE_ID_CONSUMER,
-      newPolicyId
-    );
-    console.log("📄 Policy trovata:", existing);
-
-    // Gas estimation
-    const estimatedGas = await contract.modifyPolicy.estimateGas(
-      NODE_ID_CONSUMER,
-      newPolicyId,
-      newPolicyContent
-    );
-
-    console.log(`⛽ Gas stimato: ${estimatedGas}`);
-
-    // Transazione
-    const tx = await contract.modifyPolicy(
-      NODE_ID_CONSUMER,
-      newPolicyId,
-      newPolicyContent,
-      { gasLimit: estimatedGas + 50_000n }
-    );
-
-    console.log(`⏳ Transazione inviata: ${tx.hash}`);
-
-    const receipt = await tx.wait();
-    console.log(`✅ Policy "${newPolicyId}" modificata nel blocco ${receipt.blockNumber}`);
-
-    // Verifica finale
-    const updated = await contract.getPolicy(
-      NODE_ID_CONSUMER,
-      newPolicyId
-    );
-    console.log("📄 Policy modificata:", updated);
-
-  } catch (err) {
-    console.error("❌ Errore durante la modifica Policy (CONSUMER):", err);
-  }
+    await modifyPolicyOnchainFromWebhook(cleanedData,NODE_ID_CONSUMER,contract);
   }
   /* ======================= DATAOFFER POST ======================= */
   else if(rawPort==DataOffer&& method=='POST')
