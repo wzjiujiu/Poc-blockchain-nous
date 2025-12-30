@@ -219,20 +219,56 @@ app.post("/event", async (req, res) => {
    console.log(accessPolicyId)
    console.log(contractPolicyId)
    console.log(assetSelector)
-   await registerDataofferOnChain(contract,NODE_ID_PROVIDER,cleanedData,accessPolicyId,contractPolicyId,assetSelector);
+   await publish("edc.dataoffer", {
+    type: "DATAOFFER_CREATED",
+    nodeId: NODE_ID_PROVIDER,
+    payload: cleanedData,
+    accessPolicyId,
+    contractPolicyId,
+    assetSelector
+  });
+
+  console.log("✅ Evento DataOffer CREATED pubblicato su Kafka");
   }
   else if(rawPort==DataOffer&& method=='PUT')
   {
-    await modifyDataofferOnChain(contract,NODE_ID_PROVIDER,cleanedData,rawPort);
+     console.log("✏️ Modifica DataOffer ricevuta (PRODUCER)");
+
+  await publish("edc.dataoffer", {
+    type: "DATAOFFER_UPDATED",
+    nodeId: NODE_ID_PROVIDER,
+    payload: cleanedData,
+    rawPort
+  });
+
+  console.log("✅ Evento DataOffer UPDATED pubblicato su Kafka");
   }
   else if (rawPort == Contratto && method === "POST") {
 
-    await registerContrattoOnchain(contract,NODE_ID_PROVIDER,cleanedData);
+    console.log("📄 Contratto creato (PRODUCER)");
+
+  await publish("edc.contract", {
+    type: "CONTRACT_CREATED",
+    nodeId: NODE_ID_PROVIDER,
+    payload: cleanedData,
+    rawPort
+  });
+
+  console.log("✅ Evento CONTRACT_CREATED pubblicato su Kafka");
   }
 else if (method === "POST" && rawPort.startsWith(TERMINATE_CONTRATTO_PREFIX) && rawPort.endsWith("/terminate"))
 {
 
-  terminateContrattoOnchain(contract,NODE_ID_PROVIDER,rawPort)
+  console.log("🛑 TERMINATE Contratto ricevuto (PRODUCER)");
+
+  await publish("edc.contract", {
+    type: "CONTRACT_TERMINATED",
+    nodeId: NODE_ID_PROVIDER,
+    rawPort,       // per estrarre contractAgreementId nel consumer
+    payload: cleanedData
+  });
+
+  console.log("✅ Evento CONTRACT_TERMINATED pubblicato su Kafka");
 
 }
 else if (rawPort === Transfer && method === "POST") {
