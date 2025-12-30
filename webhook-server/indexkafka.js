@@ -7,6 +7,9 @@ const { ethers } = require("ethers"); // ethers.js v6
 require("dotenv").config();
 const axios = require("axios");
 
+const express = require("express");
+const { initKafka, publish } = require("./kafka/kafka.js"); // <-- qui importi Kafka
+
 
 const app = express();
 const PORT = 3000;
@@ -58,6 +61,10 @@ modifyDataofferOnChain,
 registerContrattoOnchain,
 terminateContrattoOnchain
 } =require("./config/services.js");
+
+// --- Kafka setup ---
+
+initKafka().catch(err => console.error("❌ Errore Kafka:", err));
 
 
 // --- Ethereum setup ---
@@ -157,13 +164,23 @@ app.post("/event", async (req, res) => {
 
   /* ======================= ASSET POST ======================= */
   if (rawPort == Asset && method === "POST") {
-    await registerAssetOnChain(
-    {nodeId: NODE_ID_PROVIDER,assetId,assetTitle, contract });
+     await publish("edc.asset", {
+        type: "ASSET_CREATED",
+        assetId,
+        assetTitle,
+        nodeId: NODE_ID_PROVIDER,
+        payload: cleanedData
+      });
   }
 
   /* ======================= ASSET PUT ======================= */
   else if (rawPort == Asset && method === "PUT") {
-    await modifyAssetOnChainFromWebhook(cleanedData, NODE_ID_PROVIDER,contract);
+    await publish("edc.asset", {
+        type: "ASSET_UPDATED",
+        assetId,
+        nodeId: NODE_ID_PROVIDER,
+        payload: cleanedData
+      });
   }
 
   /* ======================= POLICY POST ======================= */
@@ -177,12 +194,23 @@ app.post("/event", async (req, res) => {
     if (time1 && time2) {
       policyContent = `${time1}&${time2}`;
     }
-    await registerPolicyOnChainFromWebhook(NODE_ID_PROVIDER,newPolicyId,policyContent,contract);
+   await publish("edc.policy", {
+    type: "POLICY_CREATED",
+    nodeId: NODE_ID_PROVIDER,
+    policyId: policyid.toString(),
+    policyContent,
+    payload: cleanedData
+  });
   }
   /* ======================= POLICY PUT ======================= */
   else if(method === "PUT" && rawPort.startsWith(Policy)){
     console.log("✏️ Modifica policy (producer)");
-    await modifyPolicyOnchainFromWebhook(cleanedData,NODE_ID_PROVIDER,contract);
+    await publish("edc.policy", {
+    type: "POLICY_UPDATED",
+    nodeId: NODE_ID_PROVIDER,
+    payload: cleanedData
+  });
+  console.log("✅ Evento Policy UPDATED pubblicato su Kafka");
   }
   /* ======================= DATAOFFER POST ======================= */
   else if(rawPort==DataOffer&& method=='POST')
