@@ -209,8 +209,242 @@ async function modifyPolicyOnchainFromWebhook(cleanedData, nodeId,contract) {
   }
 }
 
+async function modifyDataofferOnChain(contract, nodeId, cleanedData, rawPort) {
+  try {
+    /* ======================= ID ======================= */
+    const dataofferId =
+      cleanedData.request?.body?.['@id'] ||
+      rawPort.split("/").pop();
+
+    if (!dataofferId) {
+      throw new Error("DataOffer ID non trovato");
+    }
+
+    const newDataofferId = dataofferId.toString();
+
+    /* ======================= CONTENUTO ======================= */
+    const [newAccessPolicyId, newContractPolicyId, newAssetSelector] =
+      extractContractDefinitionInfo(cleanedData);
+
+    console.log("📄 Nuovi valori DataOffer:");
+    console.log("accessPolicyId:", newAccessPolicyId);
+    console.log("contractPolicyId:", newContractPolicyId);
+    console.log("assetSelector:", newAssetSelector);
+
+    /* ======================= CHECK ESISTENZA ======================= */
+    const existing = await contract.getDataoffer(nodeId, newDataofferId);
+    console.log("📄 DataOffer trovato:", existing);
+
+    /* ======================= GAS ======================= */
+    const estimatedGas = await contract.modifyDataoffer.estimateGas(
+      nodeId,
+      newDataofferId,
+      newAccessPolicyId,
+      newContractPolicyId,
+      newAssetSelector
+    );
+    console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+    /* ======================= TRANSAZIONE ======================= */
+    const tx = await contract.modifyDataoffer(
+      nodeId,
+      newDataofferId,
+      newAccessPolicyId,
+      newContractPolicyId,
+      newAssetSelector,
+      { gasLimit: estimatedGas + 50_000n } // buffer gas
+    );
+
+    console.log(`⏳ Transazione inviata: ${tx.hash}`);
+    const receipt = await tx.wait();
+    console.log(`✅ DataOffer "${newDataofferId}" modificato nel blocco ${receipt.blockNumber}`);
+
+    /* ======================= VERIFY ======================= */
+    const updated = await contract.getDataoffer(nodeId, newDataofferId);
+    console.log("📄 DataOffer aggiornato:", updated);
+
+    return updated; // ritorna il nuovo stato del DataOffer
+
+  } catch (err) {
+    console.error("❌ Errore durante la modifica DataOffer:", err);
+    throw err; // rilancia l'errore per gestione esterna
+  }
+}
+
+async function registerDataofferOnChain(contract, nodeId, cleanedData, accessPolicyId, contractPolicyId, assetSelector) {
+  try {
+    /* ======================= ID ======================= */
+    const dataofferid = cleanedData.response?.['@id'];
+    if (!dataofferid) {
+      throw new Error("DataOffer ID non trovato");
+    }
+
+    const newDataofferid = dataofferid.toString();
+    console.log(`📤 Registrazione DataOffer ID: ${newDataofferid}`);
+
+    /* ======================= GAS ======================= */
+    const estimatedGas = await contract.registerDataoffer.estimateGas(
+      nodeId,
+      newDataofferid,
+      accessPolicyId,
+      contractPolicyId,
+      assetSelector
+    );
+    console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+    /* ======================= TRANSAZIONE ======================= */
+    const tx = await contract.registerDataoffer(
+      nodeId,
+      newDataofferid,
+      accessPolicyId,
+      contractPolicyId,
+      assetSelector,
+      { gasLimit: estimatedGas + 50_000n } // buffer gas sicuro
+    );
+
+    console.log(`⏳ Transazione inviata: ${tx.hash}`);
+    const receipt = await tx.wait();
+    console.log(`✅ DataOffer "${newDataofferid}" registrato nel blocco ${receipt.blockNumber}`);
+
+    /* ======================= VERIFY ======================= */
+    const data = await contract.getDataoffer(nodeId, newDataofferid);
+    console.log("📄 DataOffer registrato:", data);
+
+    return data; // ritorna lo stato registrato del DataOffer
+
+  } catch (err) {
+    console.error("❌ Errore durante la registrazione DataOffer:", err);
+    throw err; // rilancia l'errore per gestione esterna
+  }
+}
+
+async function waitForAgreementState(contractNegotiationId, {
+  baseUrl,
+  apiKey,
+  targetState = "AGREED",
+  intervalMs = 2000,
+  maxRetries = 15
+}) {
+  const url = `${baseUrl}/api/management/wrapper/ui/pages/catalog-page/contract-negotiations/${contractNegotiationId}`;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    console.log(`🔁 Polling negotiation (${attempt}/${maxRetries})`);
+
+    const resp = await axios.get(url, {
+      headers: { "X-Api-Key": apiKey }
+    });
+
+    const state = resp.data?.state?.simplifiedState;
+
+    console.log("📌 Current simplifiedState:", state);
+
+    if (state === targetState) {
+      console.log("✅ Target state reached:", targetState);
+      return resp.data;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, intervalMs));
+  }
+
+  throw new Error(`Timeout: stato ${targetState} non raggiunto`);
+}
+
+async function registerContrattoOnchain(contract, nodeId, cleanedData)
+{
+try {
+    /* ======================= ESTRAZIONE ID ======================= */
+
+    const contractNegotiationId =
+      cleanedData.response?.contractNegotiationId;
+
+    const counterPartyId =
+      cleanedData.request?.body?.counterPartyId ||
+      cleanedData.request?.body?.counterPartyParticipantId ||
+      "unknown";
+
+    if (!contractNegotiationId) {
+      throw new Error("contractNegotiationId non trovato");
+    }
+
+    console.log("📄 contractNegotiationId:", contractNegotiationId);
+
+    /* ======================= COSTRUZIONE URL ======================= */
+
+    const negotiation = await waitForAgreementState(contractNegotiationId, {
+     baseUrl: "http://localhost:11000",
+     apiKey: "SomeOtherApiKey",
+     targetState: "AGREED",
+     intervalMs: 2000,
+     maxRetries: 20
+    });
+
+    console.log("🎉 Negotiation AGREED:");
+    console.dir(negotiation, { depth: null, colors: true });
+
+    const contractAgreementId = negotiation?.contractAgreementId;
+
+    if (!contractAgreementId) {
+      throw new Error("contractAgreementId non presente nonostante stato AGREED");
+    }
+
+    console.log("📄 contractAgreementId:", contractAgreementId);
+
+    const state = negotiation.state;
+
+    // Campi di stato separati (più comodo)
+    const stateName = negotiation.state.name;                 // "FINALIZED"
+    const stateCode = negotiation.state.code;                 // 1200
+    const simplifiedState = negotiation.state.simplifiedState; // "AGREED"
+    const createdAt = Date.parse(negotiation.createdAt);
+    console.log(createdAt);
+
+    const estimatedGas = await contract.registerContratto.estimateGas(
+      NODE_ID_PROVIDER,
+      contractAgreementId,
+      counterPartyId,
+      createdAt,
+      stateName
+    );
+
+    console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+    const tx = await contract.registerContratto(
+      NODE_ID_PROVIDER,
+      contractAgreementId,
+      counterPartyId,
+      createdAt,
+      stateName,
+      { gasLimit: estimatedGas + 50_000n }
+    );
+
+    console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+    const receipt = await tx.wait();
+    console.log(`✅ Contratto registrato on-chain nel blocco ${receipt.blockNumber}`);
+
+    const stored = await contract.getContratto(
+      NODE_ID_PROVIDER,
+      contractAgreementId
+    );
+
+    console.log("📄 Contratto on-chain:", stored);
+
+
+
+  } catch (err) {
+    console.error("❌ Errore gestione Contratto POST:", err);
+
+    return res.status(500).json({
+      error: err.message
+    });
+  }
+
+}
 
 module.exports = { registerAssetOnChain,
 modifyAssetOnChainFromWebhook ,
 registerPolicyOnChainFromWebhook,
-modifyPolicyOnchainFromWebhook};
+modifyPolicyOnchainFromWebhook,
+registerDataofferOnChain,
+modifyDataofferOnChain,
+registerContrattoOnchain};
