@@ -1,6 +1,8 @@
 const { extractPolicyInfo, extractContractDefinitionInfo } = require("../utils/extractors.js");
 const axios = require("axios");
 
+
+
 async function registerAssetOnChain({ nodeId, assetId, assetTitle,contract }) {
   try {
     const assetIdStr = assetId.toString();

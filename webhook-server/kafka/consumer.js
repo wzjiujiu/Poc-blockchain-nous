@@ -1,4 +1,8 @@
 const { Kafka } = require("kafkajs");
+const { ethers } = require("ethers"); // ethers.js v6
+const crypto = require("crypto");
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 const {registerAssetOnChain,
 modifyAssetOnChainFromWebhook,
@@ -8,7 +12,7 @@ registerDataofferOnChain,
 modifyDataofferOnChain,
 registerContrattoOnchain,
 terminateContrattoOnchain
-} =require("../config/services.js");
+} =require("../config/serviceskafka.js");
 
 const kafka = new Kafka({
   clientId: "onchain-worker",
@@ -17,14 +21,31 @@ const kafka = new Kafka({
 
 const consumer = kafka.consumer({ groupId: "onchain-group" });
 
+const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
+
+// Usa il nodo Besu locale (porta 8545)
+const provider = new ethers.JsonRpcProvider("http://localhost:8545");
+const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
+
+const CONTRACT_ADDRESS = "0x0bcc0aa6bb316af0e04e90f1c869362805caa873";
+
+const CONTRACT_ABI = require("../abi/ExampleContract");
+
+const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, wallet);
+
+
 async function startConsumer() {
   await consumer.connect();
 
   // iscrizione ai topic
-  await consumer.subscribe({ topic: "edc.asset", fromBeginning: false });
-  await consumer.subscribe({ topic: "edc.policy" });
-  await consumer.subscribe({ topic: "edc.dataoffer" });
-  await consumer.subscribe({ topic: "edc.contract" });
+  await consumer.subscribe({ topic: "edc.addasset", fromBeginning: false });
+  await consumer.subscribe({ topic: "edc.modifyasset", fromBeginning: false });
+  await consumer.subscribe({ topic: "edc.addpolicy" });
+  await consumer.subscribe({ topic: "edc.modifypolicy" });
+  await consumer.subscribe({ topic: "edc.adddataoffer" });
+  await consumer.subscribe({ topic: "edc.modifydataoffer" });
+  await consumer.subscribe({ topic: "edc.addcontract" });
+  await consumer.subscribe({ topic: "edc.modifycontract" });
   await consumer.subscribe({ topic: "edc.transfer" });
 
   await consumer.run({
@@ -36,44 +57,31 @@ async function startConsumer() {
         switch (data.type) {
 
           case "ASSET_CREATED":
-            await contract.registerAssetOnChain({
+           console.log(data);
+            await registerAssetOnChain({
               nodeId: data.nodeId,
               assetId: data.assetId,
-              assetTitle: data.assetTitle
+              assetTitle: data.assetTitle,
+              contract
             });
             break;
 
           case "ASSET_UPDATED":
-            await contract.modifyAssetOnChainFromWebhook(
+            await modifyAssetOnChainFromWebhook(
               data.payload,
               data.nodeId
             );
             break;
 
           case "POLICY_CREATED":
-            await contract.registerPolicyOnChainFromWebhook(
+            await registerPolicyOnChainFromWebhook(
               data.nodeId,
               data.payload.id,
               data.payload.content
             );
             break;
 
-          case "TRANSFER_CREATED":
-            await contract.requestDataTransfer(
-              data.transferId,
-              data.nodeId,
-              data.contractId,
-              data.terminationStatus,
-              data.assetId
-            );
-            break;
 
-          case "TRANSFER_TERMINATED":
-            await contract.completeDataTransfer(
-              data.transferId,
-              data.reason
-            );
-            break;
 
           // ... aggiungere DataOffer, Contratto ecc.
         }

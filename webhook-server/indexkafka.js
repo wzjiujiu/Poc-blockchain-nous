@@ -7,7 +7,7 @@ const { ethers } = require("ethers"); // ethers.js v6
 require("dotenv").config();
 const axios = require("axios");
 
-const express = require("express");
+
 const { initKafka, publish } = require("./kafka/kafka.js"); // <-- qui importi Kafka
 
 
@@ -164,7 +164,7 @@ app.post("/event", async (req, res) => {
 
   /* ======================= ASSET POST ======================= */
   if (rawPort == Asset && method === "POST") {
-     await publish("edc.asset", {
+     await publish("edc.addasset", {
         type: "ASSET_CREATED",
         assetId,
         assetTitle,
