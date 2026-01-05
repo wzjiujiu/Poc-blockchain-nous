@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+  # Blockchain
+  evm_test_node:
+    container_name: besu_local
+    hostname: template_test_node
+    image: hyperledger/besu:latest
+    user: "root:root"
+    restart: unless-stopped
+
+    ports:
+      - "${RPC_HTTP_PORT:-8545}:8545"
+      - "${RPC_WS_PORT:-8546}:8546"
+      - "30303:30303"
+      - "30303:30303/udp"
+
+    volumes:
+      - ./data:/opt/besu/database
+      - ./networkFiles/config:/etc/besu/config
+      - ./networkFiles/keys/bootnode:/etc/besu/keys
+
+    environment:
+      - BESU_USER_NAME=root
+
+    command: >
+      --data-path=/opt/besu/database
+      --genesis-file=/etc/besu/config/genesis.json
+      --node-private-key-file=/etc/besu/keys/key
+      --rpc-http-enabled
+      --rpc-http-host=0.0.0.0
+      --rpc-http-port=8545
+      --rpc-http-cors-origins="*"
+      --rpc-http-api=ADMIN,CLIQUE,DEBUG,ETH,NET,TRACE,TXPOOL,WEB3
+      --rpc-http-authentication-enabled=false
+      --rpc-http-max-active-connections=1000
+      --rpc-ws-enabled
+      --rpc-ws-host=0.0.0.0
+      --rpc-ws-port=8546
+      --rpc-ws-api=ADMIN,CLIQUE,DEBUG,ETH,NET,TRACE,TXPOOL,WEB3
+      --min-gas-price=0
+      --miner-enabled
+      --miner-coinbase=0xb6c94f0eB270839e07b693D17E7a757DD7223618
+      --host-allowlist="*"
+      --p2p-host=0.0.0.0
+      --nat-method=NONE
+      --logging=${LOG_LEVEL:-INFO}

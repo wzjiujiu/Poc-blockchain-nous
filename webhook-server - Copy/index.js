@@ -8,9 +8,6 @@ require("dotenv").config();
 const axios = require("axios");
 
 
-const { initKafka, publish } = require("./kafka/kafka.js"); // <-- qui importi Kafka
-
-
 const app = express();
 const PORT = 3000;
 
@@ -61,10 +58,6 @@ modifyDataofferOnChain,
 registerContrattoOnchain,
 terminateContrattoOnchain
 } =require("./config/services.js");
-
-// --- Kafka setup ---
-
-initKafka().catch(err => console.error("❌ Errore Kafka:", err));
 
 
 // --- Ethereum setup ---
@@ -164,25 +157,13 @@ app.post("/event", async (req, res) => {
 
   /* ======================= ASSET POST ======================= */
   if (rawPort == Asset && method === "POST") {
-     await publish("edc.addasset", {
-        type: "ASSET_CREATED",
-        assetId,
-        assetTitle,
-        nodeId: NODE_ID_PROVIDER,
-        payload: cleanedData
-      });
-      console.log("✅ Evento ASSET CREATED pubblicato su Kafka");
+    await registerAssetOnChain(
+    {nodeId: NODE_ID_PROVIDER,assetId,assetTitle, contract });
   }
 
   /* ======================= ASSET PUT ======================= */
   else if (rawPort == Asset && method === "PUT") {
-    await publish("edc.asset", {
-        type: "ASSET_UPDATED",
-        assetId,
-        nodeId: NODE_ID_PROVIDER,
-        payload: cleanedData
-      });
-      console.log("✅ Evento ASSET UPDATED pubblicato su Kafka");
+    await modifyAssetOnChainFromWebhook(cleanedData, NODE_ID_PROVIDER,contract);
   }
 
   /* ======================= POLICY POST ======================= */
@@ -196,24 +177,12 @@ app.post("/event", async (req, res) => {
     if (time1 && time2) {
       policyContent = `${time1}&${time2}`;
     }
-   await publish("edc.policy", {
-    type: "POLICY_CREATED",
-    nodeId: NODE_ID_PROVIDER,
-    policyId: policyid.toString(),
-    policyContent,
-    payload: cleanedData
-  });
-  console.log("✅ Evento POLICY CREATED pubblicato su Kafka");
+    await registerPolicyOnChainFromWebhook(NODE_ID_PROVIDER,newPolicyId,policyContent,contract);
   }
   /* ======================= POLICY PUT ======================= */
   else if(method === "PUT" && rawPort.startsWith(Policy)){
     console.log("✏️ Modifica policy (producer)");
-    await publish("edc.policy", {
-    type: "POLICY_UPDATED",
-    nodeId: NODE_ID_PROVIDER,
-    payload: cleanedData
-  });
-  console.log("✅ Evento Policy UPDATED pubblicato su Kafka");
+    await modifyPolicyOnchainFromWebhook(cleanedData,NODE_ID_PROVIDER,contract);
   }
   /* ======================= DATAOFFER POST ======================= */
   else if(rawPort==DataOffer&& method=='POST')
@@ -222,56 +191,20 @@ app.post("/event", async (req, res) => {
    console.log(accessPolicyId)
    console.log(contractPolicyId)
    console.log(assetSelector)
-   await publish("edc.dataoffer", {
-    type: "DATAOFFER_CREATED",
-    nodeId: NODE_ID_PROVIDER,
-    payload: cleanedData,
-    accessPolicyId,
-    contractPolicyId,
-    assetSelector
-  });
-
-  console.log("✅ Evento DataOffer CREATED pubblicato su Kafka");
+   await registerDataofferOnChain(contract,NODE_ID_PROVIDER,cleanedData,accessPolicyId,contractPolicyId,assetSelector);
   }
   else if(rawPort==DataOffer&& method=='PUT')
   {
-     console.log("✏️ Modifica DataOffer ricevuta (PRODUCER)");
-
-  await publish("edc.dataoffer", {
-    type: "DATAOFFER_UPDATED",
-    nodeId: NODE_ID_PROVIDER,
-    payload: cleanedData,
-    rawPort
-  });
-
-  console.log("✅ Evento DataOffer UPDATED pubblicato su Kafka");
+    await modifyDataofferOnChain(contract,NODE_ID_PROVIDER,cleanedData,rawPort);
   }
   else if (rawPort == Contratto && method === "POST") {
 
-    console.log("📄 Contratto creato (PRODUCER)");
-
-  await publish("edc.contract", {
-    type: "CONTRACT_CREATED",
-    nodeId: NODE_ID_PROVIDER,
-    payload: cleanedData,
-    rawPort
-  });
-
-  console.log("✅ Evento CONTRACT_CREATED pubblicato su Kafka");
+    await registerContrattoOnchain(contract,NODE_ID_PROVIDER,cleanedData);
   }
 else if (method === "POST" && rawPort.startsWith(TERMINATE_CONTRATTO_PREFIX) && rawPort.endsWith("/terminate"))
 {
 
-  console.log("🛑 TERMINATE Contratto ricevuto (PRODUCER)");
-
-  await publish("edc.contract", {
-    type: "CONTRACT_TERMINATED",
-    nodeId: NODE_ID_PROVIDER,
-    rawPort,       // per estrarre contractAgreementId nel consumer
-    payload: cleanedData
-  });
-
-  console.log("✅ Evento CONTRACT_TERMINATED pubblicato su Kafka");
+  terminateContrattoOnchain(contract,NODE_ID_PROVIDER,rawPort)
 
 }
 else if (rawPort === Transfer && method === "POST") {
@@ -443,23 +376,13 @@ else if (rawPort === Transfer && method === "POST") {
 
   /* ======================= ASSET POST ======================= */
   if (rawPort == Asset && method === "POST") {
-     await publish("edc.addasset", {
-        type: "ASSET_CREATED",
-        assetId,
-        assetTitle,
-        nodeId: NODE_ID_CONSUMER,
-        payload: cleanedData
-      });
+    await registerAssetOnChain(
+    {nodeId: NODE_ID_CONSUMER,assetId,assetTitle, contract });
   }
 
   /* ======================= ASSET PUT ======================= */
   else if (rawPort == Asset && method === "PUT") {
-     await publish("edc.asset", {
-        type: "ASSET_UPDATED",
-        assetId,
-        nodeId: NODE_ID_CONSUMER,
-        payload: cleanedData
-      });
+    await modifyAssetOnChainFromWebhook(cleanedData,NODE_ID_CONSUMER,contract);
   }
 
   /* ======================= POLICY POST ======================= */
@@ -474,23 +397,12 @@ else if (rawPort === Transfer && method === "POST") {
       policyContent = `${time1}&${time2}`;
     }
 
-    await publish("edc.policy", {
-    type: "POLICY_CREATED",
-    nodeId: NODE_ID_CONSUMER,
-    policyId: policyid.toString(),
-    policyContent,
-    payload: cleanedData
-  });
+   await registerPolicyOnChainFromWebhook(NODE_ID_CONSUMER,newPolicyId,policyContent,contract);
   }
   /* ======================= POLICY PUT ======================= */
   else if(method === "PUT" && rawPort.startsWith(Policy)){
     console.log("✏️ Modifica policy (CONSUMER)");
-    await publish("edc.policy", {
-    type: "POLICY_UPDATED",
-    nodeId: NODE_ID_CONSUMER,
-    payload: cleanedData
-  });
-  console.log("✅ Evento Policy UPDATED pubblicato su Kafka");
+    await modifyPolicyOnchainFromWebhook(cleanedData,NODE_ID_CONSUMER,contract);
   }
   /* ======================= DATAOFFER POST ======================= */
   else if(rawPort==DataOffer&& method=='POST')
@@ -499,49 +411,20 @@ else if (rawPort === Transfer && method === "POST") {
    console.log(accessPolicyId)
    console.log(contractPolicyId)
    console.log(assetSelector)
-   await publish("edc.dataoffer", {
-    type: "DATAOFFER_CREATED",
-    nodeId: NODE_ID_CONSUMER,
-    payload: cleanedData,
-    accessPolicyId,
-    contractPolicyId,
-    assetSelector
-  });
-
-  console.log("✅ Evento DataOffer CREATED pubblicato su Kafka");
+   await registerDataofferOnChain(contract,NODE_ID_CONSUMER,cleanedData,accessPolicyId,contractPolicyId,assetSelector);
   }
   else if(rawPort==DataOffer&& method=='PUT')
   {
-     await publish("edc.dataoffer", {
-    type: "DATAOFFER_UPDATED",
-    nodeId: NODE_ID_CONSUMER,
-    payload: cleanedData,
-    rawPort
-  });
-
-  console.log("✅ Evento DataOffer UPDATED pubblicato su Kafka");
+      await modifyDataofferOnChain(contract,NODE_ID_CONSUMER,cleanedData,rawPort);
   }
   else if (rawPort == Contratto && method === "POST") {
 
-  await publish("edc.contract", {
-    type: "CONTRACT_CREATED",
-    nodeId: NODE_ID_CONSUMER,
-    payload: cleanedData,
-    rawPort
-  });
-
-  console.log("✅ Evento CONTRACT_CREATED pubblicato su Kafka");
+  await registerContrattoOnchain(contract,NODE_ID_CONSUMER,cleanedData);
 }
 else if (method === "POST" && rawPort.startsWith(TERMINATE_CONTRATTO_PREFIX) && rawPort.endsWith("/terminate"))
 {
-  await publish("edc.contract", {
-    type: "CONTRACT_TERMINATED",
-    nodeId: NODE_ID_CONSUMER,
-    rawPort,       // per estrarre contractAgreementId nel consumer
-    payload: cleanedData
-  });
+  terminateContrattoOnchain(contract,NODE_ID_CONSUMER,rawPort)
 
-  console.log("✅ Evento CONTRACT_TERMINATED pubblicato su Kafka");
 }
 else if (rawPort === Transfer && method === "POST") {
     try {

@@ -1,0 +1,9 @@
+{
+    "keys": [
+        {
+            "crv": "Ed25519",
+            "x": "yBb8Y1d_p8oM71o53VO879jd-2a6LmEK-fROhXtp408",
+            "kty": "OKP"
+        }
+    ]
+}
