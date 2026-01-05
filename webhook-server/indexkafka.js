@@ -74,11 +74,6 @@ const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const provider = new ethers.JsonRpcProvider("http://localhost:8545");
 const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 
-const CONTRACT_ADDRESS = "0x0bcc0aa6bb316af0e04e90f1c869362805caa873";
-
-const CONTRACT_ABI = require("./abi/ExampleContract");
-
-
 const NODE_ID_PROVIDER = ethers.keccak256(
   ethers.toUtf8Bytes("localhost:11000")
 );
@@ -87,8 +82,6 @@ const NODE_ID_CONSUMER = ethers.keccak256(
   ethers.toUtf8Bytes("localhost:22000")
 );
 
-
-const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, wallet);
 
 // --- Funzione per leggere e loggare il balance ---
 async function printBalance() {

@@ -47,7 +47,7 @@ async function registerAssetOnChain({ nodeId, assetId, assetTitle,contract }) {
   }
 }
 
-async function modifyAssetOnChainFromWebhook(cleanedData, nodeId,contract) {
+async function modifyAssetOnChainFromWebhook(cleanedData, nodeId, contract) {
   try {
     const assetId = cleanedData?.request?.body?.properties?.id?.toString();
     const newTitle = cleanedData?.request?.body?.properties?.title;
@@ -93,10 +93,9 @@ async function modifyAssetOnChainFromWebhook(cleanedData, nodeId,contract) {
       block: receipt.blockNumber,
       updated
     };
-
   } catch (err) {
     console.error("❌ Errore in modifyAssetOnChainFromWebhook:", err);
-    return { success: false, error: err };
+    return { success: false, error: err.message || err };
   }
 }
 

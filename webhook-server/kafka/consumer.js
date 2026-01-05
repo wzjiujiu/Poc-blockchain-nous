@@ -69,7 +69,8 @@ async function startConsumer() {
           case "ASSET_UPDATED":
             await modifyAssetOnChainFromWebhook(
               data.payload,
-              data.nodeId
+              data.nodeId,
+              contract
             );
             break;
 
@@ -77,13 +78,52 @@ async function startConsumer() {
             await registerPolicyOnChainFromWebhook(
               data.nodeId,
               data.payload.id,
-              data.payload.content
+              data.policyContent,
+              contract
+            );
+            break;
+          case "POLICY_UPDATED":
+            await modifyPolicyOnchainFromWebhook(
+              data.payload,
+              data.nodeId,
+              contract
+            );
+            break;
+          case "DATAOFFER_CREATED":
+            await registerDataofferOnChain(
+              contract,
+              data.nodeId,
+              data.payload,
+              data.accessPolicyId,
+              data.contractPolicyId,
+              data.assetSelector
+            );
+            break;
+          case "DATAOFFER_UPDATED":
+            await modifyDataofferOnChain(
+              contract,
+              data.nodeId,
+              data.payload,
+              data.rawPort
             );
             break;
 
+          case "CONTRACT_CREATED":
+            await registerContrattoOnchain(
+              contract,
+              data.nodeId,
+              data.payload
+            );
+            break;
 
+          case "CONTRACT_TERMINATED":
+            await terminateContrattoOnchain(
+              contract,
+              data.nodeId,
+              data.rawPort
+            );
+            break;
 
-          // ... aggiungere DataOffer, Contratto ecc.
         }
       } catch (err) {
         console.error("❌ Errore esecuzione smart contract:", err);
