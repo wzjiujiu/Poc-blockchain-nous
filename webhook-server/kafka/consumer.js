@@ -77,7 +77,7 @@ async function startConsumer() {
           case "POLICY_CREATED":
             await registerPolicyOnChainFromWebhook(
               data.nodeId,
-              data.payload.id,
+              data.policyId,
               data.policyContent,
               contract
             );

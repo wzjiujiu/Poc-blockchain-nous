@@ -169,7 +169,7 @@ app.post("/event", async (req, res) => {
 
   /* ======================= ASSET PUT ======================= */
   else if (rawPort == Asset && method === "PUT") {
-    await publish("edc.asset", {
+    await publish("edc.modifyasset", {
         type: "ASSET_UPDATED",
         assetId,
         nodeId: NODE_ID_PROVIDER,
@@ -189,7 +189,7 @@ app.post("/event", async (req, res) => {
     if (time1 && time2) {
       policyContent = `${time1}&${time2}`;
     }
-   await publish("edc.policy", {
+   await publish("edc.addpolicy", {
     type: "POLICY_CREATED",
     nodeId: NODE_ID_PROVIDER,
     policyId: policyid.toString(),
@@ -201,7 +201,7 @@ app.post("/event", async (req, res) => {
   /* ======================= POLICY PUT ======================= */
   else if(method === "PUT" && rawPort.startsWith(Policy)){
     console.log("✏️ Modifica policy (producer)");
-    await publish("edc.policy", {
+    await publish("edc.modifypolicy", {
     type: "POLICY_UPDATED",
     nodeId: NODE_ID_PROVIDER,
     payload: cleanedData
@@ -215,7 +215,7 @@ app.post("/event", async (req, res) => {
    console.log(accessPolicyId)
    console.log(contractPolicyId)
    console.log(assetSelector)
-   await publish("edc.dataoffer", {
+   await publish("edc.adddataoffer", {
     type: "DATAOFFER_CREATED",
     nodeId: NODE_ID_PROVIDER,
     payload: cleanedData,
@@ -230,7 +230,7 @@ app.post("/event", async (req, res) => {
   {
      console.log("✏️ Modifica DataOffer ricevuta (PRODUCER)");
 
-  await publish("edc.dataoffer", {
+  await publish("edc.modifydataoffer", {
     type: "DATAOFFER_UPDATED",
     nodeId: NODE_ID_PROVIDER,
     payload: cleanedData,
@@ -243,7 +243,7 @@ app.post("/event", async (req, res) => {
 
     console.log("📄 Contratto creato (PRODUCER)");
 
-  await publish("edc.contract", {
+  await publish("edc.addcontract", {
     type: "CONTRACT_CREATED",
     nodeId: NODE_ID_PROVIDER,
     payload: cleanedData,
@@ -257,7 +257,7 @@ else if (method === "POST" && rawPort.startsWith(TERMINATE_CONTRATTO_PREFIX) && 
 
   console.log("🛑 TERMINATE Contratto ricevuto (PRODUCER)");
 
-  await publish("edc.contract", {
+  await publish("edc.modifycontract", {
     type: "CONTRACT_TERMINATED",
     nodeId: NODE_ID_PROVIDER,
     rawPort,       // per estrarre contractAgreementId nel consumer
@@ -447,7 +447,7 @@ else if (rawPort === Transfer && method === "POST") {
 
   /* ======================= ASSET PUT ======================= */
   else if (rawPort == Asset && method === "PUT") {
-     await publish("edc.asset", {
+     await publish("edc.modifyasset", {
         type: "ASSET_UPDATED",
         assetId,
         nodeId: NODE_ID_CONSUMER,
@@ -467,7 +467,7 @@ else if (rawPort === Transfer && method === "POST") {
       policyContent = `${time1}&${time2}`;
     }
 
-    await publish("edc.policy", {
+    await publish("edc.addpolicy", {
     type: "POLICY_CREATED",
     nodeId: NODE_ID_CONSUMER,
     policyId: policyid.toString(),
@@ -478,7 +478,7 @@ else if (rawPort === Transfer && method === "POST") {
   /* ======================= POLICY PUT ======================= */
   else if(method === "PUT" && rawPort.startsWith(Policy)){
     console.log("✏️ Modifica policy (CONSUMER)");
-    await publish("edc.policy", {
+    await publish("edc.modifypolicy", {
     type: "POLICY_UPDATED",
     nodeId: NODE_ID_CONSUMER,
     payload: cleanedData
@@ -492,7 +492,7 @@ else if (rawPort === Transfer && method === "POST") {
    console.log(accessPolicyId)
    console.log(contractPolicyId)
    console.log(assetSelector)
-   await publish("edc.dataoffer", {
+   await publish("edc.adddataoffer", {
     type: "DATAOFFER_CREATED",
     nodeId: NODE_ID_CONSUMER,
     payload: cleanedData,
@@ -505,7 +505,7 @@ else if (rawPort === Transfer && method === "POST") {
   }
   else if(rawPort==DataOffer&& method=='PUT')
   {
-     await publish("edc.dataoffer", {
+     await publish("edc.modifydataoffer", {
     type: "DATAOFFER_UPDATED",
     nodeId: NODE_ID_CONSUMER,
     payload: cleanedData,
@@ -516,7 +516,7 @@ else if (rawPort === Transfer && method === "POST") {
   }
   else if (rawPort == Contratto && method === "POST") {
 
-  await publish("edc.contract", {
+  await publish("edc.addcontract", {
     type: "CONTRACT_CREATED",
     nodeId: NODE_ID_CONSUMER,
     payload: cleanedData,
@@ -527,7 +527,7 @@ else if (rawPort === Transfer && method === "POST") {
 }
 else if (method === "POST" && rawPort.startsWith(TERMINATE_CONTRATTO_PREFIX) && rawPort.endsWith("/terminate"))
 {
-  await publish("edc.contract", {
+  await publish("edc.modifycontract", {
     type: "CONTRACT_TERMINATED",
     nodeId: NODE_ID_CONSUMER,
     rawPort,       // per estrarre contractAgreementId nel consumer
