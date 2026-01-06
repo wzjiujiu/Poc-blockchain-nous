@@ -5,29 +5,39 @@ import SearchBar from "../components/SearchBar";
 
 export default function Home({ contract }) {
   const [blocks, setBlocks] = useState([]);
-  const [txBlocks, setTxBlocks] = useState([]);
+  const [transactions, setTransactions] = useState([]); // <-- cambiato
   const [searchResults, setSearchResults] = useState([]);
 
+  // Carica ultimi 5 blocchi dalla blockchain
   useEffect(() => {
     async function loadBlocks() {
       const latest = await provider.getBlockNumber();
       let list = [];
-      let txList = [];
 
-      let i = 0;
-      while (list.length < 5 || txList.length < 5) {
+      for (let i = 0; i < 5; i++) {
         const b = await provider.getBlock(latest - i);
-        if (list.length < 5) list.push(b);
-        if (b.transactions.length > 0 && txList.length < 5) txList.push(b);
-        i++;
-        if (i > 50) break; // sicurezza in caso di blocchi senza tx
+        list.push(b);
       }
 
       setBlocks(list);
-      setTxBlocks(txList);
     }
 
     loadBlocks();
+  }, []);
+
+  // 🔥 Carica ultime transazioni dal tuo backend PostgreSQL
+  useEffect(() => {
+    async function loadTransactions() {
+      try {
+        const res = await fetch("http://localhost:3001/tx/latest");
+        const data = await res.json();
+        setTransactions(data);
+      } catch (err) {
+        console.error("Errore caricamento transazioni:", err);
+      }
+    }
+
+    loadTransactions();
   }, []);
 
   const handleSearch = async (query) => {
@@ -50,13 +60,13 @@ export default function Home({ contract }) {
   return (
     <div className="container">
       <h2 className="page-title">Search</h2>
-      <SearchBar onSearch={handleSearch} className="search-bar" />
+      <SearchBar onSearch={handleSearch} />
 
       {searchResults.length > 0 && (
         <div>
           <h2 className="page-title">Risultati Ricerca</h2>
           {searchResults.map((e, idx) => (
-            <Card key={idx} className="card">
+            <Card key={idx}>
               <p><strong>Tx Hash:</strong> {e.transactionHash}</p>
               <p><strong>Block:</strong> {e.blockNumber}</p>
               <p><strong>Event:</strong> {e.event}</p>
@@ -66,11 +76,11 @@ export default function Home({ contract }) {
       )}
 
       <div className="home-grid">
-        {/* Colonna sinistra: Ultimi blocchi */}
+        {/* Colonna sinistra */}
         <div>
           <h2 className="page-title">Ultimi Blocchi</h2>
           {blocks.map((b) => (
-            <Card key={b.number} className="card">
+            <Card key={b.number}>
               <p>🧱 <strong>Block:</strong> {b.number}</p>
               <p><strong>Tx:</strong> {b.transactions.length}</p>
               <p><strong>Gas Used:</strong> {b.gasUsed?.toString()}</p>
@@ -78,19 +88,14 @@ export default function Home({ contract }) {
           ))}
         </div>
 
-        {/* Colonna destra: Ultime transazioni */}
+        {/* Colonna destra */}
         <div>
-          <h2 className="page-title">Ultime Transazioni</h2>
-          {txBlocks.map((b) => (
-            <Card key={b.number} className="card">
-              <p>🧱 <strong>Block:</strong> {b.number}</p>
-              <p><strong>Tx Count:</strong> {b.transactions.length}</p>
-              <p><strong>Tx Hashes:</strong></p>
-              <ul>
-                {b.transactions.map((tx) => (
-                  <li key={tx}>{tx}</li>
-                ))}
-              </ul>
+          <h2 className="page-title">Ultime Transazioni (DB)</h2>
+          {transactions.map((tx) => (
+            <Card key={tx.tx_hash}>
+              <p>🔗 <strong>Tx Hash:</strong> {tx.tx_hash}</p>
+              <p>🧱 <strong>Block:</strong> {tx.block_number}</p>
+              <p>⏱ <strong>Timestamp:</strong> {tx.timestamp}</p>
             </Card>
           ))}
         </div>
