@@ -2,11 +2,15 @@ import { useEffect, useState } from "react";
 import { provider } from "../lib/provider";
 import Card from "../components/Card";
 import SearchBar from "../components/SearchBar";
+import { ethers } from "ethers";
+import { CONTRACT_ADDRESS, ABI } from "../lib/constants"; // importa il tuo ABI
+import { useNavigate } from "react-router-dom";
 
 export default function Home({ contract }) {
   const [blocks, setBlocks] = useState([]);
   const [transactions, setTransactions] = useState([]); // <-- cambiato
   const [searchResults, setSearchResults] = useState([]);
+  const navigate = useNavigate();
 
   // Carica ultimi 5 blocchi dalla blockchain
   useEffect(() => {
@@ -41,19 +45,22 @@ export default function Home({ contract }) {
   }, []);
 
   const handleSearch = async (query) => {
-    if (!contract) return;
     try {
-      const allEvents = await contract.queryFilter(null, 0, "latest");
-      const filtered = allEvents.filter(
-        (e) =>
-          e.transactionHash.includes(query) ||
-          e.blockNumber.toString() === query ||
-          e.args?.registrar?.toLowerCase() === query.toLowerCase()
-      );
-      setSearchResults(filtered);
+      const tx = await provider.getTransaction(query);
+
+      // ❗ Se non esiste → mostra errore
+      if (!tx) {
+        alert("Transazione non trovata");
+        return;
+      }
+
+      // 2. Vai alla pagina dei dettagli
+      console.log(query)
+      navigate(`/tx/${query}`);
+
     } catch (err) {
-      console.error(err);
-      setSearchResults([]);
+      console.error("Search error:", err);
+      alert("Errore durante la ricerca");
     }
   };
 
