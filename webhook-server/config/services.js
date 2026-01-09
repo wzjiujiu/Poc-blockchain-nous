@@ -1,10 +1,24 @@
 const { extractPolicyInfo, extractContractDefinitionInfo } = require("../utils/extractors.js");
 const axios = require("axios");
+import { ethers } from "ethers";
 
-async function registerAssetOnChain({ nodeId, assetId, assetTitle,contract }) {
+function toBytes32(str) {
+  return ethers.hexlify(ethers.toUtf8Bytes(str)).padEnd(66, "0");
+}
+
+// Helper: bytes32 -> string
+function fromBytes32(bytes32Str) {
+  return ethers.toUtf8String(bytes32Str).replace(/\0/g, ""); // rimuove padding null
+}
+
+async function registerAssetOnChain({ nodeId, assetId, assetTitle, contract }) {
+
   try {
     const assetIdStr = assetId.toString();
     console.log(`📤 Registrazione asset ID: ${assetIdStr}`);
+
+    const startTime = Date.now(); // inizio registrazione
+    console.log(`⏱ Inizio registrazione: ${new Date(startTime).toLocaleTimeString()}`);
 
     // Stima gas
     const estimatedGas = await contract.registerAsset.estimateGas(
@@ -12,7 +26,6 @@ async function registerAssetOnChain({ nodeId, assetId, assetTitle,contract }) {
       assetIdStr,
       assetTitle
     );
-
     console.log(`⛽ Gas stimato: ${estimatedGas}`);
 
     // Transazione
@@ -22,11 +35,13 @@ async function registerAssetOnChain({ nodeId, assetId, assetTitle,contract }) {
       assetTitle,
       { gasLimit: estimatedGas + 50_000n }
     );
-
     console.log(`⏳ Transazione inviata: ${tx.hash}`);
-    const receipt = await tx.wait();
 
+    const receipt = await tx.wait();
     console.log(`✅ Asset "${assetIdStr}" registrato nel blocco ${receipt.blockNumber}`);
+    const endTime = Date.now(); // fine registrazione
+    const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+    console.log(`⏱ Tempo totale registrazione on-chain: ${durationSec} secondi`);
 
     // Lettura dei dati registrati
     const data = await contract.getAsset(nodeId, assetIdStr);
@@ -36,12 +51,17 @@ async function registerAssetOnChain({ nodeId, assetId, assetTitle,contract }) {
       success: true,
       txHash: tx.hash,
       block: receipt.blockNumber,
-      data
+      data,
+      durationSec
     };
 
   } catch (err) {
     console.error("❌ Errore durante la registrazione asset:", err);
-    return { success: false, error: err };
+    const endTime = Date.now();
+    const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+    console.log(`⏱ Tempo trascorso prima dell'errore: ${durationSec} secondi`);
+
+    return { success: false, error: err, durationSec };
   }
 }
 
@@ -59,14 +79,18 @@ async function modifyAssetOnChainFromWebhook(cleanedData, nodeId,contract) {
 
     // Recupero asset esistente
     const existing = await contract.getAsset(nodeId, assetId);
+
     console.log("📄 Asset trovato:", existing);
 
     // Stima gas
+    const startTime = Date.now(); // inizio registrazione
+    console.log(`⏱ Inizio registrazione: ${new Date(startTime).toLocaleTimeString()}`);
     const estimatedGas = await contract.modifyAsset.estimateGas(
       nodeId,
       assetId,
       newTitle
     );
+    console.log(`⛽ Gas stimato: ${estimatedGas}`);
 
     // Transazione
     const tx = await contract.modifyAsset(
@@ -79,7 +103,11 @@ async function modifyAssetOnChainFromWebhook(cleanedData, nodeId,contract) {
     console.log(`⏳ TX inviata: ${tx.hash}`);
 
     const receipt = await tx.wait();
+
     console.log(`✅ Asset "${assetId}" modificato nel blocco ${receipt.blockNumber}`);
+    const endTime = Date.now(); // fine registrazione
+    const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+    console.log(`⏱ Tempo totale registrazione on-chain: ${durationSec} secondi`);
 
     // Leggi asset aggiornato
     const updated = await contract.getAsset(nodeId, assetId);
@@ -92,6 +120,121 @@ async function modifyAssetOnChainFromWebhook(cleanedData, nodeId,contract) {
       updated
     };
 
+  } catch (err) {
+    console.error("❌ Errore in modifyAssetOnChainFromWebhook:", err);
+    return { success: false, error: err };
+  }
+}
+
+export async function registerAssetOnChainGasTest({ nodeId, assetId, assetTitle, contract }) {
+  const startTime = Date.now();
+  console.log(`⏱ Inizio registrazione: ${new Date(startTime).toLocaleTimeString()}`);
+
+  try {
+    const assetIdBytes = toBytes32(assetId);
+    const titleBytes = toBytes32(assetTitle);
+    console.log(`📤 Registrazione asset ID: ${assetId}`);
+
+    // Stima gas
+    const estimatedGas = await contract.registerAsset.estimateGas(
+      nodeId,
+      assetIdBytes,
+      titleBytes
+    );
+    console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+    // Transazione
+    const tx = await contract.registerAsset(
+      nodeId,
+      assetIdBytes,
+      titleBytes,
+      { gasLimit: estimatedGas + 50_000n }
+    );
+    console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+    const receipt = await tx.wait();
+    console.log(`✅ Asset "${assetId}" registrato nel blocco ${receipt.blockNumber}`);
+
+    const endTime = Date.now();
+    const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+    console.log(`⏱ Tempo totale registrazione on-chain: ${durationSec} secondi`);
+
+    // Lettura dati registrati
+    const data = await contract.getAsset(nodeId, assetIdBytes);
+    console.log("📄 Asset registrato:", {
+      id: fromBytes32(data[0]),
+      nodeId: data[1],
+      registrar: data[2],
+      timestamp: data[3].toString(),
+      title: fromBytes32(data[4])
+    });
+
+    return { success: true, txHash: tx.hash, block: receipt.blockNumber, data, durationSec };
+  } catch (err) {
+    console.error("❌ Errore durante la registrazione asset:", err);
+    const endTime = Date.now();
+    const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+    return { success: false, error: err, durationSec };
+  }
+}
+
+export async function modifyAssetOnChainFromWebhookGasTest(cleanedData, nodeId, contract) {
+  try {
+    const assetId = cleanedData?.request?.body?.properties?.id;
+    const newTitle = cleanedData?.request?.body?.properties?.title;
+
+    if (!assetId || !newTitle) throw new Error("assetId o title mancanti nei dati webhook");
+
+    const assetIdBytes = toBytes32(assetId);
+    const newTitleBytes = toBytes32(newTitle);
+
+    console.log(`📤 Modifica asset ID: ${assetId}`);
+    console.log(`📝 Nuovo titolo: ${newTitle}`);
+
+    const existing = await contract.getAsset(nodeId, assetIdBytes);
+    console.log("📄 Asset trovato:", {
+      id: fromBytes32(existing[0]),
+      nodeId: existing[1],
+      registrar: existing[2],
+      timestamp: existing[3].toString(),
+      title: fromBytes32(existing[4])
+    });
+
+    const startTime = Date.now();
+    console.log(`⏱ Inizio modifica: ${new Date(startTime).toLocaleTimeString()}`);
+
+    const estimatedGas = await contract.modifyAsset.estimateGas(
+      nodeId,
+      assetIdBytes,
+      newTitleBytes
+    );
+    console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+    const tx = await contract.modifyAsset(
+      nodeId,
+      assetIdBytes,
+      newTitleBytes,
+      { gasLimit: estimatedGas + 50_000n }
+    );
+    console.log(`⏳ TX inviata: ${tx.hash}`);
+
+    const receipt = await tx.wait();
+    console.log(`✅ Asset "${assetId}" modificato nel blocco ${receipt.blockNumber}`);
+
+    const endTime = Date.now();
+    const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+    console.log(`⏱ Tempo totale modifica on-chain: ${durationSec} secondi`);
+
+    const updated = await contract.getAsset(nodeId, assetIdBytes);
+    console.log("📄 Asset aggiornato:", {
+      id: fromBytes32(updated[0]),
+      nodeId: updated[1],
+      registrar: updated[2],
+      timestamp: updated[3].toString(),
+      title: fromBytes32(updated[4])
+    });
+
+    return { success: true, txHash: tx.hash, block: receipt.blockNumber, updated, durationSec };
   } catch (err) {
     console.error("❌ Errore in modifyAssetOnChainFromWebhook:", err);
     return { success: false, error: err };
