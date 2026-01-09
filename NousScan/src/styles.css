@@ -153,13 +153,20 @@ button:hover {
     height: 60px;
     display: flex;
     align-items: center;
-    padding: 0 20px;
+    padding: 1rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .navbar-title {
-    font-size: 1.5rem;
-    font-weight: bold;
+  font-size: 1.5rem; /* grandezza titolo */
+  font-weight: bold;
+  text-decoration: none; /* rimuove sottolineatura */
+  cursor: pointer;      /* cambia cursore */
+  transition: color 0.2s;
+}
+
+.navbar-title:hover {
+  color: #d1d5db; /* cambia colore al passaggio del mouse, simile a gray-300 */
 }
 
 .home-grid {
