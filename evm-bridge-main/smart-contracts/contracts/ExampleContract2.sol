@@ -23,12 +23,12 @@ contract ExampleContract is BaseContract {
        ===================================================== */
 
     struct Asset {
-    bytes32 id;              // assetId compresso
-    bytes32 nodeId;          // logical node identifier
-    address registrar;       // relayer
-    uint64 timestamp;        // ridotto per packing
-    bytes32 title;           // titolo compresso
-}
+        string id;              // local asset id (node-scoped)
+        bytes32 nodeId;         // logical node identifier
+        address registrar;      // relayer that registered it
+        uint256 timestamp;
+        string title;
+    }
 
     struct Policy {
         string id;              // local policy id (node-scoped)
@@ -88,7 +88,7 @@ contract ExampleContract is BaseContract {
        ===================================================== */
 
     // nodeId => localId => entity
-    mapping(bytes32 => mapping(bytes32 => Asset)) private assets;
+    mapping(bytes32 => mapping(string => Asset)) private assets;
     mapping(bytes32 => mapping(string => Policy)) private policies;
     mapping(bytes32 => mapping(string => Dataoffer)) private offers;
     mapping(bytes32 => mapping(string => Contratto)) private contratti;
@@ -101,19 +101,19 @@ contract ExampleContract is BaseContract {
        ===================================================== */
 
     event AssetRegistered(
-    address indexed registrar,
-    bytes32 indexed nodeId,
-    bytes32 assetId,
-    uint64 timestamp,
-    bytes32 title
-);
+        address indexed registrar,
+        bytes32 indexed nodeId,
+        string assetId,
+        uint256 timestamp,
+        string title
+    );
 
     event AssetModified(
-    bytes32 indexed nodeId,
-    bytes32 assetId,
-    uint64 timestamp,
-    bytes32 newTitle
-);
+        bytes32 indexed nodeId,
+        string assetId,
+        uint256 timestamp,
+        string newTitle
+    );
 
     event PolicyRegistered(
         address indexed registrar,
@@ -185,98 +185,82 @@ contract ExampleContract is BaseContract {
        ===================================================== */
 
     function registerAsset(
-    bytes32 nodeId,
-    string memory assetIdString,
-    string memory assetTitleString
-)
-    external
-{
-    // Converto string → bytes32
-    bytes32 assetId = _toBytes32(assetIdString);
-    bytes32 assetTitle = _toBytes32(assetTitleString);
-
-    require(assetId != bytes32(0), "ID non valido");
-
-    Asset storage a = assets[nodeId][assetId];
-    require(a.registrar == address(0), "Asset gia' registrato");
-
-    a.id = assetId;
-    a.nodeId = nodeId;
-    a.registrar = msg.sender;
-    a.timestamp = uint64(block.timestamp);
-    a.title = assetTitle;
-
-    emit AssetRegistered(
-        msg.sender,
-        nodeId,
-        assetId,
-        uint64(block.timestamp),
-        assetTitle
-    );
-}
-
-function modifyAsset(
-    bytes32 nodeId,
-    string memory assetIdString,
-    string memory newTitleString
-)
-    external
-{
-    bytes32 assetId = _toBytes32(assetIdString);
-    bytes32 newTitle = _toBytes32(newTitleString);
-
-    Asset storage a = assets[nodeId][assetId];
-    require(a.registrar != address(0), "Asset non trovato");
-    require(msg.sender == a.registrar, "Non autorizzato");
-
-    // Evita scrittura se il valore è identico → risparmio gas
-    if (a.title != newTitle) {
-        a.title = newTitle;
-    }
-
-    a.timestamp = uint64(block.timestamp);
-
-    emit AssetModified(nodeId, assetId, uint64(block.timestamp), newTitle);
-}
-
-function getAsset(
-    bytes32 nodeId,
-    string memory assetIdString
-)
-    external
-    view
-    returns (
-        bytes32 id,
-        bytes32 nId,
-        address registrar,
-        uint64 timestamp,
-        bytes32 title
+        bytes32 nodeId,
+        string memory assetId,
+        string memory assetTitle
     )
-{
-    bytes32 assetId = _toBytes32(assetIdString);
-    Asset memory a = assets[nodeId][assetId];
-    require(a.registrar != address(0), "Asset non trovato");
+        external
+    {
+        require(bytes(assetId).length > 0, "ID non valido");
+        require(
+            assets[nodeId][assetId].registrar == address(0),
+            "Asset gia' registrato per questo nodo"
+        );
 
-    return (a.id, a.nodeId, a.registrar, a.timestamp, a.title);
-}
+        assets[nodeId][assetId] = Asset({
+            id: assetId,
+            nodeId: nodeId,
+            registrar: msg.sender,
+            timestamp: block.timestamp,
+            title: assetTitle
+        });
 
-function assetExists(
-    bytes32 nodeId,
-    string memory assetIdString
-)
-    external
-    view
-    returns (bool)
-{
-    bytes32 assetId = _toBytes32(assetIdString);
-    return assets[nodeId][assetId].registrar != address(0);
-}
-    function _toBytes32(string memory str) internal pure returns (bytes32 result) {
-    require(bytes(str).length <= 32, "String troppo lunga");
-    assembly {
-        result := mload(add(str, 32))
+        emit AssetRegistered(
+            msg.sender,
+            nodeId,
+            assetId,
+            block.timestamp,
+            assetTitle
+        );
     }
-}
+
+    function modifyAsset(
+        bytes32 nodeId,
+        string memory assetId,
+        string memory newTitle
+    )
+        external
+    {
+        Asset storage a = assets[nodeId][assetId];
+        require(a.registrar != address(0), "Asset non trovato");
+        require(msg.sender == a.registrar, "Non autorizzato");
+
+        a.title = newTitle;
+        a.timestamp = block.timestamp;
+
+        emit AssetModified(nodeId, assetId, block.timestamp, newTitle);
+    }
+
+    function getAsset(
+        bytes32 nodeId,
+        string memory assetId
+    )
+        external
+        view
+        returns (
+            string memory id,
+            bytes32 nId,
+            address registrar,
+            uint256 timestamp,
+            string memory title
+        )
+    {
+        Asset memory a = assets[nodeId][assetId];
+        require(a.registrar != address(0), "Asset non trovato");
+
+        return (a.id, a.nodeId, a.registrar, a.timestamp, a.title);
+    }
+
+    function assetExists(
+        bytes32 nodeId,
+        string memory assetId
+    )
+        external
+        view
+        returns (bool)
+    {
+        return assets[nodeId][assetId].registrar != address(0);
+    }
 
     /* =====================================================
                             POLICY

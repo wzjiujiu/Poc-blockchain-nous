@@ -1,14 +1,22 @@
 const { extractPolicyInfo, extractContractDefinitionInfo } = require("../utils/extractors.js");
 const axios = require("axios");
-import { ethers } from "ethers";
+const { toUtf8Bytes, hexlify, toUtf8String } = require("ethers");
+
 
 function toBytes32(str) {
-  return ethers.hexlify(ethers.toUtf8Bytes(str)).padEnd(66, "0");
+  const bytes = toUtf8Bytes(str);
+  console.log(str)
+  console.log(bytes)
+  console.log(bytes.length)
+  if (bytes.length > 32) throw new Error("String troppo lunga per bytes32");
+  const padded = new Uint8Array(32);
+  padded.set(bytes); // copia i byte all'inizio, resto è 0
+  return hexlify(padded);
 }
 
-// Helper: bytes32 -> string
+// bytes32 -> string
 function fromBytes32(bytes32Str) {
-  return ethers.toUtf8String(bytes32Str).replace(/\0/g, ""); // rimuove padding null
+  return toUtf8String(bytes32Str).replace(/\0/g, "");
 }
 
 async function registerAssetOnChain({ nodeId, assetId, assetTitle, contract }) {
@@ -126,16 +134,21 @@ async function modifyAssetOnChainFromWebhook(cleanedData, nodeId,contract) {
   }
 }
 
-export async function registerAssetOnChainGasTest({ nodeId, assetId, assetTitle, contract }) {
-  const startTime = Date.now();
-  console.log(`⏱ Inizio registrazione: ${new Date(startTime).toLocaleTimeString()}`);
+async function registerAssetOnChainGasTest({ nodeId, assetId, assetTitle, contract }) {
+
 
   try {
     const assetIdBytes = toBytes32(assetId);
     const titleBytes = toBytes32(assetTitle);
     console.log(`📤 Registrazione asset ID: ${assetId}`);
 
+    console.log(assetIdBytes)
+
+    console.log(titleBytes)
+
     // Stima gas
+    const startTime = Date.now();
+    console.log(`⏱ Inizio registrazione: ${new Date(startTime).toLocaleTimeString()}`);
     const estimatedGas = await contract.registerAsset.estimateGas(
       nodeId,
       assetIdBytes,
@@ -178,7 +191,7 @@ export async function registerAssetOnChainGasTest({ nodeId, assetId, assetTitle,
   }
 }
 
-export async function modifyAssetOnChainFromWebhookGasTest(cleanedData, nodeId, contract) {
+async function modifyAssetOnChainFromWebhookGasTest(cleanedData, nodeId, contract) {
   try {
     const assetId = cleanedData?.request?.body?.properties?.id;
     const newTitle = cleanedData?.request?.body?.properties?.title;
@@ -671,4 +684,6 @@ modifyPolicyOnchainFromWebhook,
 registerDataofferOnChain,
 modifyDataofferOnChain,
 registerContrattoOnchain,
-terminateContrattoOnchain};
+terminateContrattoOnchain,
+registerAssetOnChainGasTest,
+modifyAssetOnChainFromWebhookGasTest};

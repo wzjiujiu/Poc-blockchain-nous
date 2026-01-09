@@ -4,10 +4,10 @@ module.exports = [
   "function initialize(address roleManagerAddress, address upgradeControlAddress) external",
 
   // ───────────── Asset ─────────────
-  "function registerAsset(bytes32 nodeId, string assetId, string assetTitle) external",
-  "function modifyAsset(bytes32 nodeId, string assetId, string newTitle) external",
-  "function getAsset(bytes32 nodeId, string assetId) external view returns (bytes32 id, bytes32 nId, address registrar, uint64 timestamp, bytes32 title)",
-  "function assetExists(bytes32 nodeId, string assetId) external view returns (bool)",
+ "function registerAsset(bytes32 nodeId, bytes32 assetId, bytes32 assetTitle) external",
+  "function modifyAsset(bytes32 nodeId, bytes32 assetId, bytes32 newTitle) external",
+  "function getAsset(bytes32 nodeId, bytes32 assetId) external view returns (bytes32 id, bytes32 nId, address registrar, uint64 timestamp, bytes32 title)",
+  "function assetExists(bytes32 nodeId, bytes32 assetId) external view returns (bool)",
 
   // ───────────── Policy ─────────────
   "function registerPolicy(bytes32 nodeId, string policyId, string policyTitle) external",

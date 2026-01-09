@@ -56,7 +56,9 @@ modifyPolicyOnchainFromWebhook,
 registerDataofferOnChain,
 modifyDataofferOnChain,
 registerContrattoOnchain,
-terminateContrattoOnchain
+terminateContrattoOnchain,
+registerAssetOnChainGasTest,
+modifyAssetOnChainFromWebhookGasTest
 } =require("./config/services.js");
 
 
@@ -67,9 +69,10 @@ const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const provider = new ethers.JsonRpcProvider("http://localhost:8545");
 const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 
-const CONTRACT_ADDRESS = "0x0bcc0aa6bb316af0e04e90f1c869362805caa873";
+//const CONTRACT_ADDRESS = "0x0bcc0aa6bb316af0e04e90f1c869362805caa873";
+const CONTRACT_ADDRESS = "0xf5d1169b68a96e314c4f0c3e8299676189b2abb7";
 
-const CONTRACT_ABI = require("./abi/ExampleContract");
+const CONTRACT_ABI = require("./abi/ExampleContract1");
 
 
 const NODE_ID_PROVIDER = ethers.keccak256(
@@ -157,13 +160,13 @@ app.post("/event", async (req, res) => {
 
   /* ======================= ASSET POST ======================= */
   if (rawPort == Asset && method === "POST") {
-    await registerAssetOnChain(
+    await registerAssetOnChainGasTest(
     {nodeId: NODE_ID_PROVIDER,assetId,assetTitle, contract });
   }
 
   /* ======================= ASSET PUT ======================= */
   else if (rawPort == Asset && method === "PUT") {
-    await modifyAssetOnChainFromWebhook(cleanedData, NODE_ID_PROVIDER,contract);
+    await modifyAssetOnChainFromWebhookGasTest(cleanedData, NODE_ID_PROVIDER,contract);
   }
 
   /* ======================= POLICY POST ======================= */

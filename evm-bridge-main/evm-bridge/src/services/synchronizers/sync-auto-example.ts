@@ -76,9 +76,9 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                         const id = createEventUID(block, eventIndex, tx);
 
                         const pNodeId = normalizeBytes32(ev.data.nodeId);
-                        const pAssetId = ev.data.assetId;
+                        const pAssetId = normalizeBytes32(ev.data.assetId);
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
-                        const pNewTitle = ev.data.newTitle;
+                        const pNewTitle = normalizeBytes32(ev.data.newTitle);
                         const exists = await EventExampleAssetModified.exists(id);
                         if (!exists) {
                             const newEvent = new EventExampleAssetModified({
@@ -110,9 +110,9 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
 
                         const pRegistrar = normalizeAddress(ev.data.registrar);
                         const pNodeId = normalizeBytes32(ev.data.nodeId);
-                        const pAssetId = ev.data.assetId;
+                        const pAssetId = normalizeBytes32(ev.data.assetId);
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
-                        const pTitle = ev.data.title;
+                        const pTitle = normalizeBytes32(ev.data.title);
                         const exists = await EventExampleAssetRegistered.exists(id);
                         if (!exists) {
                             const newEvent = new EventExampleAssetRegistered({

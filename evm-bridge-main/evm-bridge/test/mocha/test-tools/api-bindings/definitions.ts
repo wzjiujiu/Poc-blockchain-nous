@@ -1589,12 +1589,12 @@ export interface TxParamsExampleModifyAsset {
     nodeId: string;
 
     /**
-     * assetId
+     * assetId 
      */
     assetId: string;
 
     /**
-     * newTitle
+     * newTitle 
      */
     newTitle: string;
 }
@@ -1672,12 +1672,12 @@ export interface TxParamsExampleRegisterAsset {
     nodeId: string;
 
     /**
-     * assetId
+     * assetId 
      */
     assetId: string;
 
     /**
-     * assetTitle
+     * assetTitle 
      */
     assetTitle: string;
 }
@@ -1862,7 +1862,7 @@ export interface EventParamsExampleAssetModified {
     nodeId: string;
 
     /**
-     * assetId
+     * assetId 
      */
     assetId: string;
 
@@ -1872,7 +1872,7 @@ export interface EventParamsExampleAssetModified {
     timestamp: string;
 
     /**
-     * newTitle
+     * newTitle 
      */
     newTitle: string;
 }
@@ -1927,7 +1927,7 @@ export interface EventParamsExampleAssetRegistered {
     nodeId: string;
 
     /**
-     * assetId
+     * assetId 
      */
     assetId: string;
 
@@ -1937,7 +1937,7 @@ export interface EventParamsExampleAssetRegistered {
     timestamp: string;
 
     /**
-     * title
+     * title 
      */
     title: string;
 }
@@ -2694,7 +2694,7 @@ export interface CallRequestExampleAssetExists {
     nodeId: string;
 
     /**
-     * assetId
+     * assetId 
      */
     assetId: string;
 }
@@ -2751,14 +2751,14 @@ export interface CallRequestExampleGetAsset {
     nodeId: string;
 
     /**
-     * assetId
+     * assetId 
      */
     assetId: string;
 }
 
 export interface CallResponseExampleGetAsset {
     /**
-     * id
+     * id 
      */
     id: string;
 
@@ -2778,7 +2778,7 @@ export interface CallResponseExampleGetAsset {
     timestamp: string;
 
     /**
-     * title
+     * title 
      */
     title: string;
 }

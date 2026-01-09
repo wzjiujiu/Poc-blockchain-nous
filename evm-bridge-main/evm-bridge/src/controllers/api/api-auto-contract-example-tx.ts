@@ -144,8 +144,8 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * @typedef TxParamsExampleModifyAsset
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} assetId.required - assetId
-     * @property {string} newTitle.required - newTitle
+     * @property {string} assetId.required - assetId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} newTitle.required - newTitle - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      */
 
     /**
@@ -157,7 +157,7 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: modifyAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: modifyAsset(bytes32,string,string)
+     * Method signature: modifyAsset(bytes32,bytes32,bytes32)
      * Binding: TxModifyAsset
      * 
      * @route POST /contracts/example/tx/modify-asset
@@ -169,7 +169,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txModifyAsset(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }], "name": "modifyAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "bytes32", "name": "assetId", "type": "bytes32" }, { "internalType": "bytes32", "name": "newTitle", "type": "bytes32" }], "name": "modifyAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 
@@ -310,8 +310,8 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * @typedef TxParamsExampleRegisterAsset
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} assetId.required - assetId
-     * @property {string} assetTitle.required - assetTitle
+     * @property {string} assetId.required - assetId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} assetTitle.required - assetTitle - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      */
 
     /**
@@ -323,7 +323,7 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: registerAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerAsset(bytes32,string,string)
+     * Method signature: registerAsset(bytes32,bytes32,bytes32)
      * Binding: TxRegisterAsset
      * 
      * @route POST /contracts/example/tx/register-asset
@@ -335,7 +335,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txRegisterAsset(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string", "name": "assetTitle", "type": "string" }], "name": "registerAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "bytes32", "name": "assetId", "type": "bytes32" }, { "internalType": "bytes32", "name": "assetTitle", "type": "bytes32" }], "name": "registerAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 

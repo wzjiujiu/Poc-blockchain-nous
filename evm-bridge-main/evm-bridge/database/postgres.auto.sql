@@ -20,9 +20,9 @@ CREATE TABLE "event_example_asset_modified" (
     "tx" VARCHAR(255),
     "timestamp" BIGINT,
     "p_node_id" VARCHAR(255),
-    "p_asset_id" TEXT,
+    "p_asset_id" VARCHAR(255),
     "p_timestamp" VARCHAR(255),
-    "p_new_title" TEXT
+    "p_new_title" VARCHAR(255)
 );
 
 CREATE INDEX "ix_event_example_asset_modified_s_1" ON "event_example_asset_modified"("id" DESC);
@@ -38,9 +38,9 @@ CREATE TABLE "event_example_asset_registered" (
     "timestamp" BIGINT,
     "p_registrar" VARCHAR(255),
     "p_node_id" VARCHAR(255),
-    "p_asset_id" TEXT,
+    "p_asset_id" VARCHAR(255),
     "p_timestamp" VARCHAR(255),
-    "p_title" TEXT
+    "p_title" VARCHAR(255)
 );
 
 CREATE INDEX "ix_event_example_asset_registered_s_1" ON "event_example_asset_registered"("id" DESC);

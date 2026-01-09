@@ -119,7 +119,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/modify-asset
      * Sends transaction for method: modifyAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: modifyAsset(bytes32,string,string)
+     * Method signature: modifyAsset(bytes32,bytes32,bytes32)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -248,7 +248,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/register-asset
      * Sends transaction for method: registerAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerAsset(bytes32,string,string)
+     * Method signature: registerAsset(bytes32,bytes32,bytes32)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -505,7 +505,7 @@ export class ApiExample {
      * Path: /contracts/example/events/asset-modified
      * Get a list of events of type AssetModified
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetModified(bytes32,string,uint256,string)
+     * Event signature: AssetModified(bytes32,bytes32,uint64,bytes32)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
@@ -528,7 +528,7 @@ export class ApiExample {
      * Path: /contracts/example/events/asset-registered
      * Get a list of events of type AssetRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetRegistered(address,bytes32,string,uint256,string)
+     * Event signature: AssetRegistered(address,bytes32,bytes32,uint64,bytes32)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
@@ -853,7 +853,7 @@ export class ApiExample {
      * Path: /contracts/example/call/asset-exists
      * Calls the view method: assetExists
      * Smart contract: Example (ExampleContract)
-     * Method signature: assetExists(bytes32,string)
+     * Method signature: assetExists(bytes32,bytes32)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -931,7 +931,7 @@ export class ApiExample {
      * Path: /contracts/example/call/get-asset
      * Calls the view method: getAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: getAsset(bytes32,string)
+     * Method signature: getAsset(bytes32,bytes32)
      * @param body Body parameters
      * @returns The request parameters
      */

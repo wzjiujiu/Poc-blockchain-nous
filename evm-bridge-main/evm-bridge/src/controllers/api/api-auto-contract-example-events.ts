@@ -74,9 +74,9 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * @typedef EventParamsExampleAssetModified
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} assetId.required - assetId
+     * @property {string} assetId.required - assetId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} timestamp.required - timestamp - eg: 0
-     * @property {string} newTitle.required - newTitle
+     * @property {string} newTitle.required - newTitle - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      */
 
     /**
@@ -98,7 +98,7 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type AssetModified
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetModified(bytes32,string,uint256,string)
+     * Event signature: AssetModified(bytes32,bytes32,uint64,bytes32)
      * Binding: GetEventsAssetModified
      * @route GET /contracts/example/events/asset-modified
      * @group example - API for smart contract: Example (ExampleContract)
@@ -109,7 +109,7 @@ export class ExampleContractApiEventsController extends Controller {
      * @security BearerAuthorization
      */
     public async getEventsAssetModified(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newTitle", "type": "string" }], "name": "AssetModified", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "bytes32", "name": "assetId", "type": "bytes32" }, { "indexed": false, "internalType": "uint64", "name": "timestamp", "type": "uint64" }, { "indexed": false, "internalType": "bytes32", "name": "newTitle", "type": "bytes32" }], "name": "AssetModified", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 
@@ -139,9 +139,9 @@ export class ExampleContractApiEventsController extends Controller {
      * @typedef EventParamsExampleAssetRegistered
      * @property {string} registrar.required - registrar - eg: 0x0000000000000000000000000000000000000000
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} assetId.required - assetId
+     * @property {string} assetId.required - assetId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} timestamp.required - timestamp - eg: 0
-     * @property {string} title.required - title
+     * @property {string} title.required - title - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      */
 
     /**
@@ -163,7 +163,7 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type AssetRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetRegistered(address,bytes32,string,uint256,string)
+     * Event signature: AssetRegistered(address,bytes32,bytes32,uint64,bytes32)
      * Binding: GetEventsAssetRegistered
      * @route GET /contracts/example/events/asset-registered
      * @group example - API for smart contract: Example (ExampleContract)
@@ -175,7 +175,7 @@ export class ExampleContractApiEventsController extends Controller {
      * @security BearerAuthorization
      */
     public async getEventsAssetRegistered(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "registrar", "type": "address" }, { "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "title", "type": "string" }], "name": "AssetRegistered", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "registrar", "type": "address" }, { "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "bytes32", "name": "assetId", "type": "bytes32" }, { "indexed": false, "internalType": "uint64", "name": "timestamp", "type": "uint64" }, { "indexed": false, "internalType": "bytes32", "name": "title", "type": "bytes32" }], "name": "AssetRegistered", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 

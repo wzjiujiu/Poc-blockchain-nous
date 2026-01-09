@@ -119,13 +119,13 @@ export class EventExampleAssetRegistered extends DataModel {
     /* db-type: VARCHAR 255 */
     public pNodeId: string;
 
-    /* db-type: TEXT */
+    /* db-type: VARCHAR 255 */
     public pAssetId: string;
 
     /* db-type: VARCHAR 255 */
     public pTimestamp: string;
 
-    /* db-type: TEXT */
+    /* db-type: VARCHAR 255 */
     public pTitle: string;
 
     constructor(data: TypedRow<EventExampleAssetRegistered>) {

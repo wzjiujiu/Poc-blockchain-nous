@@ -71,14 +71,14 @@ export class ExampleContractWrapper {
     }
 
     /**
-     * Calls View method: assetExists(bytes32,string)
-     * Method: assetExists(bytes32,string)
+     * Calls View method: assetExists(bytes32,bytes32)
+     * Method: assetExists(bytes32,bytes32)
      * @param nodeId nodeId
      * @param assetId assetId
      * @param options The options for sending the request
      * @returns The result for calling the method
      */
-    public async assetExists(nodeId: BytesLike, assetId: string, options?: MethodCallingOptions): Promise<boolean> {
+    public async assetExists(nodeId: BytesLike, assetId: BytesLike, options?: MethodCallingOptions): Promise<boolean> {
         const __r: any = await this._contractInterface.callViewMethod("assetExists", [nodeId, assetId], options || {});
         return __r[0];
     }
@@ -110,14 +110,14 @@ export class ExampleContractWrapper {
     }
 
     /**
-     * Calls View method: getAsset(bytes32,string)
-     * Method: getAsset(bytes32,string)
+     * Calls View method: getAsset(bytes32,bytes32)
+     * Method: getAsset(bytes32,bytes32)
      * @param nodeId nodeId
      * @param assetId assetId
      * @param options The options for sending the request
      * @returns The result for calling the method
      */
-    public async getAsset(nodeId: BytesLike, assetId: string, options?: MethodCallingOptions): Promise<{id: string, nId: string, registrar: Address, timestamp: Quantity, title: string}> {
+    public async getAsset(nodeId: BytesLike, assetId: BytesLike, options?: MethodCallingOptions): Promise<{id: string, nId: string, registrar: Address, timestamp: Quantity, title: string}> {
         const __r: any = await this._contractInterface.callViewMethod("getAsset", [nodeId, assetId], options || {});
         return {
             id: __r[0],
@@ -327,15 +327,15 @@ export class ExampleContractWrapper {
     }
 
     /**
-     * Calls Transaction method: modifyAsset(bytes32,string,string)
-     * Method: modifyAsset(bytes32,string,string)
+     * Calls Transaction method: modifyAsset(bytes32,bytes32,bytes32)
+     * Method: modifyAsset(bytes32,bytes32,bytes32)
      * @param nodeId nodeId
      * @param assetId assetId
      * @param newTitle newTitle
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async modifyAsset(nodeId: BytesLike, assetId: string, newTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+    public async modifyAsset(nodeId: BytesLike, assetId: BytesLike, newTitle: BytesLike, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
         const __r = await this._contractInterface.callMutableMethod("modifyAsset", [nodeId, assetId, newTitle], options);
     
         if (__r.receipt.status > BigInt(0)) {
@@ -347,14 +347,14 @@ export class ExampleContractWrapper {
     }
     
     /**
-     * Gets details for building a transaction calling the method: modifyAsset(bytes32,string,string)
-     * Method: modifyAsset(bytes32,string,string)
+     * Gets details for building a transaction calling the method: modifyAsset(bytes32,bytes32,bytes32)
+     * Method: modifyAsset(bytes32,bytes32,bytes32)
      * @param nodeId nodeId
      * @param assetId assetId
      * @param newTitle newTitle
      * @returns The details for building the transaction
      */
-    public modifyAsset$txBuildDetails(nodeId: BytesLike, assetId: string, newTitle: string): TransactionBuildDetails {
+    public modifyAsset$txBuildDetails(nodeId: BytesLike, assetId: BytesLike, newTitle: BytesLike): TransactionBuildDetails {
         return this._contractInterface.encodeMutableMethod("modifyAsset", [nodeId, assetId, newTitle]);
     }
 
@@ -453,15 +453,15 @@ export class ExampleContractWrapper {
     }
 
     /**
-     * Calls Transaction method: registerAsset(bytes32,string,string)
-     * Method: registerAsset(bytes32,string,string)
+     * Calls Transaction method: registerAsset(bytes32,bytes32,bytes32)
+     * Method: registerAsset(bytes32,bytes32,bytes32)
      * @param nodeId nodeId
      * @param assetId assetId
      * @param assetTitle assetTitle
      * @param options The options for sending the transaction
      * @returns The transaction result
      */
-    public async registerAsset(nodeId: BytesLike, assetId: string, assetTitle: string, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
+    public async registerAsset(nodeId: BytesLike, assetId: BytesLike, assetTitle: BytesLike, options: MethodTransactionOptions): Promise<TransactionResult<ExampleContractEventCollection>> {
         const __r = await this._contractInterface.callMutableMethod("registerAsset", [nodeId, assetId, assetTitle], options);
     
         if (__r.receipt.status > BigInt(0)) {
@@ -473,14 +473,14 @@ export class ExampleContractWrapper {
     }
     
     /**
-     * Gets details for building a transaction calling the method: registerAsset(bytes32,string,string)
-     * Method: registerAsset(bytes32,string,string)
+     * Gets details for building a transaction calling the method: registerAsset(bytes32,bytes32,bytes32)
+     * Method: registerAsset(bytes32,bytes32,bytes32)
      * @param nodeId nodeId
      * @param assetId assetId
      * @param assetTitle assetTitle
      * @returns The details for building the transaction
      */
-    public registerAsset$txBuildDetails(nodeId: BytesLike, assetId: string, assetTitle: string): TransactionBuildDetails {
+    public registerAsset$txBuildDetails(nodeId: BytesLike, assetId: BytesLike, assetTitle: BytesLike): TransactionBuildDetails {
         return this._contractInterface.encodeMutableMethod("registerAsset", [nodeId, assetId, assetTitle]);
     }
 
@@ -773,7 +773,7 @@ export class ExampleContractEventCollection {
     }
 
     /**
-     * Get an event of type AssetModified(bytes32,string,uint256,string) from the collection
+     * Get an event of type AssetModified(bytes32,bytes32,uint64,bytes32) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
      */
@@ -791,7 +791,7 @@ export class ExampleContractEventCollection {
     }
 
     /**
-     * Get an event of type AssetRegistered(address,bytes32,string,uint256,string) from the collection
+     * Get an event of type AssetRegistered(address,bytes32,bytes32,uint64,bytes32) from the collection
      * @param index Event index in the collection (from 0 to length - 1)
      * @returns The event object
      */
@@ -1023,7 +1023,7 @@ export class ExampleContractEventCollection {
 }
 
 /**
- * Event: AssetModified(bytes32,string,uint256,string)
+ * Event: AssetModified(bytes32,bytes32,uint64,bytes32)
  */
 export interface AssetModifiedEvent {
     nodeId: string,
@@ -1036,7 +1036,7 @@ export interface AssetModifiedEvent {
 }
 
 /**
- * Event: AssetRegistered(address,bytes32,string,uint256,string)
+ * Event: AssetRegistered(address,bytes32,bytes32,uint64,bytes32)
  */
 export interface AssetRegisteredEvent {
     registrar: Address,
@@ -1276,21 +1276,21 @@ const CONTRACT_ABI: ABILike = [
             },
             {
                 "indexed": false,
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "assetId",
-                "type": "string"
+                "type": "bytes32"
             },
             {
                 "indexed": false,
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "timestamp",
-                "type": "uint256"
+                "type": "uint64"
             },
             {
                 "indexed": false,
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "newTitle",
-                "type": "string"
+                "type": "bytes32"
             }
         ],
         "name": "AssetModified",
@@ -1313,21 +1313,21 @@ const CONTRACT_ABI: ABILike = [
             },
             {
                 "indexed": false,
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "assetId",
-                "type": "string"
+                "type": "bytes32"
             },
             {
                 "indexed": false,
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "timestamp",
-                "type": "uint256"
+                "type": "uint64"
             },
             {
                 "indexed": false,
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "title",
-                "type": "string"
+                "type": "bytes32"
             }
         ],
         "name": "AssetRegistered",
@@ -1702,9 +1702,9 @@ const CONTRACT_ABI: ABILike = [
                 "type": "bytes32"
             },
             {
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "assetId",
-                "type": "string"
+                "type": "bytes32"
             }
         ],
         "name": "assetExists",
@@ -1792,17 +1792,17 @@ const CONTRACT_ABI: ABILike = [
                 "type": "bytes32"
             },
             {
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "assetId",
-                "type": "string"
+                "type": "bytes32"
             }
         ],
         "name": "getAsset",
         "outputs": [
             {
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "id",
-                "type": "string"
+                "type": "bytes32"
             },
             {
                 "internalType": "bytes32",
@@ -1815,14 +1815,14 @@ const CONTRACT_ABI: ABILike = [
                 "type": "address"
             },
             {
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "timestamp",
-                "type": "uint256"
+                "type": "uint64"
             },
             {
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "title",
-                "type": "string"
+                "type": "bytes32"
             }
         ],
         "stateMutability": "view",
@@ -2063,14 +2063,14 @@ const CONTRACT_ABI: ABILike = [
                 "type": "bytes32"
             },
             {
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "assetId",
-                "type": "string"
+                "type": "bytes32"
             },
             {
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "newTitle",
-                "type": "string"
+                "type": "bytes32"
             }
         ],
         "name": "modifyAsset",
@@ -2199,14 +2199,14 @@ const CONTRACT_ABI: ABILike = [
                 "type": "bytes32"
             },
             {
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "assetId",
-                "type": "string"
+                "type": "bytes32"
             },
             {
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "assetTitle",
-                "type": "string"
+                "type": "bytes32"
             }
         ],
         "name": "registerAsset",

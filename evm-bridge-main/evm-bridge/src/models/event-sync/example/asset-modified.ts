@@ -115,13 +115,13 @@ export class EventExampleAssetModified extends DataModel {
     /* db-type: VARCHAR 255 */
     public pNodeId: string;
 
-    /* db-type: TEXT */
+    /* db-type: VARCHAR 255 */
     public pAssetId: string;
 
     /* db-type: VARCHAR 255 */
     public pTimestamp: string;
 
-    /* db-type: TEXT */
+    /* db-type: VARCHAR 255 */
     public pNewTitle: string;
 
     constructor(data: TypedRow<EventExampleAssetModified>) {

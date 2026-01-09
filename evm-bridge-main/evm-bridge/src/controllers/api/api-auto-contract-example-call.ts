@@ -103,7 +103,7 @@ export class ExampleContractApiCallController extends Controller {
     /**
      * @typedef CallRequestExampleAssetExists
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} assetId.required - assetId
+     * @property {string} assetId.required - assetId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      */
 
     /**
@@ -114,7 +114,7 @@ export class ExampleContractApiCallController extends Controller {
     /**
      * Calls the view method: assetExists
      * Smart contract: Example (ExampleContract)
-     * Method signature: assetExists(bytes32,string)
+     * Method signature: assetExists(bytes32,bytes32)
      * Binding: CallAssetExists
      * 
      * @route POST /contracts/example/call/asset-exists
@@ -126,7 +126,7 @@ export class ExampleContractApiCallController extends Controller {
      * @security BearerAuthorization
      */
     public async callAssetExists(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "assetId", "type": "string" }], "name": "assetExists", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "bytes32", "name": "assetId", "type": "bytes32" }], "name": "assetExists", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" };
 
         const [callParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body, methodAbi);
 
@@ -253,22 +253,22 @@ export class ExampleContractApiCallController extends Controller {
     /**
      * @typedef CallRequestExampleGetAsset
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} assetId.required - assetId
+     * @property {string} assetId.required - assetId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      */
 
     /**
      * @typedef CallResponseExampleGetAsset
-     * @property {string} id.required - id
+     * @property {string} id.required - id - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} nId.required - nId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} registrar.required - registrar - eg: 0x0000000000000000000000000000000000000000
      * @property {string} timestamp.required - timestamp - eg: 0
-     * @property {string} title.required - title
+     * @property {string} title.required - title - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      */
 
     /**
      * Calls the view method: getAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: getAsset(bytes32,string)
+     * Method signature: getAsset(bytes32,bytes32)
      * Binding: CallGetAsset
      * 
      * @route POST /contracts/example/call/get-asset
@@ -280,7 +280,7 @@ export class ExampleContractApiCallController extends Controller {
      * @security BearerAuthorization
      */
     public async callGetAsset(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "assetId", "type": "string" }], "name": "getAsset", "outputs": [{ "internalType": "string", "name": "id", "type": "string" }, { "internalType": "bytes32", "name": "nId", "type": "bytes32" }, { "internalType": "address", "name": "registrar", "type": "address" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "string", "name": "title", "type": "string" }], "stateMutability": "view", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "bytes32", "name": "assetId", "type": "bytes32" }], "name": "getAsset", "outputs": [{ "internalType": "bytes32", "name": "id", "type": "bytes32" }, { "internalType": "bytes32", "name": "nId", "type": "bytes32" }, { "internalType": "address", "name": "registrar", "type": "address" }, { "internalType": "uint64", "name": "timestamp", "type": "uint64" }, { "internalType": "bytes32", "name": "title", "type": "bytes32" }], "stateMutability": "view", "type": "function" };
 
         const [callParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body, methodAbi);
 
