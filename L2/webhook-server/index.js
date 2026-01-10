@@ -64,10 +64,10 @@ terminateContrattoOnchain
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 
 // Usa il nodo Besu locale (porta 8545)
-const provider = new ethers.JsonRpcProvider("http://localhost:8545");
+const provider = new ethers.JsonRpcProvider("http://localhost:9555");
 const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 
-const CONTRACT_ADDRESS = "0x0bcc0aa6bb316af0e04e90f1c869362805caa873";
+const CONTRACT_ADDRESS = "0x7cdd54f3e7c17eb0fab7eb4f3924835d9511f231";
 
 const CONTRACT_ABI = require("./abi/ExampleContract");
 
