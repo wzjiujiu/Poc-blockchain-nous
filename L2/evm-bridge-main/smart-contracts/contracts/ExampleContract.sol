@@ -661,4 +661,86 @@ contract ExampleContract is BaseContract {
         return transfers[transferId].timestamp != 0;
     }
 
+    function hashAsset(bytes32 nodeId, string memory assetId) internal view returns (bytes32) {
+        Asset memory a = assets[nodeId][assetId];
+        return keccak256(abi.encodePacked(a.id, a.nodeId, a.registrar, a.timestamp, a.title));
+    }
+
+    // Hash di tutte le policy
+    function hashPolicy(bytes32 nodeId, string memory policyId) internal view returns (bytes32) {
+        Policy memory p = policies[nodeId][policyId];
+        return keccak256(abi.encodePacked(p.id, p.nodeId, p.registrar, p.timestamp, p.title));
+    }
+
+    // Hash di tutte le offerte
+    function hashDataoffer(bytes32 nodeId, string memory offerId) internal view returns (bytes32) {
+        Dataoffer memory d = offers[nodeId][offerId];
+        return keccak256(abi.encodePacked(d.id, d.nodeId, d.registrar, d.timestamp, d.accessPolicyId, d.contractPolicyId, d.assetSelector));
+    }
+
+    // Hash di tutti i contratti
+    function hashContratto(bytes32 nodeId, string memory contractId) internal view returns (bytes32) {
+        Contratto memory c = contratti[nodeId][contractId];
+        return keccak256(abi.encodePacked(c.id, c.nodeId, c.registrar, c.counterpartyid, c.contractnegotiationid, c.timestamp, c.createdat, c.state));
+    }
+
+    // Hash di tutti i trasferimenti
+    function hashDataTransfer(string memory transferId) internal view returns (bytes32) {
+        DataTransfer memory t = transfers[transferId];
+        return keccak256(abi.encodePacked(t.id, t.nodeId, t.contractagreetmentid, t.assetId, t.dataHash, uint256(t.status), t.timestamp));
+    }
+
+     function getMerkleRoot(
+        bytes32[] memory assetNodeIds,
+        string[][] memory assetIds,
+        bytes32[] memory policyNodeIds,
+        string[][] memory policyIds,
+        bytes32[] memory offerNodeIds,
+        string[][] memory offerIds,
+        bytes32[] memory contractNodeIds,
+        string[][] memory contractIds,
+        string[] memory transferIds
+    )
+        external
+        view
+        returns (bytes32)
+    {
+        bytes32 root = 0x0;
+
+        // Asset
+        for (uint i = 0; i < assetNodeIds.length; i++) {
+            for (uint j = 0; j < assetIds[i].length; j++) {
+                root = keccak256(abi.encodePacked(root, hashAsset(assetNodeIds[i], assetIds[i][j])));
+            }
+        }
+
+        // Policy
+        for (uint i = 0; i < policyNodeIds.length; i++) {
+            for (uint j = 0; j < policyIds[i].length; j++) {
+                root = keccak256(abi.encodePacked(root, hashPolicy(policyNodeIds[i], policyIds[i][j])));
+            }
+        }
+
+        // Dataoffer
+        for (uint i = 0; i < offerNodeIds.length; i++) {
+            for (uint j = 0; j < offerIds[i].length; j++) {
+                root = keccak256(abi.encodePacked(root, hashDataoffer(offerNodeIds[i], offerIds[i][j])));
+            }
+        }
+
+        // Contratti
+        for (uint i = 0; i < contractNodeIds.length; i++) {
+            for (uint j = 0; j < contractIds[i].length; j++) {
+                root = keccak256(abi.encodePacked(root, hashContratto(contractNodeIds[i], contractIds[i][j])));
+            }
+        }
+
+        // DataTransfer
+        for (uint i = 0; i < transferIds.length; i++) {
+            root = keccak256(abi.encodePacked(root, hashDataTransfer(transferIds[i])));
+        }
+
+        return root;
+    }
+
 }
