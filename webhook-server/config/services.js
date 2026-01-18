@@ -1,6 +1,7 @@
 const { extractPolicyInfo, extractContractDefinitionInfo } = require("../utils/extractors.js");
 const axios = require("axios");
 const { toUtf8Bytes, hexlify, toUtf8String } = require("ethers");
+const { ethers } = require("ethers"); // ethers.js v6
 
 
 function toBytes32(str) {
@@ -677,7 +678,7 @@ async function terminateContrattoOnchain(contract, nodeId, rawPort)
   }
 }
 
-async function registerTransferOnchain(contractid,nodeid, assetid,transferid, contract)
+async function registerTransferOnchain(contractId,nodeid, assetid,transferid, contract)
 {
  try {
         console.log("📄 Contract ID estratto:", contractId);
@@ -727,6 +728,7 @@ async function registerTransferOnchain(contractid,nodeid, assetid,transferid, co
 
         const terminationStatus = contractResp.data.terminationStatus;
         console.log("🛑 terminationStatus:", terminationStatus);
+        let stringterminate=terminationStatus.toString();
 
         // 3️⃣ Trigger smart contract solo se non TERMINATED
         if (terminationStatus === "TERMINATED") {
@@ -734,7 +736,7 @@ async function registerTransferOnchain(contractid,nodeid, assetid,transferid, co
               transferid,
               nodeid,
               contractId,
-              terminationStatus,
+              stringterminate,
               assetid
               );
 
@@ -742,7 +744,7 @@ async function registerTransferOnchain(contractid,nodeid, assetid,transferid, co
               transferid,
               nodeid,
               contractId,
-              terminationStatus,
+              stringterminate,
               assetid,
              { gasLimit: estimatedGas + 50_000n }
          );
@@ -756,7 +758,7 @@ async function registerTransferOnchain(contractid,nodeid, assetid,transferid, co
               transferid,
               nodeid,
               contractId,
-              terminationStatus,
+              stringterminate,
               assetid
               );
 
@@ -764,7 +766,7 @@ async function registerTransferOnchain(contractid,nodeid, assetid,transferid, co
               transferid,
               nodeid,
               contractId,
-              terminationStatus,
+              stringterminate,
               assetid,
              { gasLimit: estimatedGas + 50_000n }
          );
@@ -773,6 +775,10 @@ async function registerTransferOnchain(contractid,nodeid, assetid,transferid, co
 
          const receipt = await tx.wait();
          console.log(`✅ Data Transfer registrato nel blocco ${receipt.blockNumber}`);
+
+         const stored = await contract.getTransfer(transferid);
+
+         console.log("📄 Transfer on-chain:", stored);
 
 
         }
@@ -813,6 +819,8 @@ async function terminateTransferOnchain(rawPort, contract)
 
     const receipt = await tx.wait();
     console.log(`✅ trasferimento TERMINATED nel blocco ${receipt.blockNumber}`);
+    const stored = await contract.getTransfer(transferId);
+    console.log("📄 Transfer on-chain:", stored);
 
 
   } catch (err) {

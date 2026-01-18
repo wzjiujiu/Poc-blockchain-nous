@@ -216,7 +216,7 @@ else if (rawPort === Transfer && method === "POST") {
     const assetid=cleanedData.request.body.assetId;
     const contractId = cleanedData.request.body.contractId;
     const transferid = cleanedData.response['@id'];
-    await registerTransferOnchain(contractid,NODE_ID_PROVIDER,assetid,transferid,contract);
+    await registerTransferOnchain(contractId,NODE_ID_PROVIDER,assetid,transferid,contract);
    }
 else if (method === "POST" && rawPort.startsWith(Transfer_PREFIX) && rawPort.endsWith("/terminate"))
   {

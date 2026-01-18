@@ -124,6 +124,16 @@ async function startConsumer() {
             );
             break;
 
+          case "TRANSFER_CREATED":
+            await registerTransferOnchain(
+              data.contractId,
+              data.nodeId,
+              data.assetid,
+              data.transferid,
+              contract
+            );
+            break;
+
         }
       } catch (err) {
         console.error("❌ Errore esecuzione smart contract:", err);
