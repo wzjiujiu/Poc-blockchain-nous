@@ -234,6 +234,8 @@ THE REST API Disponible to test are :
 | **EDIT CONTRACT DEFINITION PUT** | {{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/contractdefinitions |
 | **START NEGOTIATION POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/wrapper/ui/pages/catalog-page/contract-negotiations |
 | **TERMINATE NEGOTIATION POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/wrapper/ui/pages/content-agreement-page/CONTRACT AGREEMENT ID/terminate |
+| **START DATA TRANSFER POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/wrapper/ui/pages/catalog-page/contract-negotiations |
+| **TERMINATE DATA TRANSFER POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/wrapper/ui/pages/content-agreement-page/CONTRACT AGREEMENT ID/terminate |
 
 
 
@@ -315,17 +317,27 @@ From the folder kafka perform following command:
 docker compose up -d
 ```
 
-From the webhook-server directory perform following command:
+From the webhook-server directory perform following command to start producer :
 
 ```bash
 node indexkafka.js
 ```
 
-From the webhook-server/kafka directory perform following command:
+From the webhook-server/kafka directory perform following command to start consumer:
 
 ```bash
 node consumer.js
 ```
 
+### STEP 2: Test flow
+
+Perform allowed POSTMAN API from the upside section 
 ---
 
+## 🔮 Integrated Test with MASA USECASE
+The validation process consists of several operational stages. 
+First, a file containing cinematic metadata is uploaded to a local MinIO bucket as part of the data staging phase. 
+Next, following the logic of the NOUS PoC, REST API calls are issued to the Provider Connector to configure the Asset, Access Policy, and Contract Definition. 
+After the negotiation is completed, the Consumer receives the Endpoint Data Reference (EDR), and the validation script (active webhook) 
+uses the protected URL provided to download the file. The function then computes a SHA-256 hash of the downloaded binary content. 
+Finally, the hash and asset metadata are submitted to the smart contract on Hyperledger Besu for on-chain notarization.
