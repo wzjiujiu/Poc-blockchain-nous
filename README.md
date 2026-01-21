@@ -19,6 +19,11 @@ The project explores how decentralized services can support **accident preventio
 
 ## Architecture Components
 
+### Requirements
+- **Node.js** – 
+- **Docker desktop** – 
+
+
 ### Core Services
 
 | Component | Description |
@@ -28,6 +33,8 @@ The project explores how decentralized services can support **accident preventio
 | **minio** | High-performance object storage for data management |
 | **sovity** | Integration with Sovity platform services |
 | **webhook-server** | Node.js webhook server for real-time event processing |
+
+
 
 ---
 
@@ -276,10 +283,9 @@ pm.sendRequest({
 ---
 
 
-## 🔮 Future Work: Event-driven and Kafka-based Architecture
+## 🔮 Event-driven and Kafka-based Architecture
 
-As future work, the current webhook-based integration can be evolved toward a **fully event-driven architecture**
-based on a message broker such as **Apache Kafka**.
+
 
 In this model, EDC events would no longer be handled synchronously by a single webhook, but instead published
 to dedicated Kafka topics (e.g. `asset-events`, `policy-events`, `dataoffer-events`).
@@ -299,6 +305,27 @@ independent producers of events.
 
 By adopting a Kafka-based solution, the system could scale to large dataspaces with many participants and
 high event throughput, while preserving the same on-chain semantics and audit guarantees.
+
+### STEP 1: Test Setup
+
+From the folder kafka perform following command:
+
+
+```bash
+docker compose up -d
+```
+
+From the webhook-server directory perform following command:
+
+```bash
+node indexkafka.js
+```
+
+From the webhook-server/kafka directory perform following command:
+
+```bash
+node consumer.js
+```
 
 ---
 
