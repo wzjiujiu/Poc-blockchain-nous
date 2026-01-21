@@ -332,6 +332,7 @@ node consumer.js
 ### STEP 2: Test flow
 
 Perform allowed POSTMAN API from the upside section 
+
 ---
 
 ## 🔮 Integrated Test with MASA USECASE
