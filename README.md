@@ -234,8 +234,8 @@ THE REST API Disponible to test are :
 | **EDIT CONTRACT DEFINITION PUT** | {{{PROVIDER_EDC_MANAGEMENT_URL}}/v3/contractdefinitions |
 | **START NEGOTIATION POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/wrapper/ui/pages/catalog-page/contract-negotiations |
 | **TERMINATE NEGOTIATION POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/wrapper/ui/pages/content-agreement-page/CONTRACT AGREEMENT ID/terminate |
-| **START DATA TRANSFER POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/wrapper/ui/pages/catalog-page/contract-negotiations |
-| **TERMINATE DATA TRANSFER POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/wrapper/ui/pages/content-agreement-page/CONTRACT AGREEMENT ID/terminate |
+| **START DATA TRANSFER POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/ |
+| **TERMINATE DATA TRANSFER POST** | {{CONSUMER_EDC_MANAGEMENT_URL}}/ |
 
 
 
