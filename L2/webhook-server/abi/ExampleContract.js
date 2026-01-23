@@ -33,6 +33,11 @@ module.exports = [
   "function getTransfer(string transferId) external view returns (string id, bytes32 nodeId, string contractAgreementId, string assetId, bytes32 dataHash, uint8 status, uint256 timestamp)",
   "function transferExists(string transferId) external view returns (bool)",
 
+  // ───────────── Merkle Root ─────────────
+ "function getMerkleRoot(bytes32 nodeId, string[] assetIds) public view returns (bytes32)",
+  "function verifyAssetDirect(bytes32 nodeId, string assetId, string[] assetIds) external view returns (bool)",
+
+
   // ───────────── Events ─────────────
   "event AssetRegistered(address indexed registrar, bytes32 indexed nodeId, string assetId, uint256 timestamp, string title)",
   "event AssetModified(bytes32 indexed nodeId, string assetId, uint256 timestamp, string newTitle)",

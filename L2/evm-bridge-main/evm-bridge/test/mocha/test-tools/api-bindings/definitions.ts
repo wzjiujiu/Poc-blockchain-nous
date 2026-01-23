@@ -2883,6 +2883,22 @@ export interface CallResponseExampleGetInitializedVersion {
     v: string;
 }
 
+export interface CallRequestExampleGetMerkleRoot {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    assetIds: string[];
+}
+
+export interface CallResponseExampleGetMerkleRoot {
+    /**
+     * _0 
+     */
+    _0: string;
+}
+
 export interface CallRequestExampleGetPolicy {
     /**
      * nodeId 
@@ -3007,6 +3023,27 @@ export interface CallRequestExampleTransferExists {
 }
 
 export interface CallResponseExampleTransferExists {
+    /**
+     * _0
+     */
+    _0: boolean;
+}
+
+export interface CallRequestExampleVerifyAssetDirect {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * assetId
+     */
+    assetId: string;
+
+    assetIds: string[];
+}
+
+export interface CallResponseExampleVerifyAssetDirect {
     /**
      * _0
      */

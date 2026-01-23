@@ -1,9 +1,9 @@
 const { extractPolicyInfo, extractContractDefinitionInfo } = require("../utils/extractors.js");
 const axios = require("axios");
+const { ethers } = require("ethers"); // ethers.js v6
 
 
-
-async function registerAssetOnChain({ nodeId, assetId, assetTitle,contract }) {
+async function registerAssetOnChain({ nodeId, assetId, assetTitle,contract,db,provider }) {
   try {
     const assetIdStr = assetId.toString();
     console.log(`📤 Registrazione asset ID: ${assetIdStr}`);
@@ -28,11 +28,20 @@ async function registerAssetOnChain({ nodeId, assetId, assetTitle,contract }) {
     console.log(`⏳ Transazione inviata: ${tx.hash}`);
     const receipt = await tx.wait();
 
-    console.log(`✅ Asset "${assetIdStr}" registrato nel blocco ${receipt.blockNumber}`);
+    console.log(`✅ Asset "${assetIdStr}" registrato nel blocco ${receipt.blockNumber}`)
+    const block = await provider.getBlock(receipt.blockNumber);;
+    const blockTimestamp = Number(block.timestamp); // epoch seconds
+    const blockTimestamppg = new Date(Number(block.timestamp) * 1000);
 
     // Lettura dei dati registrati
     const data = await contract.getAsset(nodeId, assetIdStr);
     console.log("📄 Asset registrato:", data);
+    await db.query(` INSERT INTO l2_assets (node_id, asset_id, registrar, timestamp, title) VALUES ($1, $2, $3, $4, $5)`, [ethers.getBytes(nodeId), assetIdStr, tx.hash, blockTimestamp,assetTitle]);
+    await db.query(` INSERT INTO blocks (block_number, hash, timestamp, gas_used, tx_count) VALUES ($1, $2, $3, $4, $5)`, [receipt.blockNumber, receipt.blockHash,blockTimestamppg,receipt.gasUsed.toString(),block.transactions.length]);
+    await db.query(` INSERT INTO transactions (tx_hash, block_number, from_address,to_address, value, gas_used,timestamp) VALUES ($1, $2, $3, $4, $5,$6,$7)`, [tx.hash, receipt.blockNumber,tx.from,tx.to || null,tx.value.toString(),receipt.gasUsed.toString(),blockTimestamppg]);
+
+    console.log(nodeId);
+    console.log(ethers.getBytes(nodeId))
 
     return {
       success: true,
@@ -47,7 +56,7 @@ async function registerAssetOnChain({ nodeId, assetId, assetTitle,contract }) {
   }
 }
 
-async function modifyAssetOnChainFromWebhook(cleanedData, nodeId,contract) {
+async function modifyAssetOnChainFromWebhook(cleanedData, nodeId,contract,db) {
   try {
     const assetId = cleanedData?.request?.body?.properties?.id?.toString();
     const newTitle = cleanedData?.request?.body?.properties?.title;
@@ -100,7 +109,7 @@ async function modifyAssetOnChainFromWebhook(cleanedData, nodeId,contract) {
   }
 }
 
-async function registerPolicyOnChainFromWebhook(nodeId,newPolicyId,policyContent,contract) {
+async function registerPolicyOnChainFromWebhook(nodeId,newPolicyId,policyContent,contract,db) {
   try {
 
     console.log(`📤 Registrazione Policy ID: ${newPolicyId}`);
@@ -144,7 +153,7 @@ async function registerPolicyOnChainFromWebhook(nodeId,newPolicyId,policyContent
   }
 }
 
-async function modifyPolicyOnchainFromWebhook(cleanedData, nodeId,contract) {
+async function modifyPolicyOnchainFromWebhook(cleanedData, nodeId,contract,db) {
   try {
     /* ======================= ID ======================= */
     const policyId =
@@ -212,7 +221,7 @@ async function modifyPolicyOnchainFromWebhook(cleanedData, nodeId,contract) {
   }
 }
 
-async function modifyDataofferOnChain(contract, nodeId, cleanedData, rawPort) {
+async function modifyDataofferOnChain(contract, nodeId, cleanedData, rawPort,db) {
   try {
     /* ======================= ID ======================= */
     const dataofferId =
@@ -275,7 +284,7 @@ async function modifyDataofferOnChain(contract, nodeId, cleanedData, rawPort) {
   }
 }
 
-async function registerDataofferOnChain(contract, nodeId, cleanedData, accessPolicyId, contractPolicyId, assetSelector) {
+async function registerDataofferOnChain(contract, nodeId, cleanedData, accessPolicyId, contractPolicyId, assetSelector,db) {
   try {
     /* ======================= ID ======================= */
     const dataofferid = cleanedData.response?.['@id'];
@@ -353,7 +362,7 @@ async function waitForAgreementState(contractNegotiationId, {
   throw new Error(`Timeout: stato ${targetState} non raggiunto`);
 }
 
-async function registerContrattoOnchain(contract, nodeId, cleanedData)
+async function registerContrattoOnchain(contract, nodeId, cleanedData,db)
 {
 try {
     /* ======================= ESTRAZIONE ID ======================= */
@@ -445,7 +454,7 @@ try {
 
 }
 
-async function terminateContrattoOnchain(contract, nodeId, rawPort) {
+async function terminateContrattoOnchain(contract, nodeId, rawPort,db) {
   try {
     // ======================= ESTRAZIONE CONTRACT AGREEMENT ID =======================
     const parts = rawPort.split("/");

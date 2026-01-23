@@ -660,87 +660,113 @@ contract ExampleContract is BaseContract {
     {
         return transfers[transferId].timestamp != 0;
     }
+ 
 
-    function hashAsset(bytes32 nodeId, string memory assetId) internal view returns (bytes32) {
-        Asset memory a = assets[nodeId][assetId];
-        return keccak256(abi.encodePacked(a.id, a.nodeId, a.registrar, a.timestamp, a.title));
+function hashLeaf(bytes32 nodeId, string memory assetId) internal pure returns (bytes32) {
+        return keccak256(abi.encodePacked(assetId, nodeId));
     }
 
-    // Hash di tutte le policy
-    function hashPolicy(bytes32 nodeId, string memory policyId) internal view returns (bytes32) {
-        Policy memory p = policies[nodeId][policyId];
-        return keccak256(abi.encodePacked(p.id, p.nodeId, p.registrar, p.timestamp, p.title));
-    }
+    // Calcola Merkle Root da array di foglie
+    function getMerkleRoot(bytes32 nodeId, string[] memory assetIds) public pure returns (bytes32) {
+        uint256 n = assetIds.length;
+        require(n > 0, "Array assetIds vuoto");
 
-    // Hash di tutte le offerte
-    function hashDataoffer(bytes32 nodeId, string memory offerId) internal view returns (bytes32) {
-        Dataoffer memory d = offers[nodeId][offerId];
-        return keccak256(abi.encodePacked(d.id, d.nodeId, d.registrar, d.timestamp, d.accessPolicyId, d.contractPolicyId, d.assetSelector));
-    }
+        bytes32[] memory leaves = new bytes32[](n);
+        for (uint256 i = 0; i < n; i++) {
+            leaves[i] = hashLeaf(nodeId, assetIds[i]);
+        }
 
-    // Hash di tutti i contratti
-    function hashContratto(bytes32 nodeId, string memory contractId) internal view returns (bytes32) {
-        Contratto memory c = contratti[nodeId][contractId];
-        return keccak256(abi.encodePacked(c.id, c.nodeId, c.registrar, c.counterpartyid, c.contractnegotiationid, c.timestamp, c.createdat, c.state));
-    }
-
-    // Hash di tutti i trasferimenti
-    function hashDataTransfer(string memory transferId) internal view returns (bytes32) {
-        DataTransfer memory t = transfers[transferId];
-        return keccak256(abi.encodePacked(t.id, t.nodeId, t.contractagreetmentid, t.assetId, t.dataHash, uint256(t.status), t.timestamp));
-    }
-
-     function getMerkleRoot(
-        bytes32[] memory assetNodeIds,
-        string[][] memory assetIds,
-        bytes32[] memory policyNodeIds,
-        string[][] memory policyIds,
-        bytes32[] memory offerNodeIds,
-        string[][] memory offerIds,
-        bytes32[] memory contractNodeIds,
-        string[][] memory contractIds,
-        string[] memory transferIds
-    )
-        external
-        view
-        returns (bytes32)
-    {
-        bytes32 root = 0x0;
-
-        // Asset
-        for (uint i = 0; i < assetNodeIds.length; i++) {
-            for (uint j = 0; j < assetIds[i].length; j++) {
-                root = keccak256(abi.encodePacked(root, hashAsset(assetNodeIds[i], assetIds[i][j])));
+        // Costruzione al volo Merkle Tree
+        while (n > 1) {
+            uint256 j = 0;
+            for (uint256 i = 0; i < n; i += 2) {
+                bytes32 left = leaves[i];
+                bytes32 right = (i + 1 < n) ? leaves[i + 1] : leaves[i];
+                leaves[j] = keccak256(abi.encodePacked(left, right));
+                j++;
             }
+            n = j;
         }
 
-        // Policy
-        for (uint i = 0; i < policyNodeIds.length; i++) {
-            for (uint j = 0; j < policyIds[i].length; j++) {
-                root = keccak256(abi.encodePacked(root, hashPolicy(policyNodeIds[i], policyIds[i][j])));
-            }
-        }
-
-        // Dataoffer
-        for (uint i = 0; i < offerNodeIds.length; i++) {
-            for (uint j = 0; j < offerIds[i].length; j++) {
-                root = keccak256(abi.encodePacked(root, hashDataoffer(offerNodeIds[i], offerIds[i][j])));
-            }
-        }
-
-        // Contratti
-        for (uint i = 0; i < contractNodeIds.length; i++) {
-            for (uint j = 0; j < contractIds[i].length; j++) {
-                root = keccak256(abi.encodePacked(root, hashContratto(contractNodeIds[i], contractIds[i][j])));
-            }
-        }
-
-        // DataTransfer
-        for (uint i = 0; i < transferIds.length; i++) {
-            root = keccak256(abi.encodePacked(root, hashDataTransfer(transferIds[i])));
-        }
-
-        return root;
+        return leaves[0]; // radice
     }
+
+    // Elemento della proof con info left/right
+    struct ProofElement {
+        bytes32 sibling;
+        bool isLeft; // true se il sibling è a sinistra della foglia
+    }
+
+    // Ottieni proof completa dell'asset
+    function verifyAssetDirect(
+    bytes32 nodeId,
+    string memory assetId,
+    string[] memory assetIds
+) external pure returns (bool) {
+    uint256 n = assetIds.length;
+    require(n > 0, "Array assetIds vuoto");
+
+    // Costruisci foglie e trova l'indice della foglia target
+    bytes32[] memory leaves = new bytes32[](n);
+    uint256 index = n; // indice foglia target
+    for (uint256 i = 0; i < n; i++) {
+        leaves[i] = hashLeaf(nodeId, assetIds[i]);
+        if (keccak256(bytes(assetIds[i])) == keccak256(bytes(assetId))) {
+            index = i;
+        }
+    }
+    require(index < n, "Asset non trovato");
+
+    // Costruzione Merkle Tree on-the-fly e verifica hash
+    while (n > 1) {
+        uint256 j = 0;
+        bytes32[] memory nextLevel = new bytes32[]((n + 1) / 2);
+        for (uint256 i = 0; i < n; i += 2) {
+            bytes32 left = leaves[i];
+            bytes32 right = (i + 1 < n) ? leaves[i + 1] : leaves[i];
+            nextLevel[j] = keccak256(abi.encodePacked(left, right));
+
+            // Aggiorna l’indice della foglia target per il livello successivo
+            if (i == index || i + 1 == index) {
+                if (i + 1 < n) {
+                    index = j; // target sale al livello superiore
+                } else {
+                    index = j; // target duplicato se dispari
+                }
+            }
+            j++;
+        }
+        leaves = nextLevel;
+        n = j;
+    }
+
+    // Confronta la foglia target con la root finale
+    bytes32 leafHash = hashLeaf(nodeId, assetId);
+    bytes32 hash = leafHash;
+
+    // Ricostruisci la root seguendo il percorso della foglia target
+    n = assetIds.length;
+    uint256 tempIndex = index;
+    bytes32[] memory levelLeaves = new bytes32[](n);
+    for (uint256 i = 0; i < n; i++) {
+        levelLeaves[i] = hashLeaf(nodeId, assetIds[i]);
+    }
+
+    while (levelLeaves.length > 1) {
+        uint256 len = levelLeaves.length;
+        bytes32[] memory nextLevel = new bytes32[]((len + 1) / 2);
+        uint256 k = 0;
+        for (uint256 i = 0; i < len; i += 2) {
+            bytes32 left = levelLeaves[i];
+            bytes32 right = (i + 1 < len) ? levelLeaves[i + 1] : levelLeaves[i];
+            nextLevel[k] = keccak256(abi.encodePacked(left, right));
+            k++;
+        }
+        levelLeaves = nextLevel;
+    }
+
+    return hash == levelLeaves[0];
+}
+
 
 }

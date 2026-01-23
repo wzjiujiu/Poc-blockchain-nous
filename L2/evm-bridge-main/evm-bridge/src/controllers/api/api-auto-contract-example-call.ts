@@ -49,12 +49,14 @@ export class ExampleContractApiCallController extends Controller {
         application.post(prefix + "/contracts/example/call/get-contratto", ensureObjectBody(this.callGetContratto.bind(this)));
         application.post(prefix + "/contracts/example/call/get-dataoffer", ensureObjectBody(this.callGetDataoffer.bind(this)));
         application.post(prefix + "/contracts/example/call/get-initialized-version", ensureObjectBody(this.callGetInitializedVersion.bind(this)));
+        application.post(prefix + "/contracts/example/call/get-merkle-root", ensureObjectBody(this.callGetMerkleRoot.bind(this)));
         application.post(prefix + "/contracts/example/call/get-policy", ensureObjectBody(this.callGetPolicy.bind(this)));
         application.post(prefix + "/contracts/example/call/get-transfer", ensureObjectBody(this.callGetTransfer.bind(this)));
         application.post(prefix + "/contracts/example/call/paused", ensureObjectBody(this.callPaused.bind(this)));
         application.post(prefix + "/contracts/example/call/policy-exists", ensureObjectBody(this.callPolicyExists.bind(this)));
         application.post(prefix + "/contracts/example/call/proxiable-uuid", ensureObjectBody(this.callProxiableUUID.bind(this)));
         application.post(prefix + "/contracts/example/call/transfer-exists", ensureObjectBody(this.callTransferExists.bind(this)));
+        application.post(prefix + "/contracts/example/call/verify-asset-direct", ensureObjectBody(this.callVerifyAssetDirect.bind(this)));
     }
 
     /**
@@ -480,6 +482,56 @@ export class ExampleContractApiCallController extends Controller {
         sendApiResult(request, response, result);
     }
     /**
+     * @typedef CallRequestExampleGetMerkleRoot
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {Array.<string>} assetIds.required - assetIds
+     */
+
+    /**
+     * @typedef CallResponseExampleGetMerkleRoot
+     * @property {string} _0.required - _0 - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     */
+
+    /**
+     * Calls the pure method: getMerkleRoot
+     * Smart contract: Example (ExampleContract)
+     * Method signature: getMerkleRoot(bytes32,string[])
+     * Binding: CallGetMerkleRoot
+     * 
+     * @route POST /contracts/example/call/get-merkle-root
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {CallRequestExampleGetMerkleRoot.model} request.body.required - Request body
+     * @returns {CallResponseExampleGetMerkleRoot.model} 200 - OK
+     * @returns {void} 400 - Invalid parameters
+     * @returns {void} 404 - Error calling the method
+     * @security BearerAuthorization
+     */
+    public async callGetMerkleRoot(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string[]", "name": "assetIds", "type": "string[]" }], "name": "getMerkleRoot", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "pure", "type": "function" };
+
+        const [callParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        let result: any;
+        try {
+            const callResult = await wrapper.getMerkleRoot.call(wrapper, ...callParams);
+
+            result = serializeOutputABIParams([callResult], methodAbi);
+        } catch (ex) {
+            Monitor.debugException(ex)
+            sendApiError(request, response, NOT_FOUND, "CALL_ERROR", ex.message);
+            return;
+        }
+
+        sendApiResult(request, response, result);
+    }
+    /**
      * @typedef CallRequestExampleGetPolicy
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
      * @property {string} policyId.required - policyId
@@ -777,6 +829,57 @@ export class ExampleContractApiCallController extends Controller {
         let result: any;
         try {
             const callResult = await wrapper.transferExists.call(wrapper, ...callParams);
+
+            result = serializeOutputABIParams([callResult], methodAbi);
+        } catch (ex) {
+            Monitor.debugException(ex)
+            sendApiError(request, response, NOT_FOUND, "CALL_ERROR", ex.message);
+            return;
+        }
+
+        sendApiResult(request, response, result);
+    }
+    /**
+     * @typedef CallRequestExampleVerifyAssetDirect
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} assetId.required - assetId
+     * @property {Array.<string>} assetIds.required - assetIds
+     */
+
+    /**
+     * @typedef CallResponseExampleVerifyAssetDirect
+     * @property {boolean} _0.required - _0
+     */
+
+    /**
+     * Calls the pure method: verifyAssetDirect
+     * Smart contract: Example (ExampleContract)
+     * Method signature: verifyAssetDirect(bytes32,string,string[])
+     * Binding: CallVerifyAssetDirect
+     * 
+     * @route POST /contracts/example/call/verify-asset-direct
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {CallRequestExampleVerifyAssetDirect.model} request.body.required - Request body
+     * @returns {CallResponseExampleVerifyAssetDirect.model} 200 - OK
+     * @returns {void} 400 - Invalid parameters
+     * @returns {void} 404 - Error calling the method
+     * @security BearerAuthorization
+     */
+    public async callVerifyAssetDirect(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string[]", "name": "assetIds", "type": "string[]" }], "name": "verifyAssetDirect", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "pure", "type": "function" };
+
+        const [callParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        let result: any;
+        try {
+            const callResult = await wrapper.verifyAssetDirect.call(wrapper, ...callParams);
 
             result = serializeOutputABIParams([callResult], methodAbi);
         } catch (ex) {

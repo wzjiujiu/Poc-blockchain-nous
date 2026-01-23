@@ -67,7 +67,7 @@ const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const provider = new ethers.JsonRpcProvider("http://localhost:9555");
 const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 
-const CONTRACT_ADDRESS = "0x7cdd54f3e7c17eb0fab7eb4f3924835d9511f231";
+const CONTRACT_ADDRESS = "0x5cf4f0d1b5d58a3b722b3c7188600a2c6681fc65";
 
 const CONTRACT_ABI = require("./abi/ExampleContract");
 

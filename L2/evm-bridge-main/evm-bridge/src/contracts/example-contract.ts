@@ -181,6 +181,19 @@ export class ExampleContractWrapper {
     }
 
     /**
+     * Calls View method: getMerkleRoot(bytes32,string[])
+     * Method: getMerkleRoot(bytes32,string[])
+     * @param nodeId nodeId
+     * @param assetIds assetIds
+     * @param options The options for sending the request
+     * @returns The result for calling the method
+     */
+    public async getMerkleRoot(nodeId: BytesLike, assetIds: string[], options?: MethodCallingOptions): Promise<string> {
+        const __r: any = await this._contractInterface.callViewMethod("getMerkleRoot", [nodeId, assetIds], options || {});
+        return __r[0];
+    }
+
+    /**
      * Calls View method: getPolicy(bytes32,string)
      * Method: getPolicy(bytes32,string)
      * @param nodeId nodeId
@@ -263,6 +276,20 @@ export class ExampleContractWrapper {
      */
     public async transferExists(transferId: string, options?: MethodCallingOptions): Promise<boolean> {
         const __r: any = await this._contractInterface.callViewMethod("transferExists", [transferId], options || {});
+        return __r[0];
+    }
+
+    /**
+     * Calls View method: verifyAssetDirect(bytes32,string,string[])
+     * Method: verifyAssetDirect(bytes32,string,string[])
+     * @param nodeId nodeId
+     * @param assetId assetId
+     * @param assetIds assetIds
+     * @param options The options for sending the request
+     * @returns The result for calling the method
+     */
+    public async verifyAssetDirect(nodeId: BytesLike, assetId: string, assetIds: string[], options?: MethodCallingOptions): Promise<boolean> {
+        const __r: any = await this._contractInterface.callViewMethod("verifyAssetDirect", [nodeId, assetId, assetIds], options || {});
         return __r[0];
     }
 
@@ -1952,6 +1979,30 @@ const CONTRACT_ABI: ABILike = [
                 "type": "bytes32"
             },
             {
+                "internalType": "string[]",
+                "name": "assetIds",
+                "type": "string[]"
+            }
+        ],
+        "name": "getMerkleRoot",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
                 "internalType": "string",
                 "name": "policyId",
                 "type": "string"
@@ -2401,6 +2452,35 @@ const CONTRACT_ABI: ABILike = [
         "name": "upgradeToAndCall",
         "outputs": [],
         "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "nodeId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
+                "name": "assetId",
+                "type": "string"
+            },
+            {
+                "internalType": "string[]",
+                "name": "assetIds",
+                "type": "string[]"
+            }
+        ],
+        "name": "verifyAssetDirect",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "pure",
         "type": "function"
     }
 ];

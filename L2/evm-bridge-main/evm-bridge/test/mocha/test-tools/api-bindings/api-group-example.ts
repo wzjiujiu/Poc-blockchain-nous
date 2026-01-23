@@ -27,7 +27,7 @@
 
 import { RequestErrorHandler, RequestParams, CommonAuthenticatedErrorHandler } from "@asanrom/request-axios";
 import { getApiUrl, generateURIQuery } from "./utils";
-import { SmartContractInformation, TxResponse, TxRequestExampleCompleteDataTransfer, TxRequestExampleInitialize, TxRequestExampleModifyAsset, TxRequestExampleModifyDataoffer, TxRequestExampleModifyPolicy, TxRequestExamplePause, TxRequestExampleRegisterAsset, TxRequestExampleRegisterContratto, TxRequestExampleRegisterDataoffer, TxRequestExampleRegisterPolicy, TxRequestExampleRequestDataTransfer, TxRequestExampleUnpause, TxRequestExampleUpdateContrattoState, TxRequestExampleUpgradeToAndCall, EventListExampleAssetModified, EventListExampleAssetRegistered, EventListExampleContrattoRegistered, EventListExampleContrattoStateUpdated, EventListExampleDataTransferCompleted, EventListExampleDataTransferRequested, EventListExampleDataofferModified, EventListExampleDataofferRegistered, EventListExampleInitialized, EventListExamplePaused, EventListExamplePolicyModified, EventListExamplePolicyRegistered, EventListExampleUnpaused, EventListExampleUpgraded, CallResponseExampleUPGRADE_INTERFACE_VERSION, CallResponseExampleAssetExists, CallRequestExampleAssetExists, CallResponseExampleContrattoExists, CallRequestExampleContrattoExists, CallResponseExampleDataofferExists, CallRequestExampleDataofferExists, CallResponseExampleGetAsset, CallRequestExampleGetAsset, CallResponseExampleGetContratto, CallRequestExampleGetContratto, CallResponseExampleGetDataoffer, CallRequestExampleGetDataoffer, CallResponseExampleGetInitializedVersion, CallResponseExampleGetPolicy, CallRequestExampleGetPolicy, CallResponseExampleGetTransfer, CallRequestExampleGetTransfer, CallResponseExamplePaused, CallResponseExamplePolicyExists, CallRequestExamplePolicyExists, CallResponseExampleProxiableUUID, CallResponseExampleTransferExists, CallRequestExampleTransferExists } from "./definitions";
+import { SmartContractInformation, TxResponse, TxRequestExampleCompleteDataTransfer, TxRequestExampleInitialize, TxRequestExampleModifyAsset, TxRequestExampleModifyDataoffer, TxRequestExampleModifyPolicy, TxRequestExamplePause, TxRequestExampleRegisterAsset, TxRequestExampleRegisterContratto, TxRequestExampleRegisterDataoffer, TxRequestExampleRegisterPolicy, TxRequestExampleRequestDataTransfer, TxRequestExampleUnpause, TxRequestExampleUpdateContrattoState, TxRequestExampleUpgradeToAndCall, EventListExampleAssetModified, EventListExampleAssetRegistered, EventListExampleContrattoRegistered, EventListExampleContrattoStateUpdated, EventListExampleDataTransferCompleted, EventListExampleDataTransferRequested, EventListExampleDataofferModified, EventListExampleDataofferRegistered, EventListExampleInitialized, EventListExamplePaused, EventListExamplePolicyModified, EventListExamplePolicyRegistered, EventListExampleUnpaused, EventListExampleUpgraded, CallResponseExampleUPGRADE_INTERFACE_VERSION, CallResponseExampleAssetExists, CallRequestExampleAssetExists, CallResponseExampleContrattoExists, CallRequestExampleContrattoExists, CallResponseExampleDataofferExists, CallRequestExampleDataofferExists, CallResponseExampleGetAsset, CallRequestExampleGetAsset, CallResponseExampleGetContratto, CallRequestExampleGetContratto, CallResponseExampleGetDataoffer, CallRequestExampleGetDataoffer, CallResponseExampleGetInitializedVersion, CallResponseExampleGetMerkleRoot, CallRequestExampleGetMerkleRoot, CallResponseExampleGetPolicy, CallRequestExampleGetPolicy, CallResponseExampleGetTransfer, CallRequestExampleGetTransfer, CallResponseExamplePaused, CallResponseExamplePolicyExists, CallRequestExamplePolicyExists, CallResponseExampleProxiableUUID, CallResponseExampleTransferExists, CallRequestExampleTransferExists, CallResponseExampleVerifyAssetDirect, CallRequestExampleVerifyAssetDirect } from "./definitions";
 
 export class ApiExample {
     /**
@@ -1031,6 +1031,32 @@ export class ApiExample {
 
     /**
      * Method: POST
+     * Path: /contracts/example/call/get-merkle-root
+     * Calls the pure method: getMerkleRoot
+     * Smart contract: Example (ExampleContract)
+     * Method signature: getMerkleRoot(bytes32,string[])
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static CallGetMerkleRoot(body: CallRequestExampleGetMerkleRoot): RequestParams<CallResponseExampleGetMerkleRoot, CallGetMerkleRootErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/call/get-merkle-root`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(404, "*", handler.notFound)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
      * Path: /contracts/example/call/get-policy
      * Calls the view method: getPolicy
      * Smart contract: Example (ExampleContract)
@@ -1169,6 +1195,32 @@ export class ApiExample {
         return {
             method: "POST",
             url: getApiUrl(`/contracts/example/call/transfer-exists`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(404, "*", handler.notFound)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
+     * Path: /contracts/example/call/verify-asset-direct
+     * Calls the pure method: verifyAssetDirect
+     * Smart contract: Example (ExampleContract)
+     * Method signature: verifyAssetDirect(bytes32,string,string[])
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static CallVerifyAssetDirect(body: CallRequestExampleVerifyAssetDirect): RequestParams<CallResponseExampleVerifyAssetDirect, CallVerifyAssetDirectErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/call/verify-asset-direct`),
             json: body,
             handleError: (err, handler) => {
                 new RequestErrorHandler()
@@ -2214,6 +2266,21 @@ export type CallGetInitializedVersionErrorHandler = CommonAuthenticatedErrorHand
 };
 
 /**
+ * Error handler for CallGetMerkleRoot
+ */
+export type CallGetMerkleRootErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * General handler for status = 404
+     */
+    notFound: () => void;
+};
+
+/**
  * Error handler for CallGetPolicy
  */
 export type CallGetPolicyErrorHandler = CommonAuthenticatedErrorHandler & {
@@ -2292,6 +2359,21 @@ export type CallProxiableUUIDErrorHandler = CommonAuthenticatedErrorHandler & {
  * Error handler for CallTransferExists
  */
 export type CallTransferExistsErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * General handler for status = 404
+     */
+    notFound: () => void;
+};
+
+/**
+ * Error handler for CallVerifyAssetDirect
+ */
+export type CallVerifyAssetDirectErrorHandler = CommonAuthenticatedErrorHandler & {
     /**
      * General handler for status = 400
      */
