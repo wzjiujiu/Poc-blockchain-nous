@@ -19,7 +19,7 @@
   "coinbase" : "0x0000000000000000000000000000000000000000",
   
   "alloc" : {
-    "B6c94f0eB270839e07b693D17E7a757DD7223618" : {
+    "d0A27e15bEe784372Ccfc1A1EAe7AE7Cb212d5De": {
       "comment" : "Test Node",
       "balance" : "0xad78ebc5ac6200000"
     }
