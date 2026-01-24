@@ -28,9 +28,10 @@
 
 import Express from "express";
 import { Controller } from "../controller";
-import { BAD_REQUEST, ensureObjectBody, sendApiError } from "../../utils/http-utils";
+import { Monitor } from "../../monitor";
+import { BAD_REQUEST, NOT_FOUND, ensureObjectBody, sendApiError, sendApiResult } from "../../utils/http-utils";
 import { SmartContractsConfig } from "../../config/config-smart-contracts";
-import { normalizeAndValidateInputParameters } from "../../utils/blockchain";
+import { normalizeAndValidateInputParameters, serializeOutputABIParams } from "../../utils/blockchain";
 import { handleTransactionSending } from "../../utils/tx-sending";
 
 /**

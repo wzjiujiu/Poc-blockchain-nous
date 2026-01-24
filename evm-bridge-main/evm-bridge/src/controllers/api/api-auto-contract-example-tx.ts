@@ -28,9 +28,10 @@
 
 import Express from "express";
 import { Controller } from "../controller";
-import { BAD_REQUEST, ensureObjectBody, sendApiError } from "../../utils/http-utils";
+import { Monitor } from "../../monitor";
+import { BAD_REQUEST, NOT_FOUND, ensureObjectBody, sendApiError, sendApiResult } from "../../utils/http-utils";
 import { SmartContractsConfig } from "../../config/config-smart-contracts";
-import { normalizeAndValidateInputParameters } from "../../utils/blockchain";
+import { normalizeAndValidateInputParameters, serializeOutputABIParams } from "../../utils/blockchain";
 import { handleTransactionSending } from "../../utils/tx-sending";
 
 /**
@@ -44,10 +45,12 @@ export class ExampleContractApiTxController extends Controller {
         application.post(prefix + "/contracts/example/tx/complete-data-transfer", ensureObjectBody(this.txCompleteDataTransfer.bind(this)));
         application.post(prefix + "/contracts/example/tx/initialize", ensureObjectBody(this.txInitialize.bind(this)));
         application.post(prefix + "/contracts/example/tx/modify-asset", ensureObjectBody(this.txModifyAsset.bind(this)));
+        application.post(prefix + "/contracts/example/tx/modify-assetminio", ensureObjectBody(this.txModifyAssetminio.bind(this)));
         application.post(prefix + "/contracts/example/tx/modify-dataoffer", ensureObjectBody(this.txModifyDataoffer.bind(this)));
         application.post(prefix + "/contracts/example/tx/modify-policy", ensureObjectBody(this.txModifyPolicy.bind(this)));
         application.post(prefix + "/contracts/example/tx/pause", ensureObjectBody(this.txPause.bind(this)));
         application.post(prefix + "/contracts/example/tx/register-asset", ensureObjectBody(this.txRegisterAsset.bind(this)));
+        application.post(prefix + "/contracts/example/tx/register-assetminio", ensureObjectBody(this.txRegisterAssetminio.bind(this)));
         application.post(prefix + "/contracts/example/tx/register-contratto", ensureObjectBody(this.txRegisterContratto.bind(this)));
         application.post(prefix + "/contracts/example/tx/register-dataoffer", ensureObjectBody(this.txRegisterDataoffer.bind(this)));
         application.post(prefix + "/contracts/example/tx/register-policy", ensureObjectBody(this.txRegisterPolicy.bind(this)));
@@ -144,8 +147,8 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * @typedef TxParamsExampleModifyAsset
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} assetId.required - assetId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} newTitle.required - newTitle - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} assetId.required - assetId
+     * @property {string} newTitle.required - newTitle
      */
 
     /**
@@ -157,7 +160,7 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: modifyAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: modifyAsset(bytes32,bytes32,bytes32)
+     * Method signature: modifyAsset(bytes32,string,string)
      * Binding: TxModifyAsset
      * 
      * @route POST /contracts/example/tx/modify-asset
@@ -169,7 +172,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txModifyAsset(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "bytes32", "name": "assetId", "type": "bytes32" }, { "internalType": "bytes32", "name": "newTitle", "type": "bytes32" }], "name": "modifyAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }], "name": "modifyAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 
@@ -181,6 +184,50 @@ export class ExampleContractApiTxController extends Controller {
         const wrapper = SmartContractsConfig.getInstance().example;
 
         const txBuildData = wrapper.modifyAsset$txBuildDetails.call(wrapper, ...txParams);
+
+        await handleTransactionSending(request, response, txBuildData, wrapper.address);
+    }
+    /**
+     * @typedef TxParamsExampleModifyAssetminio
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} assetId.required - assetId
+     * @property {string} newTitle.required - newTitle
+     * @property {string} dataHash.required - dataHash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     */
+
+    /**
+     * @typedef TxRequestExampleModifyAssetminio
+     * @property {TxParamsExampleModifyAssetminio.model} parameters.required - Transaction parameters
+     * @property {TxSigningOptions.model} txSign.required - Transaction signing options
+     */
+
+    /**
+     * Sends transaction for method: modifyAssetminio
+     * Smart contract: Example (ExampleContract)
+     * Method signature: modifyAssetminio(bytes32,string,string,bytes32)
+     * Binding: TxModifyAssetminio
+     * 
+     * @route POST /contracts/example/tx/modify-assetminio
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {TxRequestExampleModifyAssetminio.model} request.body.required - Request body
+     * @returns {TxResponse.model} 200 - Transaction result
+     * @returns {TxBadRequest.model} 400 - Bad request
+     * @returns {TxSigningForbiddenResponse.model} 403 - Access denied
+     * @security BearerAuthorization
+     */
+    public async txModifyAssetminio(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string", "name": "newTitle", "type": "string" }, { "internalType": "bytes32", "name": "dataHash", "type": "bytes32" }], "name": "modifyAssetminio", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+
+        const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        const txBuildData = wrapper.modifyAssetminio$txBuildDetails.call(wrapper, ...txParams);
 
         await handleTransactionSending(request, response, txBuildData, wrapper.address);
     }
@@ -310,8 +357,8 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * @typedef TxParamsExampleRegisterAsset
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} assetId.required - assetId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} assetTitle.required - assetTitle - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} assetId.required - assetId
+     * @property {string} assetTitle.required - assetTitle
      */
 
     /**
@@ -323,7 +370,7 @@ export class ExampleContractApiTxController extends Controller {
     /**
      * Sends transaction for method: registerAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerAsset(bytes32,bytes32,bytes32)
+     * Method signature: registerAsset(bytes32,string,string)
      * Binding: TxRegisterAsset
      * 
      * @route POST /contracts/example/tx/register-asset
@@ -335,7 +382,7 @@ export class ExampleContractApiTxController extends Controller {
      * @security BearerAuthorization
      */
     public async txRegisterAsset(request: Express.Request, response: Express.Response) {
-        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "bytes32", "name": "assetId", "type": "bytes32" }, { "internalType": "bytes32", "name": "assetTitle", "type": "bytes32" }], "name": "registerAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string", "name": "assetTitle", "type": "string" }], "name": "registerAsset", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
 
         const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
 
@@ -347,6 +394,50 @@ export class ExampleContractApiTxController extends Controller {
         const wrapper = SmartContractsConfig.getInstance().example;
 
         const txBuildData = wrapper.registerAsset$txBuildDetails.call(wrapper, ...txParams);
+
+        await handleTransactionSending(request, response, txBuildData, wrapper.address);
+    }
+    /**
+     * @typedef TxParamsExampleRegisterAssetminio
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} assetId.required - assetId
+     * @property {string} assetTitle.required - assetTitle
+     * @property {string} dataHash.required - dataHash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     */
+
+    /**
+     * @typedef TxRequestExampleRegisterAssetminio
+     * @property {TxParamsExampleRegisterAssetminio.model} parameters.required - Transaction parameters
+     * @property {TxSigningOptions.model} txSign.required - Transaction signing options
+     */
+
+    /**
+     * Sends transaction for method: registerAssetminio
+     * Smart contract: Example (ExampleContract)
+     * Method signature: registerAssetminio(bytes32,string,string,bytes32)
+     * Binding: TxRegisterAssetminio
+     * 
+     * @route POST /contracts/example/tx/register-assetminio
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {TxRequestExampleRegisterAssetminio.model} request.body.required - Request body
+     * @returns {TxResponse.model} 200 - Transaction result
+     * @returns {TxBadRequest.model} 400 - Bad request
+     * @returns {TxSigningForbiddenResponse.model} 403 - Access denied
+     * @security BearerAuthorization
+     */
+    public async txRegisterAssetminio(request: Express.Request, response: Express.Response) {
+        const methodAbi = { "inputs": [{ "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "internalType": "string", "name": "assetId", "type": "string" }, { "internalType": "string", "name": "assetTitle", "type": "string" }, { "internalType": "bytes32", "name": "dataHash", "type": "bytes32" }], "name": "registerAssetminio", "outputs": [], "stateMutability": "nonpayable", "type": "function" };
+
+        const [txParams, validParams, invalidParamsReason] = normalizeAndValidateInputParameters(request.body.parameters, methodAbi);
+
+        if (!validParams) {
+            sendApiError(request, response, BAD_REQUEST, "INVALID_PARAMETERS", invalidParamsReason);
+            return;
+        }
+
+        const wrapper = SmartContractsConfig.getInstance().example;
+
+        const txBuildData = wrapper.registerAssetminio$txBuildDetails.call(wrapper, ...txParams);
 
         await handleTransactionSending(request, response, txBuildData, wrapper.address);
     }

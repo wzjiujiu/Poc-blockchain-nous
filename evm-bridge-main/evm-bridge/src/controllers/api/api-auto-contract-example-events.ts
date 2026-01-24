@@ -28,11 +28,13 @@
 
 import Express from "express";
 import { Controller } from "../controller";
-import { noCache, sendApiResult } from "../../utils/http-utils";
+import { noCache, sendApiError, sendApiResult, sendApiSuccess } from "../../utils/http-utils";
 import { parsePaginationParameters } from "../../utils/pagination";
 import { DataFilter } from "tsbean-orm";
 import { EventExampleAssetModified } from "../../models/event-sync/example/asset-modified";
+import { EventExampleAssetModifiedminio } from "../../models/event-sync/example/asset-modifiedminio";
 import { EventExampleAssetRegistered } from "../../models/event-sync/example/asset-registered";
+import { EventExampleAssetRegisteredminio } from "../../models/event-sync/example/asset-registeredminio";
 import { EventExampleContrattoRegistered } from "../../models/event-sync/example/contratto-registered";
 import { EventExampleContrattoStateUpdated } from "../../models/event-sync/example/contratto-state-updated";
 import { EventExampleDataTransferCompleted } from "../../models/event-sync/example/data-transfer-completed";
@@ -56,7 +58,9 @@ import { serializeEventABIParams, normalizeAddress, normalizeBytes32 } from "../
 export class ExampleContractApiEventsController extends Controller {
     public registerAPI(prefix: string, application: Express.Express) {
         application.get(prefix + "/contracts/example/events/asset-modified", noCache(this.getEventsAssetModified.bind(this)));
+        application.get(prefix + "/contracts/example/events/asset-modifiedminio", noCache(this.getEventsAssetModifiedminio.bind(this)));
         application.get(prefix + "/contracts/example/events/asset-registered", noCache(this.getEventsAssetRegistered.bind(this)));
+        application.get(prefix + "/contracts/example/events/asset-registeredminio", noCache(this.getEventsAssetRegisteredminio.bind(this)));
         application.get(prefix + "/contracts/example/events/contratto-registered", noCache(this.getEventsContrattoRegistered.bind(this)));
         application.get(prefix + "/contracts/example/events/contratto-state-updated", noCache(this.getEventsContrattoStateUpdated.bind(this)));
         application.get(prefix + "/contracts/example/events/data-transfer-completed", noCache(this.getEventsDataTransferCompleted.bind(this)));
@@ -74,9 +78,9 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * @typedef EventParamsExampleAssetModified
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} assetId.required - assetId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} assetId.required - assetId
      * @property {string} timestamp.required - timestamp - eg: 0
-     * @property {string} newTitle.required - newTitle - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} newTitle.required - newTitle
      */
 
     /**
@@ -98,7 +102,7 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type AssetModified
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetModified(bytes32,bytes32,uint64,bytes32)
+     * Event signature: AssetModified(bytes32,string,uint256,string)
      * Binding: GetEventsAssetModified
      * @route GET /contracts/example/events/asset-modified
      * @group example - API for smart contract: Example (ExampleContract)
@@ -109,7 +113,7 @@ export class ExampleContractApiEventsController extends Controller {
      * @security BearerAuthorization
      */
     public async getEventsAssetModified(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "bytes32", "name": "assetId", "type": "bytes32" }, { "indexed": false, "internalType": "uint64", "name": "timestamp", "type": "uint64" }, { "indexed": false, "internalType": "bytes32", "name": "newTitle", "type": "bytes32" }], "name": "AssetModified", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newTitle", "type": "string" }], "name": "AssetModified", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 
@@ -136,12 +140,77 @@ export class ExampleContractApiEventsController extends Controller {
         });
     }
     /**
+     * @typedef EventParamsExampleAssetModifiedminio
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} assetId.required - assetId
+     * @property {string} dataHash.required - dataHash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} timestamp.required - timestamp - eg: 0
+     * @property {string} newTitle.required - newTitle
+     */
+
+    /**
+     * @typedef EventItemExampleAssetModifiedminio
+     * @property {string} id.required - Event ID - eg: xxxx-yyyy-zzzz
+     * @property {number} block.required - Block number - eg: 1
+     * @property {number} eventIndex.required - Event index in the block - eg: 0
+     * @property {string} tx.required - Transaction hash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} timestamp.required - Event timestamp (Unix seconds) - eg: 0
+     * @property {EventParamsExampleAssetModifiedminio.model} parameters.required - Event parameters
+     */
+
+    /**
+     * @typedef EventListExampleAssetModifiedminio
+     * @property {Array.<EventItemExampleAssetModifiedminio>} events.required - List of events
+     * @property {string} continuationToken - Continuation token - eg: xxxx-yyyy-zzzz
+     */
+
+    /**
+     * Get a list of events of type AssetModifiedminio
+     * Smart contract: Example (ExampleContract)
+     * Event signature: AssetModifiedminio(bytes32,string,bytes32,uint256,string)
+     * Binding: GetEventsAssetModifiedminio
+     * @route GET /contracts/example/events/asset-modifiedminio
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {string} continuationToken.query - Continuation token
+     * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
+     * @param {string} filter_eq_pNodeId.query - Filter event with a value for the parameter 'nodeId' equal than the one specified.
+     * @returns {EventListExampleAssetModifiedminio.model} 200 - Event list
+     * @security BearerAuthorization
+     */
+    public async getEventsAssetModifiedminio(request: Express.Request, response: Express.Response) {
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "bytes32", "name": "dataHash", "type": "bytes32" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newTitle", "type": "string" }], "name": "AssetModifiedminio", "type": "event" };
+
+        const [limit, continuationToken] = parsePaginationParameters(request);
+
+        const filters: DataFilter<EventExampleAssetModifiedminio>[] = [];
+
+        if (request.query.filter_eq_pNodeId !== undefined && request.query.filter_eq_pNodeId !== null) {
+            filters.push(DataFilter.equals("pNodeId", normalizeBytes32(request.query.filter_eq_pNodeId + "")));
+        }
+
+        const [events, nextContinuationToken] = await EventExampleAssetModifiedminio.findPaginated(filters, limit, continuationToken);
+
+        sendApiResult(request, response, {
+            events: events.map(e => {
+                return {
+                    id: e.id,
+                    block: e.block,
+                    timestamp: e.timestamp,
+                    eventIndex: e.eventIndex,
+                    tx: e.tx,
+                    parameters: serializeEventABIParams(e.getParametersArray(), eventAbi),
+                };
+            }),
+            continuationToken: nextContinuationToken,
+        });
+    }
+    /**
      * @typedef EventParamsExampleAssetRegistered
      * @property {string} registrar.required - registrar - eg: 0x0000000000000000000000000000000000000000
      * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
-     * @property {string} assetId.required - assetId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} assetId.required - assetId
      * @property {string} timestamp.required - timestamp - eg: 0
-     * @property {string} title.required - title - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} title.required - title
      */
 
     /**
@@ -163,7 +232,7 @@ export class ExampleContractApiEventsController extends Controller {
     /**
      * Get a list of events of type AssetRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetRegistered(address,bytes32,bytes32,uint64,bytes32)
+     * Event signature: AssetRegistered(address,bytes32,string,uint256,string)
      * Binding: GetEventsAssetRegistered
      * @route GET /contracts/example/events/asset-registered
      * @group example - API for smart contract: Example (ExampleContract)
@@ -175,7 +244,7 @@ export class ExampleContractApiEventsController extends Controller {
      * @security BearerAuthorization
      */
     public async getEventsAssetRegistered(request: Express.Request, response: Express.Response) {
-        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "registrar", "type": "address" }, { "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "bytes32", "name": "assetId", "type": "bytes32" }, { "indexed": false, "internalType": "uint64", "name": "timestamp", "type": "uint64" }, { "indexed": false, "internalType": "bytes32", "name": "title", "type": "bytes32" }], "name": "AssetRegistered", "type": "event" };
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "registrar", "type": "address" }, { "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "title", "type": "string" }], "name": "AssetRegistered", "type": "event" };
 
         const [limit, continuationToken] = parsePaginationParameters(request);
 
@@ -190,6 +259,77 @@ export class ExampleContractApiEventsController extends Controller {
         }
 
         const [events, nextContinuationToken] = await EventExampleAssetRegistered.findPaginated(filters, limit, continuationToken);
+
+        sendApiResult(request, response, {
+            events: events.map(e => {
+                return {
+                    id: e.id,
+                    block: e.block,
+                    timestamp: e.timestamp,
+                    eventIndex: e.eventIndex,
+                    tx: e.tx,
+                    parameters: serializeEventABIParams(e.getParametersArray(), eventAbi),
+                };
+            }),
+            continuationToken: nextContinuationToken,
+        });
+    }
+    /**
+     * @typedef EventParamsExampleAssetRegisteredminio
+     * @property {string} registrar.required - registrar - eg: 0x0000000000000000000000000000000000000000
+     * @property {string} nodeId.required - nodeId - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} assetId.required - assetId
+     * @property {string} dataHash.required - dataHash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} timestamp.required - timestamp - eg: 0
+     * @property {string} title.required - title
+     */
+
+    /**
+     * @typedef EventItemExampleAssetRegisteredminio
+     * @property {string} id.required - Event ID - eg: xxxx-yyyy-zzzz
+     * @property {number} block.required - Block number - eg: 1
+     * @property {number} eventIndex.required - Event index in the block - eg: 0
+     * @property {string} tx.required - Transaction hash - eg: 0x0000000000000000000000000000000000000000000000000000000000000000
+     * @property {string} timestamp.required - Event timestamp (Unix seconds) - eg: 0
+     * @property {EventParamsExampleAssetRegisteredminio.model} parameters.required - Event parameters
+     */
+
+    /**
+     * @typedef EventListExampleAssetRegisteredminio
+     * @property {Array.<EventItemExampleAssetRegisteredminio>} events.required - List of events
+     * @property {string} continuationToken - Continuation token - eg: xxxx-yyyy-zzzz
+     */
+
+    /**
+     * Get a list of events of type AssetRegisteredminio
+     * Smart contract: Example (ExampleContract)
+     * Event signature: AssetRegisteredminio(address,bytes32,string,bytes32,uint256,string)
+     * Binding: GetEventsAssetRegisteredminio
+     * @route GET /contracts/example/events/asset-registeredminio
+     * @group example - API for smart contract: Example (ExampleContract)
+     * @param {string} continuationToken.query - Continuation token
+     * @param {string} limit.query - Max number of items to get. Default: 25, Max: 256
+     * @param {string} filter_eq_pRegistrar.query - Filter event with a value for the parameter 'registrar' equal than the one specified.
+     * @param {string} filter_eq_pNodeId.query - Filter event with a value for the parameter 'nodeId' equal than the one specified.
+     * @returns {EventListExampleAssetRegisteredminio.model} 200 - Event list
+     * @security BearerAuthorization
+     */
+    public async getEventsAssetRegisteredminio(request: Express.Request, response: Express.Response) {
+        const eventAbi = { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "registrar", "type": "address" }, { "indexed": true, "internalType": "bytes32", "name": "nodeId", "type": "bytes32" }, { "indexed": false, "internalType": "string", "name": "assetId", "type": "string" }, { "indexed": false, "internalType": "bytes32", "name": "dataHash", "type": "bytes32" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "title", "type": "string" }], "name": "AssetRegisteredminio", "type": "event" };
+
+        const [limit, continuationToken] = parsePaginationParameters(request);
+
+        const filters: DataFilter<EventExampleAssetRegisteredminio>[] = [];
+
+        if (request.query.filter_eq_pRegistrar !== undefined && request.query.filter_eq_pRegistrar !== null) {
+            filters.push(DataFilter.equals("pRegistrar", normalizeAddress(request.query.filter_eq_pRegistrar + "")));
+        }
+
+        if (request.query.filter_eq_pNodeId !== undefined && request.query.filter_eq_pNodeId !== null) {
+            filters.push(DataFilter.equals("pNodeId", normalizeBytes32(request.query.filter_eq_pNodeId + "")));
+        }
+
+        const [events, nextContinuationToken] = await EventExampleAssetRegisteredminio.findPaginated(filters, limit, continuationToken);
 
         sendApiResult(request, response, {
             events: events.map(e => {

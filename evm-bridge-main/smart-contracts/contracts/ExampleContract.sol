@@ -23,12 +23,23 @@ contract ExampleContract is BaseContract {
        ===================================================== */
 
     struct Asset {
-    bytes32 id;              // assetId compresso
-    bytes32 nodeId;          // logical node identifier
-    address registrar;       // relayer
-    uint64 timestamp;        // ridotto per packing
-    bytes32 title;           // titolo compresso
-}
+        string id;              // local asset id (node-scoped)
+        bytes32 nodeId;         // logical node identifier
+        address registrar;      // relayer that registered it
+        uint256 timestamp;
+        string title;
+    }
+
+     struct Assetminio {
+        string id;              // local asset id (node-scoped)
+        bytes32 nodeId;         // logical node identifier
+        address registrar;      // relayer that registered it
+         bytes32 dataHash;
+        uint256 timestamp;
+        string title;
+    }
+
+
 
     struct Policy {
         string id;              // local policy id (node-scoped)
@@ -88,7 +99,7 @@ contract ExampleContract is BaseContract {
        ===================================================== */
 
     // nodeId => localId => entity
-    mapping(bytes32 => mapping(bytes32 => Asset)) private assets;
+    mapping(bytes32 => mapping(string => Asset)) private assets;
     mapping(bytes32 => mapping(string => Policy)) private policies;
     mapping(bytes32 => mapping(string => Dataoffer)) private offers;
     mapping(bytes32 => mapping(string => Contratto)) private contratti;
@@ -96,24 +107,49 @@ contract ExampleContract is BaseContract {
     // transferId => transfer
     mapping(string => DataTransfer) private transfers;
 
+    //integrated test assetminio
+    mapping(bytes32 => mapping(string => Assetminio)) private assetsminio;
+
+    /* =====================================================
+                            EVENTS integrated test
+       ===================================================== */
+
+    event AssetRegisteredminio(
+        address indexed registrar,
+        bytes32 indexed nodeId,
+        string assetId,
+        bytes32 dataHash,
+        uint256 timestamp,
+        string title
+    );
+
+    event AssetModifiedminio(
+        bytes32 indexed nodeId,
+        string assetId,
+        bytes32 dataHash,
+        uint256 timestamp,
+        string newTitle
+    );
+
     /* =====================================================
                             EVENTS
        ===================================================== */
 
     event AssetRegistered(
-    address indexed registrar,
-    bytes32 indexed nodeId,
-    bytes32 assetId,
-    uint64 timestamp,
-    bytes32 title
-);
+        address indexed registrar,
+        bytes32 indexed nodeId,
+        string assetId,
+        uint256 timestamp,
+        string title
+    );
 
     event AssetModified(
-    bytes32 indexed nodeId,
-    bytes32 assetId,
-    uint64 timestamp,
-    bytes32 newTitle
-);
+        bytes32 indexed nodeId,
+        string assetId,
+        uint256 timestamp,
+        string newTitle
+    );
+
 
     event PolicyRegistered(
         address indexed registrar,
@@ -181,92 +217,174 @@ contract ExampleContract is BaseContract {
     );
 
     /* =====================================================
+                            ASSET integrated test
+       ===================================================== */
+    function registerAssetminio(
+        bytes32 nodeId,
+        string memory assetId,
+        string memory assetTitle,
+        bytes32 dataHash
+    )
+        external
+    {
+        require(bytes(assetId).length > 0, "ID non valido");
+        require(
+            assetsminio[nodeId][assetId].registrar == address(0),
+            "Asset gia' registrato per questo nodo"
+        );
+
+        assetsminio[nodeId][assetId] = Assetminio({
+            id: assetId,
+            nodeId: nodeId,
+            registrar: msg.sender,
+            dataHash:dataHash,
+            timestamp: block.timestamp,
+            title: assetTitle
+
+        });
+
+        emit AssetRegisteredminio(
+            msg.sender,
+            nodeId,
+            assetId,
+            dataHash,
+            block.timestamp,
+            assetTitle
+        );
+    }
+
+    function modifyAssetminio(
+        bytes32 nodeId,
+        string memory assetId,
+        string memory newTitle,
+        bytes32 dataHash
+
+    )
+        external
+    {
+        Assetminio storage a = assetsminio[nodeId][assetId];
+        require(a.registrar != address(0), "Asset non trovato");
+        require(msg.sender == a.registrar, "Non autorizzato");
+
+        a.title = newTitle;
+        a.timestamp = block.timestamp;
+        a.dataHash=dataHash;
+
+        emit AssetModifiedminio(nodeId, assetId,dataHash, block.timestamp, newTitle);
+    }
+
+    function getAssetminio(
+        bytes32 nodeId,
+        string memory assetId
+    )
+        external
+        view
+        returns (
+            string memory id,
+            bytes32 nId,
+            address registrar,
+            uint256 timestamp,
+            string memory title
+        )
+    {
+        Assetminio memory a = assetsminio[nodeId][assetId];
+        require(a.registrar != address(0), "Asset non trovato");
+
+        return (a.id, a.nodeId, a.registrar, a.timestamp, a.title);
+    }
+
+    function assetExistsminio(
+        bytes32 nodeId,
+        string memory assetId
+    )
+        external
+        view
+        returns (bool)
+    {
+        return assetsminio[nodeId][assetId].registrar != address(0);
+    }
+
+    /* =====================================================
                             ASSET
        ===================================================== */
 
     function registerAsset(
-    bytes32 nodeId,
-    bytes32 assetId,
-    bytes32 assetTitle
-)
-    external
-{
-    // Converto string → bytes32
+        bytes32 nodeId,
+        string memory assetId,
+        string memory assetTitle
+    )
+        external
+    {
+        require(bytes(assetId).length > 0, "ID non valido");
+        require(
+            assets[nodeId][assetId].registrar == address(0),
+            "Asset gia' registrato per questo nodo"
+        );
 
+        assets[nodeId][assetId] = Asset({
+            id: assetId,
+            nodeId: nodeId,
+            registrar: msg.sender,
+            timestamp: block.timestamp,
+            title: assetTitle
+        });
 
-    require(assetId != bytes32(0), "ID non valido");
-
-    Asset storage a = assets[nodeId][assetId];
-    require(a.registrar == address(0), "Asset gia' registrato");
-
-    a.id = assetId;
-    a.nodeId = nodeId;
-    a.registrar = msg.sender;
-    a.timestamp = uint64(block.timestamp);
-    a.title = assetTitle;
-
-    emit AssetRegistered(
-        msg.sender,
-        nodeId,
-        assetId,
-        uint64(block.timestamp),
-        assetTitle
-    );
-}
-
-function modifyAsset(
-    bytes32 nodeId,
-    bytes32 assetId,
-    bytes32 newTitle
-)
-    external
-{
-    Asset storage a = assets[nodeId][assetId];
-    require(a.registrar != address(0), "Asset non trovato");
-    require(msg.sender == a.registrar, "Non autorizzato");
-
-    // Evita scrittura se il valore è identico → risparmio gas
-    if (a.title != newTitle) {
-        a.title = newTitle;
+        emit AssetRegistered(
+            msg.sender,
+            nodeId,
+            assetId,
+            block.timestamp,
+            assetTitle
+        );
     }
 
-    a.timestamp = uint64(block.timestamp);
-
-    emit AssetModified(nodeId, assetId, uint64(block.timestamp), newTitle);
-}
-
-function getAsset(
-    bytes32 nodeId,
-    bytes32 assetId
-)
-    external
-    view
-    returns (
-        bytes32 id,
-        bytes32 nId,
-        address registrar,
-        uint64 timestamp,
-        bytes32 title
+    function modifyAsset(
+        bytes32 nodeId,
+        string memory assetId,
+        string memory newTitle
     )
-{
+        external
+    {
+        Asset storage a = assets[nodeId][assetId];
+        require(a.registrar != address(0), "Asset non trovato");
+        require(msg.sender == a.registrar, "Non autorizzato");
 
-    Asset memory a = assets[nodeId][assetId];
-    require(a.registrar != address(0), "Asset non trovato");
+        a.title = newTitle;
+        a.timestamp = block.timestamp;
 
-    return (a.id, a.nodeId, a.registrar, a.timestamp, a.title);
-}
+        emit AssetModified(nodeId, assetId, block.timestamp, newTitle);
+    }
 
-function assetExists(
-    bytes32 nodeId,
-    bytes32 assetId
-)
-    external
-    view
-    returns (bool)
-{
-    return assets[nodeId][assetId].registrar != address(0);
-}
+    function getAsset(
+        bytes32 nodeId,
+        string memory assetId
+    )
+        external
+        view
+        returns (
+            string memory id,
+            bytes32 nId,
+            address registrar,
+            uint256 timestamp,
+            string memory title
+        )
+    {
+        Asset memory a = assets[nodeId][assetId];
+        require(a.registrar != address(0), "Asset non trovato");
 
+        return (a.id, a.nodeId, a.registrar, a.timestamp, a.title);
+    }
+
+    function assetExists(
+        bytes32 nodeId,
+        string memory assetId
+    )
+        external
+        view
+        returns (bool)
+    {
+        return assets[nodeId][assetId].registrar != address(0);
+    }
 
     /* =====================================================
                             POLICY

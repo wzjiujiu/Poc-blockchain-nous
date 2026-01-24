@@ -29,7 +29,9 @@
 import { SmartContractsConfig } from "../../config/config-smart-contracts";
 import { SmartContractEventSynchronizer } from "./event-synchronizer";
 import { EventExampleAssetModified } from "../../models/event-sync/example/asset-modified";
+import { EventExampleAssetModifiedminio } from "../../models/event-sync/example/asset-modifiedminio";
 import { EventExampleAssetRegistered } from "../../models/event-sync/example/asset-registered";
+import { EventExampleAssetRegisteredminio } from "../../models/event-sync/example/asset-registeredminio";
 import { EventExampleContrattoRegistered } from "../../models/event-sync/example/contratto-registered";
 import { EventExampleContrattoStateUpdated } from "../../models/event-sync/example/contratto-state-updated";
 import { EventExampleDataTransferCompleted } from "../../models/event-sync/example/data-transfer-completed";
@@ -76,9 +78,9 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                         const id = createEventUID(block, eventIndex, tx);
 
                         const pNodeId = normalizeBytes32(ev.data.nodeId);
-                        const pAssetId = normalizeBytes32(ev.data.assetId);
+                        const pAssetId = ev.data.assetId;
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
-                        const pNewTitle = normalizeBytes32(ev.data.newTitle);
+                        const pNewTitle = ev.data.newTitle;
                         const exists = await EventExampleAssetModified.exists(id);
                         if (!exists) {
                             const newEvent = new EventExampleAssetModified({
@@ -89,6 +91,41 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 tx,
                                 pNodeId,
                                 pAssetId,
+                                pTimestamp,
+                                pNewTitle,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
+                case "AssetModifiedminio":
+                    {
+                        const ev = events.getAssetModifiedminioEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pNodeId = normalizeBytes32(ev.data.nodeId);
+                        const pAssetId = ev.data.assetId;
+                        const pDataHash = normalizeBytes32(ev.data.dataHash);
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const pNewTitle = ev.data.newTitle;
+                        const exists = await EventExampleAssetModifiedminio.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExampleAssetModifiedminio({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pNodeId,
+                                pAssetId,
+                                pDataHash,
                                 pTimestamp,
                                 pNewTitle,
                             });
@@ -110,9 +147,9 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
 
                         const pRegistrar = normalizeAddress(ev.data.registrar);
                         const pNodeId = normalizeBytes32(ev.data.nodeId);
-                        const pAssetId = normalizeBytes32(ev.data.assetId);
+                        const pAssetId = ev.data.assetId;
                         const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
-                        const pTitle = normalizeBytes32(ev.data.title);
+                        const pTitle = ev.data.title;
                         const exists = await EventExampleAssetRegistered.exists(id);
                         if (!exists) {
                             const newEvent = new EventExampleAssetRegistered({
@@ -124,6 +161,43 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
                                 pRegistrar,
                                 pNodeId,
                                 pAssetId,
+                                pTimestamp,
+                                pTitle,
+                            });
+
+                            await newEvent.insert();
+                        }
+                    }
+                    break;
+                case "AssetRegisteredminio":
+                    {
+                        const ev = events.getAssetRegisteredminioEvent(i);
+
+                        const block = Number(ev.event.log.blockNumber);
+                        const timestamp = await this.getBlockTimestamp(block);
+                        const eventIndex = Number(ev.event.log.logIndex);
+                        const tx = ev.event.log.transactionHash.toString("hex").toLowerCase();
+
+                        const id = createEventUID(block, eventIndex, tx);
+
+                        const pRegistrar = normalizeAddress(ev.data.registrar);
+                        const pNodeId = normalizeBytes32(ev.data.nodeId);
+                        const pAssetId = ev.data.assetId;
+                        const pDataHash = normalizeBytes32(ev.data.dataHash);
+                        const pTimestamp = normalizeDatabaseUint256(ev.data.timestamp);
+                        const pTitle = ev.data.title;
+                        const exists = await EventExampleAssetRegisteredminio.exists(id);
+                        if (!exists) {
+                            const newEvent = new EventExampleAssetRegisteredminio({
+                                id,
+                                block,
+                                timestamp,
+                                eventIndex,
+                                tx,
+                                pRegistrar,
+                                pNodeId,
+                                pAssetId,
+                                pDataHash,
                                 pTimestamp,
                                 pTitle,
                             });
@@ -525,7 +599,9 @@ export class ExampleEventSynchronizer extends SmartContractEventSynchronizer {
     }
     async reset(): Promise<void> {
         await EventExampleAssetModified.reset();
+        await EventExampleAssetModifiedminio.reset();
         await EventExampleAssetRegistered.reset();
+        await EventExampleAssetRegisteredminio.reset();
         await EventExampleContrattoRegistered.reset();
         await EventExampleContrattoStateUpdated.reset();
         await EventExampleDataTransferCompleted.reset();

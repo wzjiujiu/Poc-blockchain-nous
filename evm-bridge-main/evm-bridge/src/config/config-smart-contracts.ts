@@ -49,14 +49,14 @@ export class SmartContractsConfig {
 
         const config: SmartContractsConfig = new SmartContractsConfig();
 
-        config.upgradeControl = new UpgradeControlWrapper(process.env.CONTRACT_UPGRADE_CONTROL || ZERO_ADDRESS, { provider: BlockchainConfig.getInstance().provider });
-        config.roleManager = new RoleManagerWrapper(process.env.CONTRACT_ROLE_MANAGER || ZERO_ADDRESS, { provider: BlockchainConfig.getInstance().provider });
-        config.example = new ExampleContractWrapper(process.env.CONTRACT_EXAMPLE || ZERO_ADDRESS, { provider: BlockchainConfig.getInstance().provider });
+config.upgradeControl = new UpgradeControlWrapper(process.env.CONTRACT_UPGRADE_CONTROL || ZERO_ADDRESS, { provider: BlockchainConfig.getInstance().provider });
+config.roleManager = new RoleManagerWrapper(process.env.CONTRACT_ROLE_MANAGER || ZERO_ADDRESS, { provider: BlockchainConfig.getInstance().provider });
+config.example = new ExampleContractWrapper(process.env.CONTRACT_EXAMPLE || ZERO_ADDRESS, { provider: BlockchainConfig.getInstance().provider });
 
         return config;
     }
 
-    public upgradeControl: UpgradeControlWrapper;
-    public roleManager: RoleManagerWrapper;
-    public example: ExampleContractWrapper;
+public upgradeControl: UpgradeControlWrapper;
+public roleManager: RoleManagerWrapper;
+public example: ExampleContractWrapper;
 }
