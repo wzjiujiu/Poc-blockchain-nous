@@ -1,0 +1,21 @@
+Consumer
+| Parametro      | Valore                                                 |
+| -------------- | ------------------------------------------------------ |
+| Host           | `consumer-connector-db` **(da pgAdmin dentro docker)** |
+| Porta          | `5432`                                                 |
+| Oppure da host | Host `localhost` + Port `5433`                         |
+| Database       | `db-name`                                              |
+| User           | `db-user`                                              |
+| Password       | `db-pass`                                              |
+
+Producer
+
+| Parametro      | Valore                                                 |
+| -------------- | ------------------------------------------------------ |
+| Host           | `provider-connector-db` **(da pgAdmin dentro docker)** |
+| Porta          | `5432`                                                 |
+| Oppure da host | Host `localhost` + Port `5434`                         |
+| Database       | `db-name`                                              |
+| User           | `db-user`                                              |
+| Password       | `db-pass`                                              |
+
