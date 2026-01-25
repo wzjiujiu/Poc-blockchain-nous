@@ -74,7 +74,7 @@ const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
 //const CONTRACT_ADDRESS = "0x0bcc0aa6bb316af0e04e90f1c869362805caa873";
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADD_DEPLOYED;
 
-const CONTRACT_ABI = require("./abi/ExampleContract1");
+const CONTRACT_ABI = require("./abi/ExampleContract");
 
 
 const NODE_ID_PROVIDER = ethers.keccak256(
@@ -162,13 +162,13 @@ app.post("/event", async (req, res) => {
 
   /* ======================= ASSET POST ======================= */
   if (rawPort == Asset && method === "POST") {
-    await registerAssetOnChainGasTest(
+    await registerAssetOnChain(
     {nodeId: NODE_ID_PROVIDER,assetId,assetTitle, contract });
   }
 
   /* ======================= ASSET PUT ======================= */
   else if (rawPort == Asset && method === "PUT") {
-    await modifyAssetOnChainFromWebhookGasTest(cleanedData, NODE_ID_PROVIDER,contract);
+    await modifyAssetOnChainFromWebhook(cleanedData, NODE_ID_PROVIDER,contract);
   }
 
   /* ======================= POLICY POST ======================= */
