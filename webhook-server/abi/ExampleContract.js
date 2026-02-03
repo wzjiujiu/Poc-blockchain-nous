@@ -9,6 +9,12 @@ module.exports = [
   "function getAsset(bytes32 nodeId, string assetId) external view returns (string id, bytes32 nId, address registrar, uint256 timestamp, string title)",
   "function assetExists(bytes32 nodeId, string assetId) external view returns (bool)",
 
+  // ───────────── Assetminio ─────────────
+  "function registerAssetminio(bytes32 nodeId, string assetId, string assetTitle,bytes32 dataHash) external",
+  "function modifyAssetminio(bytes32 nodeId, string assetId, string newTitle,bytes32 dataHash) external",
+  "function getAssetminio(bytes32 nodeId, string assetId) external view returns (string id, bytes32 nId, address registrar, uint256 timestamp, string title)",
+  "function assetExistsminio(bytes32 nodeId, string assetId) external view returns (bool)",
+
   // ───────────── Policy ─────────────
   "function registerPolicy(bytes32 nodeId, string policyId, string policyTitle) external",
   "function modifyPolicy(bytes32 nodeId, string policyId, string newTitle) external",
@@ -36,6 +42,8 @@ module.exports = [
   // ───────────── Events ─────────────
   "event AssetRegistered(address indexed registrar, bytes32 indexed nodeId, string assetId, uint256 timestamp, string title)",
   "event AssetModified(bytes32 indexed nodeId, string assetId, uint256 timestamp, string newTitle)",
+  "event AssetRegisteredminio(address indexed registrar, bytes32 indexed nodeId, string assetId, bytes32 dataHash, uint256 timestamp, string title)",
+  "event AssetModifiedminio(bytes32 indexed nodeId, string assetId, bytes32 dataHash, uint256 timestamp, string newTitle)",
   "event PolicyRegistered(address indexed registrar, bytes32 indexed nodeId, string policyId, uint256 timestamp, string title)",
   "event PolicyModified(bytes32 indexed nodeId, string policyId, uint256 timestamp, string newTitle)",
   "event DataofferRegistered(address indexed registrar, bytes32 indexed nodeId, string offerId, uint256 timestamp, string accessPolicyId, string contractPolicyId, string assetSelector)",

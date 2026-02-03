@@ -135,6 +135,127 @@ async function modifyAssetOnChainFromWebhook(cleanedData, nodeId,contract) {
   }
 }
 
+async function registerAssetOnChainMinio({ nodeId, assetId, assetTitle,dataHash,contract }) {
+
+  try {
+
+    console.log(assetId)
+    const assetIdStr = assetId.toString();
+    console.log(`📤 Registrazione asset ID: ${assetIdStr}`);
+
+    const startTime = Date.now(); // inizio registrazione
+    console.log(`⏱ Inizio registrazione: ${new Date(startTime).toLocaleTimeString()}`);
+
+    // Stima gas
+    const estimatedGas = await contract.registerAssetminio.estimateGas(
+      nodeId,
+      assetIdStr,
+      assetTitle,
+      dataHash
+    );
+    console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+    // Transazione
+    const tx = await contract.registerAssetminio(
+      nodeId,
+      assetIdStr,
+      assetTitle,
+      dataHash,
+      { gasLimit: estimatedGas + 50_000n }
+    );
+    console.log(`⏳ Transazione inviata: ${tx.hash}`);
+
+    const receipt = await tx.wait();
+    console.log(`✅ Asset "${assetIdStr}" registrato nel blocco ${receipt.blockNumber}`);
+    const endTime = Date.now(); // fine registrazione
+    const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+    console.log(`⏱ Tempo totale registrazione on-chain: ${durationSec} secondi`);
+
+    // Lettura dei dati registrati
+    const data = await contract.getAssetminio(nodeId, assetIdStr);
+    console.log("📄 Asset registrato:", data);
+
+    return {
+      success: true,
+      txHash: tx.hash,
+      block: receipt.blockNumber,
+      data,
+      durationSec
+    };
+}
+  catch (err) {
+    console.error("❌ Errore durante la registrazione asset:", err);
+    const endTime = Date.now();
+    const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+    console.log(`⏱ Tempo trascorso prima dell'errore: ${durationSec} secondi`);
+
+    return { success: false, error: err, durationSec };
+  }
+}
+
+async function modifyAssetOnChainFromWebhookMinio(cleanedData, nodeId,dataHash,contract) {
+  try {
+    const assetId = cleanedData?.request?.body?.properties?.id?.toString();
+    const newTitle = cleanedData?.request?.body?.properties?.title;
+
+    if (!assetId || !newTitle) {
+      throw new Error("assetId o title mancanti nei dati webhook");
+    }
+
+    console.log(`📤 Modifica asset ID: ${assetId}`);
+    console.log(`📝 Nuovo titolo: ${newTitle}`);
+
+    // Recupero asset esistente
+    const existing = await contract.getAssetminio(nodeId, assetId);
+
+    console.log("📄 Asset trovato:", existing);
+
+    // Stima gas
+    const startTime = Date.now(); // inizio registrazione
+    console.log(`⏱ Inizio registrazione: ${new Date(startTime).toLocaleTimeString()}`);
+    const estimatedGas = await contract.modifyAssetminio.estimateGas(
+      nodeId,
+      assetId,
+      newTitle,
+      dataHash
+    );
+    console.log(`⛽ Gas stimato: ${estimatedGas}`);
+
+    // Transazione
+    const tx = await contract.modifyAssetminio(
+      nodeId,
+      assetId,
+      newTitle,
+      dataHash,
+      { gasLimit: estimatedGas + 50_000n }
+    );
+
+    console.log(`⏳ TX inviata: ${tx.hash}`);
+
+    const receipt = await tx.wait();
+
+    console.log(`✅ Asset "${assetId}" modificato nel blocco ${receipt.blockNumber}`);
+    const endTime = Date.now(); // fine registrazione
+    const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+    console.log(`⏱ Tempo totale registrazione on-chain: ${durationSec} secondi`);
+
+    // Leggi asset aggiornato
+    const updated = await contract.getAssetminio(nodeId, assetId);
+    console.log("📄 Asset aggiornato:", updated);
+
+    return {
+      success: true,
+      txHash: tx.hash,
+      block: receipt.blockNumber,
+      updated
+    };
+
+  } catch (err) {
+    console.error("❌ Errore in modifyAssetOnChainFromWebhook:", err);
+    return { success: false, error: err };
+  }
+}
+
 async function registerAssetOnChainGasTest({ nodeId, assetId, assetTitle, contract }) {
 
 
@@ -833,6 +954,8 @@ async function terminateTransferOnchain(rawPort, contract)
 
 module.exports = { registerAssetOnChain,
 modifyAssetOnChainFromWebhook ,
+registerAssetOnChainMinio,
+modifyAssetOnChainFromWebhookMinio,
 registerPolicyOnChainFromWebhook,
 modifyPolicyOnchainFromWebhook,
 registerDataofferOnChain,

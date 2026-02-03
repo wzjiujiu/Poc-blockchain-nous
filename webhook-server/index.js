@@ -51,6 +51,8 @@ console.log = (...args) => {
 const { parseNestedJSON, cleanKeys ,escapeHtml,renderAsList} = require("./utils/parser.js");
 const {registerAssetOnChain,
 modifyAssetOnChainFromWebhook,
+registerAssetOnChainMinio,
+modifyAssetOnChainFromWebhookMinio,
 registerPolicyOnChainFromWebhook,
 modifyPolicyOnchainFromWebhook,
 registerDataofferOnChain,

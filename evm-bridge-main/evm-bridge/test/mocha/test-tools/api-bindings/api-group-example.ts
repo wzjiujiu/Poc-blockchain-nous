@@ -27,7 +27,7 @@
 
 import { RequestErrorHandler, RequestParams, CommonAuthenticatedErrorHandler } from "@asanrom/request-axios";
 import { getApiUrl, generateURIQuery } from "./utils";
-import { SmartContractInformation, TxResponse, TxRequestExampleCompleteDataTransfer, TxRequestExampleInitialize, TxRequestExampleModifyAsset, TxRequestExampleModifyDataoffer, TxRequestExampleModifyPolicy, TxRequestExamplePause, TxRequestExampleRegisterAsset, TxRequestExampleRegisterContratto, TxRequestExampleRegisterDataoffer, TxRequestExampleRegisterPolicy, TxRequestExampleRequestDataTransfer, TxRequestExampleUnpause, TxRequestExampleUpdateContrattoState, TxRequestExampleUpgradeToAndCall, EventListExampleAssetModified, EventListExampleAssetRegistered, EventListExampleContrattoRegistered, EventListExampleContrattoStateUpdated, EventListExampleDataTransferCompleted, EventListExampleDataTransferRequested, EventListExampleDataofferModified, EventListExampleDataofferRegistered, EventListExampleInitialized, EventListExamplePaused, EventListExamplePolicyModified, EventListExamplePolicyRegistered, EventListExampleUnpaused, EventListExampleUpgraded, CallResponseExampleUPGRADE_INTERFACE_VERSION, CallResponseExampleAssetExists, CallRequestExampleAssetExists, CallResponseExampleContrattoExists, CallRequestExampleContrattoExists, CallResponseExampleDataofferExists, CallRequestExampleDataofferExists, CallResponseExampleGetAsset, CallRequestExampleGetAsset, CallResponseExampleGetContratto, CallRequestExampleGetContratto, CallResponseExampleGetDataoffer, CallRequestExampleGetDataoffer, CallResponseExampleGetInitializedVersion, CallResponseExampleGetPolicy, CallRequestExampleGetPolicy, CallResponseExampleGetTransfer, CallRequestExampleGetTransfer, CallResponseExamplePaused, CallResponseExamplePolicyExists, CallRequestExamplePolicyExists, CallResponseExampleProxiableUUID, CallResponseExampleTransferExists, CallRequestExampleTransferExists } from "./definitions";
+import { SmartContractInformation, TxResponse, TxRequestExampleCompleteDataTransfer, TxRequestExampleInitialize, TxRequestExampleModifyAsset, TxRequestExampleModifyAssetminio, TxRequestExampleModifyDataoffer, TxRequestExampleModifyPolicy, TxRequestExamplePause, TxRequestExampleRegisterAsset, TxRequestExampleRegisterAssetminio, TxRequestExampleRegisterContratto, TxRequestExampleRegisterDataoffer, TxRequestExampleRegisterPolicy, TxRequestExampleRequestDataTransfer, TxRequestExampleUnpause, TxRequestExampleUpdateContrattoState, TxRequestExampleUpgradeToAndCall, EventListExampleAssetModified, EventListExampleAssetModifiedminio, EventListExampleAssetRegistered, EventListExampleAssetRegisteredminio, EventListExampleContrattoRegistered, EventListExampleContrattoStateUpdated, EventListExampleDataTransferCompleted, EventListExampleDataTransferRequested, EventListExampleDataofferModified, EventListExampleDataofferRegistered, EventListExampleInitialized, EventListExamplePaused, EventListExamplePolicyModified, EventListExamplePolicyRegistered, EventListExampleUnpaused, EventListExampleUpgraded, CallResponseExampleUPGRADE_INTERFACE_VERSION, CallResponseExampleAssetExists, CallRequestExampleAssetExists, CallResponseExampleAssetExistsminio, CallRequestExampleAssetExistsminio, CallResponseExampleContrattoExists, CallRequestExampleContrattoExists, CallResponseExampleDataofferExists, CallRequestExampleDataofferExists, CallResponseExampleGetAsset, CallRequestExampleGetAsset, CallResponseExampleGetAssetminio, CallRequestExampleGetAssetminio, CallResponseExampleGetContratto, CallRequestExampleGetContratto, CallResponseExampleGetDataoffer, CallRequestExampleGetDataoffer, CallResponseExampleGetInitializedVersion, CallResponseExampleGetPolicy, CallRequestExampleGetPolicy, CallResponseExampleGetTransfer, CallRequestExampleGetTransfer, CallResponseExamplePaused, CallResponseExamplePolicyExists, CallRequestExamplePolicyExists, CallResponseExampleProxiableUUID, CallResponseExampleTransferExists, CallRequestExampleTransferExists } from "./definitions";
 
 export class ApiExample {
     /**
@@ -119,7 +119,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/modify-asset
      * Sends transaction for method: modifyAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: modifyAsset(bytes32,bytes32,bytes32)
+     * Method signature: modifyAsset(bytes32,string,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -127,6 +127,38 @@ export class ApiExample {
         return {
             method: "POST",
             url: getApiUrl(`/contracts/example/tx/modify-asset`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(403, "INVALID_PRIVATE_KEY", handler.forbiddenInvalidPrivateKey)
+                    .add(403, "INVALID_WALLET_PASSWORD", handler.forbiddenInvalidWalletPassword)
+                    .add(403, "WALLET_NOT_FOUND", handler.forbiddenWalletNotFound)
+                    .add(403, "ACCESS_DENIED", handler.forbiddenAccessDenied)
+                    .add(403, "*", handler.forbidden)
+                    .add(400, "INVALID_VALUE", handler.badRequestInvalidValue)
+                    .add(400, "INVALID_PARAMETERS", handler.badRequestInvalidParameters)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
+     * Path: /contracts/example/tx/modify-assetminio
+     * Sends transaction for method: modifyAssetminio
+     * Smart contract: Example (ExampleContract)
+     * Method signature: modifyAssetminio(bytes32,string,string,bytes32)
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static TxModifyAssetminio(body: TxRequestExampleModifyAssetminio): RequestParams<TxResponse, TxModifyAssetminioErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/tx/modify-assetminio`),
             json: body,
             handleError: (err, handler) => {
                 new RequestErrorHandler()
@@ -248,7 +280,7 @@ export class ApiExample {
      * Path: /contracts/example/tx/register-asset
      * Sends transaction for method: registerAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: registerAsset(bytes32,bytes32,bytes32)
+     * Method signature: registerAsset(bytes32,string,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -256,6 +288,38 @@ export class ApiExample {
         return {
             method: "POST",
             url: getApiUrl(`/contracts/example/tx/register-asset`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(403, "INVALID_PRIVATE_KEY", handler.forbiddenInvalidPrivateKey)
+                    .add(403, "INVALID_WALLET_PASSWORD", handler.forbiddenInvalidWalletPassword)
+                    .add(403, "WALLET_NOT_FOUND", handler.forbiddenWalletNotFound)
+                    .add(403, "ACCESS_DENIED", handler.forbiddenAccessDenied)
+                    .add(403, "*", handler.forbidden)
+                    .add(400, "INVALID_VALUE", handler.badRequestInvalidValue)
+                    .add(400, "INVALID_PARAMETERS", handler.badRequestInvalidParameters)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
+     * Path: /contracts/example/tx/register-assetminio
+     * Sends transaction for method: registerAssetminio
+     * Smart contract: Example (ExampleContract)
+     * Method signature: registerAssetminio(bytes32,string,string,bytes32)
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static TxRegisterAssetminio(body: TxRequestExampleRegisterAssetminio): RequestParams<TxResponse, TxRegisterAssetminioErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/tx/register-assetminio`),
             json: body,
             handleError: (err, handler) => {
                 new RequestErrorHandler()
@@ -505,7 +569,7 @@ export class ApiExample {
      * Path: /contracts/example/events/asset-modified
      * Get a list of events of type AssetModified
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetModified(bytes32,bytes32,uint64,bytes32)
+     * Event signature: AssetModified(bytes32,string,uint256,string)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
@@ -525,10 +589,33 @@ export class ApiExample {
 
     /**
      * Method: GET
+     * Path: /contracts/example/events/asset-modifiedminio
+     * Get a list of events of type AssetModifiedminio
+     * Smart contract: Example (ExampleContract)
+     * Event signature: AssetModifiedminio(bytes32,string,bytes32,uint256,string)
+     * @param queryParams Query parameters
+     * @returns The request parameters
+     */
+    public static GetEventsAssetModifiedminio(queryParams: GetEventsAssetModifiedminioQueryParameters): RequestParams<EventListExampleAssetModifiedminio, CommonAuthenticatedErrorHandler> {
+        return {
+            method: "GET",
+            url: getApiUrl(`/contracts/example/events/asset-modifiedminio` + generateURIQuery(queryParams)),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: GET
      * Path: /contracts/example/events/asset-registered
      * Get a list of events of type AssetRegistered
      * Smart contract: Example (ExampleContract)
-     * Event signature: AssetRegistered(address,bytes32,bytes32,uint64,bytes32)
+     * Event signature: AssetRegistered(address,bytes32,string,uint256,string)
      * @param queryParams Query parameters
      * @returns The request parameters
      */
@@ -536,6 +623,29 @@ export class ApiExample {
         return {
             method: "GET",
             url: getApiUrl(`/contracts/example/events/asset-registered` + generateURIQuery(queryParams)),
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: GET
+     * Path: /contracts/example/events/asset-registeredminio
+     * Get a list of events of type AssetRegisteredminio
+     * Smart contract: Example (ExampleContract)
+     * Event signature: AssetRegisteredminio(address,bytes32,string,bytes32,uint256,string)
+     * @param queryParams Query parameters
+     * @returns The request parameters
+     */
+    public static GetEventsAssetRegisteredminio(queryParams: GetEventsAssetRegisteredminioQueryParameters): RequestParams<EventListExampleAssetRegisteredminio, CommonAuthenticatedErrorHandler> {
+        return {
+            method: "GET",
+            url: getApiUrl(`/contracts/example/events/asset-registeredminio` + generateURIQuery(queryParams)),
             handleError: (err, handler) => {
                 new RequestErrorHandler()
                     .add(401, "*", handler.unauthorized)
@@ -853,7 +963,7 @@ export class ApiExample {
      * Path: /contracts/example/call/asset-exists
      * Calls the view method: assetExists
      * Smart contract: Example (ExampleContract)
-     * Method signature: assetExists(bytes32,bytes32)
+     * Method signature: assetExists(bytes32,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -861,6 +971,32 @@ export class ApiExample {
         return {
             method: "POST",
             url: getApiUrl(`/contracts/example/call/asset-exists`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(404, "*", handler.notFound)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
+     * Path: /contracts/example/call/asset-existsminio
+     * Calls the view method: assetExistsminio
+     * Smart contract: Example (ExampleContract)
+     * Method signature: assetExistsminio(bytes32,string)
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static CallAssetExistsminio(body: CallRequestExampleAssetExistsminio): RequestParams<CallResponseExampleAssetExistsminio, CallAssetExistsminioErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/call/asset-existsminio`),
             json: body,
             handleError: (err, handler) => {
                 new RequestErrorHandler()
@@ -931,7 +1067,7 @@ export class ApiExample {
      * Path: /contracts/example/call/get-asset
      * Calls the view method: getAsset
      * Smart contract: Example (ExampleContract)
-     * Method signature: getAsset(bytes32,bytes32)
+     * Method signature: getAsset(bytes32,string)
      * @param body Body parameters
      * @returns The request parameters
      */
@@ -939,6 +1075,32 @@ export class ApiExample {
         return {
             method: "POST",
             url: getApiUrl(`/contracts/example/call/get-asset`),
+            json: body,
+            handleError: (err, handler) => {
+                new RequestErrorHandler()
+                    .add(404, "*", handler.notFound)
+                    .add(400, "*", handler.badRequest)
+                    .add(401, "*", handler.unauthorized)
+                    .add(500, "*", "serverError" in handler ? handler.serverError : handler.temporalError)
+                    .add("*", "*", "networkError" in handler ? handler.networkError : handler.temporalError)
+                    .handle(err);
+            },
+        };
+    }
+
+    /**
+     * Method: POST
+     * Path: /contracts/example/call/get-assetminio
+     * Calls the view method: getAssetminio
+     * Smart contract: Example (ExampleContract)
+     * Method signature: getAssetminio(bytes32,string)
+     * @param body Body parameters
+     * @returns The request parameters
+     */
+    public static CallGetAssetminio(body: CallRequestExampleGetAssetminio): RequestParams<CallResponseExampleGetAssetminio, CallGetAssetminioErrorHandler> {
+        return {
+            method: "POST",
+            url: getApiUrl(`/contracts/example/call/get-assetminio`),
             json: body,
             handleError: (err, handler) => {
                 new RequestErrorHandler()
@@ -1319,6 +1481,51 @@ export type TxModifyAssetErrorHandler = CommonAuthenticatedErrorHandler & {
 };
 
 /**
+ * Error handler for TxModifyAssetminio
+ */
+export type TxModifyAssetminioErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * Invalid smart contract function parameters
+     */
+    badRequestInvalidParameters: () => void;
+
+    /**
+     * Invalid transaction value
+     */
+    badRequestInvalidValue: () => void;
+
+    /**
+     * General handler for status = 403
+     */
+    forbidden: () => void;
+
+    /**
+     * Access denied to the API
+     */
+    forbiddenAccessDenied: () => void;
+
+    /**
+     * Wallet not found
+     */
+    forbiddenWalletNotFound: () => void;
+
+    /**
+     * Invalid wallet password
+     */
+    forbiddenInvalidWalletPassword: () => void;
+
+    /**
+     * Invalid private key provided
+     */
+    forbiddenInvalidPrivateKey: () => void;
+};
+
+/**
  * Error handler for TxModifyDataoffer
  */
 export type TxModifyDataofferErrorHandler = CommonAuthenticatedErrorHandler & {
@@ -1457,6 +1664,51 @@ export type TxPauseErrorHandler = CommonAuthenticatedErrorHandler & {
  * Error handler for TxRegisterAsset
  */
 export type TxRegisterAssetErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * Invalid smart contract function parameters
+     */
+    badRequestInvalidParameters: () => void;
+
+    /**
+     * Invalid transaction value
+     */
+    badRequestInvalidValue: () => void;
+
+    /**
+     * General handler for status = 403
+     */
+    forbidden: () => void;
+
+    /**
+     * Access denied to the API
+     */
+    forbiddenAccessDenied: () => void;
+
+    /**
+     * Wallet not found
+     */
+    forbiddenWalletNotFound: () => void;
+
+    /**
+     * Invalid wallet password
+     */
+    forbiddenInvalidWalletPassword: () => void;
+
+    /**
+     * Invalid private key provided
+     */
+    forbiddenInvalidPrivateKey: () => void;
+};
+
+/**
+ * Error handler for TxRegisterAssetminio
+ */
+export type TxRegisterAssetminioErrorHandler = CommonAuthenticatedErrorHandler & {
     /**
      * General handler for status = 400
      */
@@ -1834,9 +2086,54 @@ export interface GetEventsAssetModifiedQueryParameters {
 }
 
 /**
+ * Query parameters for GetEventsAssetModifiedminio
+ */
+export interface GetEventsAssetModifiedminioQueryParameters {
+    /**
+     * Continuation token
+     */
+    continuationToken?: string;
+
+    /**
+     * Max number of items to get. Default: 25, Max: 256
+     */
+    limit?: string;
+
+    /**
+     * Filter event with a value for the parameter 'nodeId' equal than the one specified.
+     */
+    filter_eq_pNodeId?: string;
+}
+
+/**
  * Query parameters for GetEventsAssetRegistered
  */
 export interface GetEventsAssetRegisteredQueryParameters {
+    /**
+     * Continuation token
+     */
+    continuationToken?: string;
+
+    /**
+     * Max number of items to get. Default: 25, Max: 256
+     */
+    limit?: string;
+
+    /**
+     * Filter event with a value for the parameter 'registrar' equal than the one specified.
+     */
+    filter_eq_pRegistrar?: string;
+
+    /**
+     * Filter event with a value for the parameter 'nodeId' equal than the one specified.
+     */
+    filter_eq_pNodeId?: string;
+}
+
+/**
+ * Query parameters for GetEventsAssetRegisteredminio
+ */
+export interface GetEventsAssetRegisteredminioQueryParameters {
     /**
      * Continuation token
      */
@@ -2124,6 +2421,21 @@ export type CallAssetExistsErrorHandler = CommonAuthenticatedErrorHandler & {
 };
 
 /**
+ * Error handler for CallAssetExistsminio
+ */
+export type CallAssetExistsminioErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * General handler for status = 404
+     */
+    notFound: () => void;
+};
+
+/**
  * Error handler for CallContrattoExists
  */
 export type CallContrattoExistsErrorHandler = CommonAuthenticatedErrorHandler & {
@@ -2157,6 +2469,21 @@ export type CallDataofferExistsErrorHandler = CommonAuthenticatedErrorHandler & 
  * Error handler for CallGetAsset
  */
 export type CallGetAssetErrorHandler = CommonAuthenticatedErrorHandler & {
+    /**
+     * General handler for status = 400
+     */
+    badRequest: () => void;
+
+    /**
+     * General handler for status = 404
+     */
+    notFound: () => void;
+};
+
+/**
+ * Error handler for CallGetAssetminio
+ */
+export type CallGetAssetminioErrorHandler = CommonAuthenticatedErrorHandler & {
     /**
      * General handler for status = 400
      */

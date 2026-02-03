@@ -13,7 +13,15 @@
             "field": "id"
         },
         {
+            "collection": "event_example_asset_modifiedminio",
+            "field": "id"
+        },
+        {
             "collection": "event_example_asset_registered",
+            "field": "id"
+        },
+        {
+            "collection": "event_example_asset_registeredminio",
             "field": "id"
         },
         {
@@ -159,6 +167,50 @@
             ]
         },
         {
+            "collection": "event_example_asset_modifiedminio",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_asset_modifiedminio",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_asset_modifiedminio",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_asset_modifiedminio",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pNodeId",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
             "collection": "event_example_asset_registered",
             "unique": false,
             "fields": [
@@ -204,6 +256,64 @@
         },
         {
             "collection": "event_example_asset_registered",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pNodeId",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_asset_registeredminio",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_asset_registeredminio",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "block",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_asset_registeredminio",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "tx",
+                    "dir": ""
+                }
+            ]
+        },
+        {
+            "collection": "event_example_asset_registeredminio",
+            "unique": false,
+            "fields": [
+                {
+                    "name": "pRegistrar",
+                    "dir": ""
+                },
+                {
+                    "name": "id",
+                    "dir": "DESC"
+                }
+            ]
+        },
+        {
+            "collection": "event_example_asset_registeredminio",
             "unique": false,
             "fields": [
                 {

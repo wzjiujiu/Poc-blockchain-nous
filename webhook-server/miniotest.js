@@ -3,6 +3,47 @@ const fs = require('fs');
 const https = require('https');
 const http = require('http');
 const crypto = require('crypto');
+require("dotenv").config();
+const { ethers } = require("ethers"); // ethers.js v6
+
+const { parseNestedJSON, cleanKeys ,escapeHtml,renderAsList} = require("./utils/parser.js");
+const {registerAssetOnChain,
+modifyAssetOnChainFromWebhook,
+registerAssetOnChainMinio,
+modifyAssetOnChainFromWebhookMinio,
+registerPolicyOnChainFromWebhook,
+modifyPolicyOnchainFromWebhook,
+registerDataofferOnChain,
+modifyDataofferOnChain,
+registerContrattoOnchain,
+terminateContrattoOnchain,
+registerTransferOnchain,
+terminateTransferOnchain,
+registerAssetOnChainGasTest,
+modifyAssetOnChainFromWebhookGasTest
+} =require("./config/services.js");
+
+const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
+
+// Usa il nodo Besu locale (porta 8545)
+const provider = new ethers.JsonRpcProvider("http://localhost:8545");
+const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
+
+//const CONTRACT_ADDRESS = "0x0bcc0aa6bb316af0e04e90f1c869362805caa873";
+const CONTRACT_ADDRESS = process.env.CONTRACT_ADD_DEPLOYED;
+
+const CONTRACT_ABI = require("./abi/ExampleContract");
+
+
+const NODE_ID_PROVIDER = ethers.keccak256(
+  ethers.toUtf8Bytes("localhost:11000")
+);
+
+const NODE_ID_CONSUMER = ethers.keccak256(
+  ethers.toUtf8Bytes("localhost:22000")
+);
+
+const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, wallet);
 
 // Configura MinIO client
 const minioClient = new Minio.Client({
@@ -13,8 +54,11 @@ const minioClient = new Minio.Client({
   secretKey: 'admin12345'
 });
 
+let assetid='minio-1'
+let assetTitle='minio-test'
+
 // Genera presigned URL + scarica file + hash
-async function generaLink() {
+async function generaLink(assetid,assetTitle) {
   try {
     const url = await minioClient.presignedGetObject(
       'masa',            // bucket
@@ -68,6 +112,13 @@ async function generaLink() {
     console.log("SHA-256 hash del file:", hash);
     console.log("SHA-256 hash del file:", hash1);
     console.log("SHA-256 hash del file:", hash2);
+    await registerAssetOnChainMinio({
+  nodeId: NODE_ID_PROVIDER,
+  assetId: assetid,      // Mappa assetid su assetId
+  assetTitle: assetTitle,
+  dataHash: "0x" + hash,        // Mappa hash su dataHash
+  contract: contract
+});
 
   } catch (err) {
     console.error("Errore:", err);
@@ -110,4 +161,4 @@ function calculateFileHash(filePath) {
   });
 }
 
-generaLink();
+generaLink(assetid,assetTitle);

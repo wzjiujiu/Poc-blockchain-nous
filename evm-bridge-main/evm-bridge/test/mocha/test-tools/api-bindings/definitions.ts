@@ -1589,18 +1589,46 @@ export interface TxParamsExampleModifyAsset {
     nodeId: string;
 
     /**
-     * assetId 
+     * assetId
      */
     assetId: string;
 
     /**
-     * newTitle 
+     * newTitle
      */
     newTitle: string;
 }
 
 export interface TxRequestExampleModifyAsset {
     parameters: TxParamsExampleModifyAsset;
+
+    txSign: TxSigningOptions;
+}
+
+export interface TxParamsExampleModifyAssetminio {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * assetId
+     */
+    assetId: string;
+
+    /**
+     * newTitle
+     */
+    newTitle: string;
+
+    /**
+     * dataHash 
+     */
+    dataHash: string;
+}
+
+export interface TxRequestExampleModifyAssetminio {
+    parameters: TxParamsExampleModifyAssetminio;
 
     txSign: TxSigningOptions;
 }
@@ -1672,18 +1700,46 @@ export interface TxParamsExampleRegisterAsset {
     nodeId: string;
 
     /**
-     * assetId 
+     * assetId
      */
     assetId: string;
 
     /**
-     * assetTitle 
+     * assetTitle
      */
     assetTitle: string;
 }
 
 export interface TxRequestExampleRegisterAsset {
     parameters: TxParamsExampleRegisterAsset;
+
+    txSign: TxSigningOptions;
+}
+
+export interface TxParamsExampleRegisterAssetminio {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * assetId
+     */
+    assetId: string;
+
+    /**
+     * assetTitle
+     */
+    assetTitle: string;
+
+    /**
+     * dataHash 
+     */
+    dataHash: string;
+}
+
+export interface TxRequestExampleRegisterAssetminio {
+    parameters: TxParamsExampleRegisterAssetminio;
 
     txSign: TxSigningOptions;
 }
@@ -1862,7 +1918,7 @@ export interface EventParamsExampleAssetModified {
     nodeId: string;
 
     /**
-     * assetId 
+     * assetId
      */
     assetId: string;
 
@@ -1872,7 +1928,7 @@ export interface EventParamsExampleAssetModified {
     timestamp: string;
 
     /**
-     * newTitle 
+     * newTitle
      */
     newTitle: string;
 }
@@ -1915,6 +1971,71 @@ export interface EventListExampleAssetModified {
     continuationToken?: string;
 }
 
+export interface EventParamsExampleAssetModifiedminio {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * assetId
+     */
+    assetId: string;
+
+    /**
+     * dataHash 
+     */
+    dataHash: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+
+    /**
+     * newTitle
+     */
+    newTitle: string;
+}
+
+export interface EventItemExampleAssetModifiedminio {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExampleAssetModifiedminio;
+}
+
+export interface EventListExampleAssetModifiedminio {
+    events: EventItemExampleAssetModifiedminio[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
 export interface EventParamsExampleAssetRegistered {
     /**
      * registrar 
@@ -1927,7 +2048,7 @@ export interface EventParamsExampleAssetRegistered {
     nodeId: string;
 
     /**
-     * assetId 
+     * assetId
      */
     assetId: string;
 
@@ -1937,7 +2058,7 @@ export interface EventParamsExampleAssetRegistered {
     timestamp: string;
 
     /**
-     * title 
+     * title
      */
     title: string;
 }
@@ -1973,6 +2094,76 @@ export interface EventItemExampleAssetRegistered {
 
 export interface EventListExampleAssetRegistered {
     events: EventItemExampleAssetRegistered[];
+
+    /**
+     * Continuation token 
+     */
+    continuationToken?: string;
+}
+
+export interface EventParamsExampleAssetRegisteredminio {
+    /**
+     * registrar 
+     */
+    registrar: string;
+
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * assetId
+     */
+    assetId: string;
+
+    /**
+     * dataHash 
+     */
+    dataHash: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+
+    /**
+     * title
+     */
+    title: string;
+}
+
+export interface EventItemExampleAssetRegisteredminio {
+    /**
+     * Event ID 
+     */
+    id: string;
+
+    /**
+     * Block number 
+     */
+    block: number;
+
+    /**
+     * Event index in the block 
+     */
+    eventIndex: number;
+
+    /**
+     * Transaction hash 
+     */
+    tx: string;
+
+    /**
+     * Event timestamp (Unix seconds) 
+     */
+    timestamp: string;
+
+    parameters: EventParamsExampleAssetRegisteredminio;
+}
+
+export interface EventListExampleAssetRegisteredminio {
+    events: EventItemExampleAssetRegisteredminio[];
 
     /**
      * Continuation token 
@@ -2694,12 +2885,31 @@ export interface CallRequestExampleAssetExists {
     nodeId: string;
 
     /**
-     * assetId 
+     * assetId
      */
     assetId: string;
 }
 
 export interface CallResponseExampleAssetExists {
+    /**
+     * _0
+     */
+    _0: boolean;
+}
+
+export interface CallRequestExampleAssetExistsminio {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * assetId
+     */
+    assetId: string;
+}
+
+export interface CallResponseExampleAssetExistsminio {
     /**
      * _0
      */
@@ -2751,14 +2961,14 @@ export interface CallRequestExampleGetAsset {
     nodeId: string;
 
     /**
-     * assetId 
+     * assetId
      */
     assetId: string;
 }
 
 export interface CallResponseExampleGetAsset {
     /**
-     * id 
+     * id
      */
     id: string;
 
@@ -2778,7 +2988,46 @@ export interface CallResponseExampleGetAsset {
     timestamp: string;
 
     /**
-     * title 
+     * title
+     */
+    title: string;
+}
+
+export interface CallRequestExampleGetAssetminio {
+    /**
+     * nodeId 
+     */
+    nodeId: string;
+
+    /**
+     * assetId
+     */
+    assetId: string;
+}
+
+export interface CallResponseExampleGetAssetminio {
+    /**
+     * id
+     */
+    id: string;
+
+    /**
+     * nId 
+     */
+    nId: string;
+
+    /**
+     * registrar 
+     */
+    registrar: string;
+
+    /**
+     * timestamp 
+     */
+    timestamp: string;
+
+    /**
+     * title
      */
     title: string;
 }

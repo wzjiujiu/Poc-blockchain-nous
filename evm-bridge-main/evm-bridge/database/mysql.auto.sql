@@ -20,15 +20,33 @@ CREATE TABLE `event_example_asset_modified` (
     `tx` VARCHAR(255),
     `timestamp` BIGINT,
     `p_node_id` VARCHAR(255),
-    `p_asset_id` VARCHAR(255),
+    `p_asset_id` TEXT,
     `p_timestamp` VARCHAR(255),
-    `p_new_title` VARCHAR(255)
+    `p_new_title` TEXT
 );
 
 CREATE INDEX `ix_event_example_asset_modified_s_1` ON `event_example_asset_modified`(`id` DESC);
 CREATE INDEX `ix_event_example_asset_modified_s_2` ON `event_example_asset_modified`(`block`);
 CREATE INDEX `ix_event_example_asset_modified_s_3` ON `event_example_asset_modified`(`tx`);
 CREATE INDEX `ix_event_example_asset_modified_s_4` ON `event_example_asset_modified`(`p_node_id`, `id` DESC);
+
+CREATE TABLE `event_example_asset_modifiedminio` (
+    `id` VARCHAR(255) PRIMARY KEY,
+    `block` BIGINT,
+    `event_index` BIGINT,
+    `tx` VARCHAR(255),
+    `timestamp` BIGINT,
+    `p_node_id` VARCHAR(255),
+    `p_asset_id` TEXT,
+    `p_data_hash` VARCHAR(255),
+    `p_timestamp` VARCHAR(255),
+    `p_new_title` TEXT
+);
+
+CREATE INDEX `ix_event_example_asset_modifiedminio_s_1` ON `event_example_asset_modifiedminio`(`id` DESC);
+CREATE INDEX `ix_event_example_asset_modifiedminio_s_2` ON `event_example_asset_modifiedminio`(`block`);
+CREATE INDEX `ix_event_example_asset_modifiedminio_s_3` ON `event_example_asset_modifiedminio`(`tx`);
+CREATE INDEX `ix_event_example_asset_modifiedminio_s_4` ON `event_example_asset_modifiedminio`(`p_node_id`, `id` DESC);
 
 CREATE TABLE `event_example_asset_registered` (
     `id` VARCHAR(255) PRIMARY KEY,
@@ -38,9 +56,9 @@ CREATE TABLE `event_example_asset_registered` (
     `timestamp` BIGINT,
     `p_registrar` VARCHAR(255),
     `p_node_id` VARCHAR(255),
-    `p_asset_id` VARCHAR(255),
+    `p_asset_id` TEXT,
     `p_timestamp` VARCHAR(255),
-    `p_title` VARCHAR(255)
+    `p_title` TEXT
 );
 
 CREATE INDEX `ix_event_example_asset_registered_s_1` ON `event_example_asset_registered`(`id` DESC);
@@ -48,6 +66,26 @@ CREATE INDEX `ix_event_example_asset_registered_s_2` ON `event_example_asset_reg
 CREATE INDEX `ix_event_example_asset_registered_s_3` ON `event_example_asset_registered`(`tx`);
 CREATE INDEX `ix_event_example_asset_registered_s_4` ON `event_example_asset_registered`(`p_registrar`, `id` DESC);
 CREATE INDEX `ix_event_example_asset_registered_s_5` ON `event_example_asset_registered`(`p_node_id`, `id` DESC);
+
+CREATE TABLE `event_example_asset_registeredminio` (
+    `id` VARCHAR(255) PRIMARY KEY,
+    `block` BIGINT,
+    `event_index` BIGINT,
+    `tx` VARCHAR(255),
+    `timestamp` BIGINT,
+    `p_registrar` VARCHAR(255),
+    `p_node_id` VARCHAR(255),
+    `p_asset_id` TEXT,
+    `p_data_hash` VARCHAR(255),
+    `p_timestamp` VARCHAR(255),
+    `p_title` TEXT
+);
+
+CREATE INDEX `ix_event_example_asset_registeredminio_s_1` ON `event_example_asset_registeredminio`(`id` DESC);
+CREATE INDEX `ix_event_example_asset_registeredminio_s_2` ON `event_example_asset_registeredminio`(`block`);
+CREATE INDEX `ix_event_example_asset_registeredminio_s_3` ON `event_example_asset_registeredminio`(`tx`);
+CREATE INDEX `ix_event_example_asset_registeredminio_s_4` ON `event_example_asset_registeredminio`(`p_registrar`, `id` DESC);
+CREATE INDEX `ix_event_example_asset_registeredminio_s_5` ON `event_example_asset_registeredminio`(`p_node_id`, `id` DESC);
 
 CREATE TABLE `event_example_contratto_registered` (
     `id` VARCHAR(255) PRIMARY KEY,

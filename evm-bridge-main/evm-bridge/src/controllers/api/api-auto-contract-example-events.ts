@@ -28,7 +28,7 @@
 
 import Express from "express";
 import { Controller } from "../controller";
-import { noCache, sendApiError, sendApiResult, sendApiSuccess } from "../../utils/http-utils";
+import { noCache, sendApiResult } from "../../utils/http-utils";
 import { parsePaginationParameters } from "../../utils/pagination";
 import { DataFilter } from "tsbean-orm";
 import { EventExampleAssetModified } from "../../models/event-sync/example/asset-modified";
