@@ -10,6 +10,14 @@
     --header-height: 60px;
     --border-radius: 6px;
     --box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      --main-color: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  --red: #e74c3c;
+  --orange: #f39c12;
+  --white: #fff;
+  --black: #2c3e50;
+  --light-color: #888;
+  --light-bg: #eee;
+  --border: .1rem solid rgba(0, 0, 0, .2);
 }
 
 /* ===========================
@@ -23,8 +31,8 @@
 }
 
 body {
-    background-color: var(--secondary-color);
-    color: var(--text-color);
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #fff;
 }
 
 /* ===========================
@@ -92,7 +100,7 @@ header h1 {
    CARD
    =========================== */
 .card {
-    background-color: var(--card-bg);
+    background: rgba(0,0,0,0.3);
     padding: 15px;
     border-radius: var(--border-radius);
     margin-bottom: 15px;
@@ -148,12 +156,17 @@ button:hover {
 
 
 .navbar {
-    background-color: #2f80ed; /* blu primario Etherscan */
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
     color: #ffffff;
     height: 60px;
     display: flex;
     align-items: center;
-    padding: 1rem;
+
+  justify-content: center;
+
+  padding: 1rem 2rem;
+
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -169,6 +182,286 @@ button:hover {
   color: #d1d5db; /* cambia colore al passaggio del mouse, simile a gray-300 */
 }
 
+.navbar .header .flex {
+  position: relative; /* necessario per posizionare il profile box */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+}
+
+/* TITOLO A SINISTRA */
+.navbar-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #00d8ff;
+  text-decoration: none;
+  margin-right: auto; /* spinge le icone a destra */
+}
+
+/* ICONS WRAPPER – ORIZZONTALE */
+.navbar .header .icons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* spazio tra icone */
+}
+
+/* OGNI ICONA */
+.navbar .header .icons div {
+  font-size: 2rem;
+  color: var(--white);
+  background: rgba(0,0,0,0.3);
+  border-radius: 0.5rem;
+  width: 4.5rem;
+  height: 4rem;
+  line-height: 4.5rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* HOVER */
+.navbar .header .icons div:hover {
+  background: var(--black);
+  color: var(--white);
+}
+
+/* PROFILO DROPDOWN */
+.navbar .header .profile {
+  position: absolute;
+  top: 120%;
+  right: 2rem;
+  background: var(--white);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  width: 30rem;
+  transform-origin: top right;
+  transform: scale(0);
+  transition: 0.2s linear;
+}
+
+.navbar .header .profile.active {
+  transform: scale(1);
+}
+
+.navbar-center {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* LINKS */
+.navbar .nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.navbar .nav-links a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.navbar .nav-links a:hover {
+  color: #00d8ff;
+}
+
+/* CONNECT WALLET */
+.navbar .connect-wallet {
+  background: #00d8ff;
+  color: #000;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.navbar .connect-wallet:hover {
+  background: #00b8e0;
+}
+
+
+.account-form {
+  position: fixed;
+  top: 0;
+  right: -420px; /* nascosto fuori dallo schermo */
+  width: 380px;
+  height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  backdrop-filter: blur(18px);
+  border-left: 1px solid rgba(255,255,255,0.1);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 2rem;
+  gap: 2rem;
+
+  z-index: 2000;
+  transition: right 0.45s ease;
+}
+
+/* STATO ACTIVE (SLIDE IN) */
+.account-form.active {
+  right: 0;
+  box-shadow: 0 0 0 100vw rgba(0, 0, 0, 0.75);
+}
+
+/* CLOSE BUTTON */
+.account-form #close-form {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+  font-size: 3rem;
+  color: var(--light-color);
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.account-form #close-form:hover {
+  transform: rotate(90deg);
+  color: var(--main-color);
+}
+
+/* LOGIN / REGISTER BUTTONS */
+.account-form .buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.account-form .buttons .btn {
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.account-form .buttons .btn.active {
+  background: var(--main-color);
+}
+
+.account-form .buttons .btn:hover {
+  background: var(--main-color);
+}
+
+/* FORM BOX */
+.account-form form {
+  width: 100%;
+  background: rgba(255,255,255,0.15);
+  padding: 2rem;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  display: none;
+}
+
+.account-form form.active {
+  display: block;
+}
+
+/* INPUT FIELDS */
+.account-form form .box {
+  width: 100%;
+  padding: 1rem;
+  margin: 0.7rem 0;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+.account-form form .box::placeholder {
+  color: #ccc;
+}
+
+/* TITLE */
+.account-form form h3 {
+  font-size: 2rem;
+  text-transform: uppercase;
+  color: #00d8ff;
+  margin-bottom: 1rem;
+}
+
+/* FLEX ROW */
+.account-form form .flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* BUTTON SUBMIT */
+.account-form form .btn {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  border-radius: 6px;
+  background: var(--main-color);
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.account-form form .btn:hover {
+  opacity: 0.85;
+}
+
+.header .flex .profile {
+  position: absolute;
+  top: 120%; /* subito sotto navbar */
+  right: 2rem;
+  background-color: var(--white);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  width: 30rem;
+  transform-origin: top right;
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.header .flex .profile.active {
+  transform: scale(1);
+  opacity: 1;
+}
+
+
+
+.header .flex .profile img {
+  height: 10rem;
+  width: 10rem;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+}
+
+.header .flex .profile h3 {
+  font-size: 2rem;
+  color: var(--black);
+}
+
+.header .flex .profile span {
+  font-size: 1.6rem;
+  color: var(--light-color);
+}
+
+.profile .btn, .profile .option-btn {
+  display: block;
+  margin: 0.5rem auto;
+  padding: 0.5rem;
+  width: 80%;
+  text-align: center;
+  border-radius: 5px;
+  background: #222;
+  color: #fff;
+}
+
 .home-grid {
     display: flex;
     gap: 20px;
@@ -178,4 +471,110 @@ button:hover {
 /* Colonne flessibili, responsive */
 .home-grid > div {
     flex: 1; /* entrambe le colonne occupano metà */
+}
+
+.init-page {
+  font-family: "Inter", sans-serif;
+  color: #fff;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  min-height: 100vh;
+}
+
+/* NAVBAR */
+.init-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+}
+.init-navbar .logo {
+  font-weight: bold;
+  font-size: 2rem;
+  color: #00d8ff;
+  text-decoration: none;
+}
+.init-navbar .nav-links a {
+  margin-left: 2rem;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.2s;
+}
+.init-navbar .nav-links a:hover {
+  color: #00d8ff;
+}
+.init-navbar .connect-wallet {
+  background: #00d8ff;
+  color: #000;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.init-navbar .connect-wallet:hover {
+  background: #00b8e0;
+}
+
+
+
+
+/* HERO */
+.hero {
+  text-align: center;
+  padding: 8rem 2rem 4rem;
+}
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #00d8ff;
+}
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #e0f7ff;
+}
+.hero .hero-btn {
+  background: #00d8ff;
+  color: #000;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.2s;
+}
+.hero .hero-btn:hover {
+  background: #00b8e0;
+}
+
+/* DASHBOARD CARDS */
+.dashboard-cards {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding: 2rem;
+}
+.card-init {
+  background: rgba(0,0,0,0.3);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 20rem;
+  backdrop-filter: blur(5px);
+}
+.card-init h3 {
+  color: #00d8ff;
+  margin-bottom: 1rem;
+}
+.card-init ul li {
+  margin-bottom: 0.5rem;
+}
+
+/* FOOTER */
+.init-footer {
+  text-align: center;
+  padding: 2rem;
+  color: #aaa;
 }

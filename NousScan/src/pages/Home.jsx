@@ -2,34 +2,69 @@ import { useEffect, useState } from "react";
 import { provider } from "../lib/provider";
 import Card from "../components/Card";
 import SearchBar from "../components/SearchBar";
-import { ethers } from "ethers";
-import { CONTRACT_ADDRESS, ABI } from "../lib/constants"; // importa il tuo ABI
 import { useNavigate } from "react-router-dom";
 
-export default function Home({ contract }) {
+export default function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState(null); // null = checking
   const [blocks, setBlocks] = useState([]);
-  const [transactions, setTransactions] = useState([]); // <-- cambiato
+  const [transactions, setTransactions] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
-  // Carica ultimi 5 blocchi dalla blockchain
+  /* ================================
+       1️⃣ CHECK LOGIN DAL DB
+  ================================= */
   useEffect(() => {
-    async function loadBlocks() {
-      const latest = await provider.getBlockNumber();
-      let list = [];
+    async function checkAuth() {
+      try {
+        const res = await fetch("http://localhost:3001/auth/check", {
+          credentials: "include", // include cookie/session
+        });
 
-      for (let i = 0; i < 5; i++) {
-        const b = await provider.getBlock(latest - i);
-        list.push(b);
+        const data = await res.json();
+        console.log("Auth check response:", data);
+
+        setIsLoggedIn(data.loggedIn);
+      } catch (err) {
+        console.error("Errore autenticazione:", err);
+        setIsLoggedIn(false);
       }
-
-      setBlocks(list);
     }
 
+    checkAuth();
+  }, []);
+
+  // Redirect se non loggato
+  useEffect(() => {
+    if (isLoggedIn === false) {
+      navigate("/", { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
+
+
+  /* ================================
+       2️⃣ LOAD BLOCKS (BLOCKCHAIN)
+  ================================= */
+  useEffect(() => {
+    async function loadBlocks() {
+      try {
+        const latest = await provider.getBlockNumber();
+        let list = [];
+        for (let i = 0; i < 5; i++) {
+          const b = await provider.getBlock(latest - i);
+          list.push(b);
+        }
+        setBlocks(list);
+      } catch (err) {
+        console.error("Errore caricamento blocchi:", err);
+      }
+    }
     loadBlocks();
   }, []);
 
-  // 🔥 Carica ultime transazioni dal tuo backend PostgreSQL
+  /* ================================
+       3️⃣ LOAD TRANSACTIONS (DB)
+  ================================= */
   useEffect(() => {
     async function loadTransactions() {
       try {
@@ -40,30 +75,29 @@ export default function Home({ contract }) {
         console.error("Errore caricamento transazioni:", err);
       }
     }
-
     loadTransactions();
   }, []);
 
+  /* ================================
+       4️⃣ SEARCH TRANSACTIONS
+  ================================= */
   const handleSearch = async (query) => {
     try {
       const tx = await provider.getTransaction(query);
-
-      // ❗ Se non esiste → mostra errore
       if (!tx) {
         alert("Transazione non trovata");
         return;
       }
-
-      // 2. Vai alla pagina dei dettagli
-      console.log(query)
       navigate(`/tx/${query}`);
-
     } catch (err) {
-      console.error("Search error:", err);
+      console.error("Errore ricerca transazione:", err);
       alert("Errore durante la ricerca");
     }
   };
 
+  /* ================================
+       RENDER HOME
+  ================================= */
   return (
     <div className="container">
       <h2 className="page-title">Search</h2>
@@ -83,7 +117,7 @@ export default function Home({ contract }) {
       )}
 
       <div className="home-grid">
-        {/* Colonna sinistra */}
+        {/* BLOCCCHI */}
         <div>
           <h2 className="page-title">Ultimi Blocchi</h2>
           {blocks.map((b) => (
@@ -95,7 +129,7 @@ export default function Home({ contract }) {
           ))}
         </div>
 
-        {/* Colonna destra */}
+        {/* TRANSZIONI DB */}
         <div>
           <h2 className="page-title">Ultime Transazioni (DB)</h2>
           {transactions.map((tx) => (

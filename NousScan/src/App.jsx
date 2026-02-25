@@ -1,25 +1,32 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Block from "./pages/Block";
+import Init from "./pages/Init";
 import Transaction from "./pages/Transaction";
-import TransactionDetails from "./pages/TransactionDetails"
-
-import { Contract } from "ethers";
-import { provider } from "./lib/provider";
-import { CONTRACT_ADDRESS, ABI } from "./lib/constants"; // importa il tuo ABI
+import TransactionDetails from "./pages/TransactionDetails";
 
 export default function App() {
-
   return (
     <BrowserRouter>
-      <Navbar />
+      <NavbarWrapper />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Init />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/block" element={<Block />} />
         <Route path="/tx" element={<Transaction />} />
         <Route path="/tx/:txHash" element={<TransactionDetails />} />
       </Routes>
     </BrowserRouter>
   );
+}
+
+// Wrapper che decide se mostrare Navbar
+function NavbarWrapper() {
+  const location = useLocation();
+
+  // non mostrare Navbar sulla pagina iniziale ("/")
+  if (location.pathname === "/") return null;
+
+  return <Navbar />;
 }
