@@ -30,3 +30,5 @@ Using the wrong ABI leads to:
 > The ABI must match the exact contract version deployed on-chain.
 
 ---
+- Link to the ABI : [link](https://github.com/wzjiujiu/Poc-blockchain-nous/tree/main/webhook-server/abi)
+- Link to the Smart contract : [link](https://github.com/wzjiujiu/Poc-blockchain-nous/tree/main/evm-bridge-main/smart-contracts/contracts)
