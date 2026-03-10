@@ -342,3 +342,11 @@ Next, following the logic of the NOUS PoC, REST API calls are issued to the Prov
 After the negotiation is completed, the Consumer receives the Endpoint Data Reference (EDR), and the validation script (active webhook) 
 uses the protected URL provided to download the file. The function then computes a SHA-256 hash of the downloaded binary content. 
 Finally, the hash and asset metadata are submitted to the smart contract on Hyperledger Besu for on-chain notarization.
+
+---
+
+##  SMART CONTRACT SECTION 
+the project has two child path which will base on standard version , and L2 experiment section 
+the link will bring you to README of explanation of each section's smart contract ABI
+Standard version(includes original webhook & evolution apache kafka) : [link 1]([http://localhost:11000/](https://github.com/wzjiujiu/Poc-blockchain-nous/tree/main/webhook-server/abi))
+L2 experiment version : [link 2]([http://localhost:11000/](https://github.com/wzjiujiu/Poc-blockchain-nous/tree/main/L2/webhook-server/abi))
