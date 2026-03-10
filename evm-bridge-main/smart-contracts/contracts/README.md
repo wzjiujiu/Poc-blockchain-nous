@@ -158,7 +158,7 @@ Below is the complete comparison.
 string id;
 string title;
 uint256 timestamp;
-
+```
 ---
 
 #  **Deploy process pay attention**
