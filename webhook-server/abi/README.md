@@ -26,7 +26,7 @@ However, the **Asset module and MinIO integration differ significantly** between
 
 ---
 
-# ABI v1 (String-Based + MinIO Support)
+# ABI v1 ExampleContract.js(String-Based + MinIO Support)
 
 ## Key Characteristics
 
@@ -51,17 +51,18 @@ However, the **Asset module and MinIO integration differ significantly** between
 
 ---
 
-# ABI v2 (Bytes32-Based Optimized Version)
+# ABI v2 ExampleContract1.js(Bytes32-Based Optimized Version)
 
 ## Key Characteristics
 
 - Uses `bytes32` for:
   - `assetId`
   - `assetTitle`
-- Removes the **Assetminio module**
 - Uses `uint64` timestamps for assets
 - More **gas efficient**
 - Requires hashing of asset identifiers before interacting with the contract
+
+this ABI is used to test the gas estimation by applying these change in the contract
 
 Example hashing:
 
