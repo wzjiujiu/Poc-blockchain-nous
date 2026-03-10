@@ -158,3 +158,9 @@ Below is the complete comparison.
 string id;
 string title;
 uint256 timestamp;
+
+---
+
+#  **Deploy process pay attention**
+there should be only one ExamContract.sol in this folder when the smart contract is deployed, the other ExampleContract1.sol should be moved out from this folder.
+
