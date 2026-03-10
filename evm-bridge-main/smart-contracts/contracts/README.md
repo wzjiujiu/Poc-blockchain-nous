@@ -1,5 +1,5 @@
 
-# 📘 Dataspace Registry Smart Contracts  
+#  Dataspace Registry Smart Contracts  
 ### Comparison of Two Versions + Common Architecture Overview
 
 This repository contains **two versions** of the `ExampleContract` smart contract used to manage a **dataspace registry** on the blockchain.
@@ -19,13 +19,13 @@ This README explains:
 
 ---
 
-# 🔷 1. Overview of the Dataspace Registry Architecture (Common to Both Versions)
+#  1. Overview of the Dataspace Registry Architecture (Common to Both Versions)
 
 Both contracts implement a unified registry composed of **five interoperable modules**:
 
 ---
 
-## ✔ 1. Asset Registry  
+##  1. Asset Registry  
 Stores all digital assets for each `nodeId`.
 
 Each asset contains:
@@ -50,7 +50,7 @@ Events:
 
 ---
 
-## ✔ 2. Policy Registry  
+##  2. Policy Registry  
 Represents access and usage policies for assets.
 
 Functions:
@@ -67,7 +67,7 @@ Events:
 
 ---
 
-## ✔ 3. Data Offer Registry  
+##  3. Data Offer Registry  
 Links policies and assets into a commercial or technical offer.
 
 Functions:
@@ -84,7 +84,7 @@ Events:
 
 ---
 
-## ✔ 4. Contract Negotiation Registry ("Contratto")  
+##  4. Contract Negotiation Registry ("Contratto")  
 Tracks contract negotiation progress between two nodes.
 
 Functions:
@@ -101,7 +101,7 @@ Events:
 
 ---
 
-## ✔ 5. Data Transfer Registry  
+##  5. Data Transfer Registry  
 Tracks the actual execution of a data exchange.
 
 Functions:
@@ -118,7 +118,7 @@ Events:
 
 ---
 
-# 🔷 2. Common Logical Patterns Between Both Versions
+#  2. Common Logical Patterns Between Both Versions
 
 Regardless of which version you use, each module follows the same design pattern:
 
@@ -143,7 +143,7 @@ This architecture gives the registry:
 
 ---
 
-# 🔥 3. Differences Between Version A and Version B
+#  3. Differences Between Version A and Version B
 
 The core logic is the same, but **how assets are stored differs significantly**.
 
@@ -151,9 +151,9 @@ Below is the complete comparison.
 
 ---
 
-# 🟦 **Version A — String-based, Full Features, MinIO Support**
+#  **Version A — String-based, Full Features, MinIO Support**
 
-### ✔ Asset model uses **string identifiers**
+###  Asset model uses **string identifiers**
 ```solidity
 string id;
 string title;
