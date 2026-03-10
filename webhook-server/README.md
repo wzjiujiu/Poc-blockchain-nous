@@ -13,7 +13,7 @@ This project includes:
 Each ABI is tightly coupled to its corresponding contract.  
 This means:
 
-### ✅ You must always use the ABI that matches the deployed smart contract.
+###  You must always use the ABI that matches the deployed smart contract.
 
 If you deploy Version A → use ABI A  
 If you deploy Version B → use ABI B  
@@ -32,3 +32,9 @@ Using the wrong ABI leads to:
 ---
 - Link to the ABI : [link](https://github.com/wzjiujiu/Poc-blockchain-nous/tree/main/webhook-server/abi)
 - Link to the Smart contract : [link](https://github.com/wzjiujiu/Poc-blockchain-nous/tree/main/evm-bridge-main/smart-contracts/contracts)
+
+---
+
+###  How to start the project 
+
+After setting up the enviroment following initial Readme and have deployed contracts information you should perform(from this directory) : 
