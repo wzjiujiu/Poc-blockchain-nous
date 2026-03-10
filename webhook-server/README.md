@@ -35,6 +35,10 @@ Using the wrong ABI leads to:
 
 ---
 
-###  How to start the project 
+###  Env file parameters
 
-After setting up the enviroment following initial Readme and have deployed contracts information you should perform(from this directory) : 
+```bash
+WALLET_PRIVATE_KEY=[your own wallet private key]
+PROVIDER_EDC_MANAGEMENT_URL=http://localhost:11000/api/management
+CONTRACT_ADD_DEPLOYED=0xd0fc4e931b6d67bcecc65c2afec2faa278d0d769
+```
