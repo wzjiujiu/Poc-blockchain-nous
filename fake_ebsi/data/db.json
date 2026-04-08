@@ -1,0 +1,42 @@
+{
+  "did:ebsi:EU5FqsLPC7t-D2KJ": {
+    "document": {
+      "@context": "https://www.w3.org/ns/did/v1",
+      "id": "did:ebsi:EU5FqsLPC7t-D2KJ",
+      "verificationMethod": [
+        {
+          "id": "did:ebsi:EU5FqsLPC7t-D2KJ#key-1",
+          "type": "JsonWebKey2020",
+          "controller": "did:ebsi:EU5FqsLPC7t-D2KJ",
+          "publicKeyJwk": {
+            "crv": "P-256",
+            "kid": "v9gkBBElTVt_PfOgg1LutU7-iR_5zPQKkkVUiaDCb9Y",
+            "kty": "EC",
+            "x": "3-E21JwIo4HRd2kyNwSFr-pZih1MEVWrJ7EYoIiL_8k",
+            "y": "SMc9IYcLnolfdXe388PKKUoSMKvMOHSd4l-W_VSckjg"
+          }
+        }
+      ],
+      "assertionMethod": [
+        "did:ebsi:EU5FqsLPC7t-D2KJ#key-1"
+      ]
+    },
+    "keys": {
+      "private": {
+        "crv": "P-256",
+        "d": "qNBnHozvD6Aj5RVcbNHxfkkXYTXZj6AMP9Fbgdid2W0",
+        "kid": "v9gkBBElTVt_PfOgg1LutU7-iR_5zPQKkkVUiaDCb9Y",
+        "kty": "EC",
+        "x": "3-E21JwIo4HRd2kyNwSFr-pZih1MEVWrJ7EYoIiL_8k",
+        "y": "SMc9IYcLnolfdXe388PKKUoSMKvMOHSd4l-W_VSckjg"
+      },
+      "public": {
+        "crv": "P-256",
+        "kid": "v9gkBBElTVt_PfOgg1LutU7-iR_5zPQKkkVUiaDCb9Y",
+        "kty": "EC",
+        "x": "3-E21JwIo4HRd2kyNwSFr-pZih1MEVWrJ7EYoIiL_8k",
+        "y": "SMc9IYcLnolfdXe388PKKUoSMKvMOHSd4l-W_VSckjg"
+      }
+    }
+  }
+}

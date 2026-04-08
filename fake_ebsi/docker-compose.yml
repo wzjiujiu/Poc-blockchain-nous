@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  fake-ebsi:
+    build: .
+    container_name: fake-ebsi
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./data:/mnt/data/fake-ebsi
